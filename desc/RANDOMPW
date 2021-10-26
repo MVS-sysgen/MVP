@@ -1,0 +1,12 @@
+Package: RANDOMPW
+Version: 1.0
+Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
+Depends:
+Homepage: https://github.com/MVS-sysgen/SOFTWARE/RANDOMPW
+Description: A random password generator for REXX
+ This installs a random password function for REXX. It returns a random
+ password of 8 characters. This function is installed to BREXX.V2R5M0.RXLIB
+ a rexx script is also installed in SYS2.EXEC to be used on the command line.
+
+ If generating user accounts for use with TSO call the script/function with
+ two arguments, number of rounds and 'TSO' (e.g. RX RANDOMPW 19 TSO).

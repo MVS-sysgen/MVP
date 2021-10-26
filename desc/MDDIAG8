@@ -1,0 +1,14 @@
+Package: MDDIAG8
+Version: 1.0
+Maintainer: Mark Dickinson
+Depends:
+Homepage: https://mdickinson.dyndns.org/hercules/downloads/
+Description: Issues DIAG 8 Commands, similar to HERCCMD
+
+ Uses the DIAGNOSE 0008 function to issue a command to the CP, which
+ in the case of MVS3.8J under hercules is to issue a command to
+ hercules itself (ie: tape devinits etc). Example in SYS2.SAMPLIB(MDDIAG8)
+
+ By default users in the RAKF group ADMIN can MDDIAG8.
+
+ Source available: https://github.com/MarkDickinson/mvs38j_utils

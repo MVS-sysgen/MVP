@@ -1,0 +1,8 @@
+Package: DUMMY
+Version: 1.0
+Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
+Depends:
+Homepage: https://github.com/MVS-sysgen/MVP
+Description: A dummy installer that does nothing
+ DUMMY is a package designed to test MVP and its installation. This package
+ itself does nothing except submit an IEFBR14 job with 5 steps.

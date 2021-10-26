@@ -1,0 +1,19 @@
+Package: KICKS
+Version: 1.5.0
+Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
+Depends:
+Homepage: http://www.kicksfortso.com/
+Description: KICKS for TSO
+
+ KICKS is an enhancement for CMS & TSO on IBM mainframes (or emulators)
+ that lets you run your CICS applications directly instead of having to
+ 'install' those apps in CICS. You don't even need CICS itself installed
+ on your mainframe.
+
+ KICKS provides a high level of source code compatibility with CICS. You can
+ migrate applications either way between CICS and KICKS simply by recompiling.
+ Whether for ease of testing, fast deployment to small groups of users, or
+ simple Guerrilla Marketing, join your colleagues using KICKS to speed up
+ their development efforts.
+
+ !! Currently not available !!

@@ -1,0 +1,11 @@
+Package: STARTREK
+Version: 1.0
+Maintainer: TED BESTANI
+Depends:
+CBTTAPE: 173
+Homepage: https://github.com/MVS-sysgen/SOFTWARE/STARTREK
+Description: Star Trek for 3270 Terminals
+
+ This programs is designed to play Star Trek using the hardware
+ characteristics of 3270 terminals. Install STARTREK to
+ SYS2.CMDLIB

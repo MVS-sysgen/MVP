@@ -1,0 +1,347 @@
+#!/usr/bin/env python3
+
+# MVP python script. Part of the MVS pakcage manager
+# Author: Philip Young (Soldier of FORTRAN)
+# License: GPLv3
+
+from re import M
+import socket
+import sys
+import argparse
+import configparser
+import os
+import random
+import string
+
+os.chdir(os.path.dirname(sys.argv[0]))
+config = configparser.ConfigParser()
+config.read('MVP.ini')
+
+'''Part of MVP this either updates the software database/packages or submits a job'''
+
+ERROR_JOB = '''//{:.8} JOB (TSO),
+//             'MVP ERROR',
+//             CLASS=A,
+//             MSGCLASS=A,
+//             MSGLEVEL=(1,1),USER={user},PASSWORD={password}
+//NOTFOUND EXEC PGM=NOTFOUND
+'''
+
+INSTALL_JOB = '''//MVPINSTL JOB (TSO),
+//             'MVP Install',
+//             CLASS=A,
+//             MSGCLASS=A,
+//             MSGLEVEL=(1,1),USER={user},PASSWORD={password}
+//COMPRESS EXEC COMPRESS,LIB='SYS2.EXEC'
+//MVPINST  EXEC PGM=IEBGENER
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD DUMMY
+//SYSUT2   DD DSN=SYS2.EXEC(MVP),DISP=SHR
+//SYSUT1    DD *
+{mvprexx}
+/*
+//MVPPARM  EXEC PGM=IEBGENER
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD DUMMY
+//SYSUT2   DD DSN=SYS2.PARMLIB(MVP0001),DISP=SHR
+//SYSUT1    DD *
+{mvpparm}
+/*
+//DELETE   EXEC PGM=IDCAMS
+//SYSPRINT DD   SYSOUT=*
+//SYSIN    DD   *
+    DELETE -
+        MVP.PACKAGES
+    DELETE -
+        MVP.MVPDB
+    SET LASTCC = 0
+    SET MAXCC = 0
+/*
+//CREATE EXEC PGM=IEFBR14
+//PACKAGES DD  DSN=MVP.PACKAGES,
+//             UNIT=3350,VOL=SER=MVS000,DISP=(,CATLG),
+//             SPACE=(CYL,(2,1,20)),
+//             DCB=SYS1.HELP
+//PACKAGES DD  DSN=MVP.MVPDB,
+//             UNIT=3350,VOL=SER=MVS000,DISP=(,CATLG),
+//             SPACE=(CYL,(1,1)),
+//             DCB=(DSORG=PS,RECFM=FB,LRECL=80,BLKSIZE=800)
+//CACHE EXEC PGM=PDSLOAD
+//STEPLIB  DD  DSN=SYSC.LINKLIB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSUT2   DD  DISP=SHR,DSN=MVP.PACKAGES
+//SYSUT1   DD *
+./ ADD NAME=CACHE
+{cache}
+{descriptions}
+/*
+//MVPRAKF    EXEC PGM=SORT,REGION=512K,PARM='MSG=AP'
+//STEPLIB DD   DSN=SYSC.LINKLIB,DISP=SHR
+//SYSOUT  DD   SYSOUT=A
+//SYSPRINT DD  SYSOUT=A
+//SORTLIB DD   DSNAME=SYSC.SORTLIB,DISP=SHR
+//SORTOUT DD   DSN=SYS1.SECURE.CNTL(USERS),DISP=SHR
+//SORTWK01 DD  UNIT=2314,SPACE=(CYL,(5,5)),VOL=SER=SORTW1
+//SORTWK02 DD  UNIT=2314,SPACE=(CYL,(5,5)),VOL=SER=SORTW2
+//SORTWK03 DD  UNIT=2314,SPACE=(CYL,(5,5)),VOL=SER=SORTW3
+//SORTWK04 DD  UNIT=2314,SPACE=(CYL,(5,5)),VOL=SER=SORTW5
+//SORTWK05 DD  UNIT=2314,SPACE=(CYL,(5,5)),VOL=SER=SORTW6
+//SYSIN  DD    *
+ SORT FIELDS=(1,80,CH,A)
+ RECORD TYPE=F,LENGTH=(80)
+ END
+/*
+//SORTIN DD DSN=SYS1.SECURE.CNTL(USERS),DISP=SHR
+//       DD *
+MVP      ADMIN   *{mvp_user:8.8} Y
+MVP      RAKFADM *{mvp_user:8.8} Y
+/*
+//UPDTUSER EXEC RAKFUSER
+'''
+
+update_JOB = '''//UPDATE JOB (TSO),
+//             'MVP UPDATE',
+//             CLASS=A,
+//             MSGCLASS=A,
+//             MSGLEVEL=(1,1),USER={user},PASSWORD={password}
+//DELETE   EXEC PGM=IDCAMS
+//SYSPRINT DD   SYSOUT=*
+//SYSIN    DD   *
+    DELETE -
+        MVP.PACKAGES
+    SET LASTCC = 0
+    SET MAXCC = 0
+/*
+//CREATE EXEC PGM=IEFBR14
+//PACKAGES DD  DSN=MVP.PACKAGES,
+//             UNIT=3350,VOL=SER=MVS000,DISP=(,CATLG),
+//             SPACE=(CYL,(2,1,20)),
+//             DCB=SYS1.HELP
+//CACHE EXEC PGM=PDSLOAD
+//STEPLIB  DD  DSN=SYSC.LINKLIB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSUT2   DD  DISP=SHR,DSN=MVP.PACKAGES
+//SYSUT1   DD *
+./ ADD NAME=CACHE
+'''
+
+submit_xmi = '''//{:8} JOB (TSO),
+//             'MVP INSTALL',
+//             CLASS=A,
+//             MSGCLASS=A,
+//             MSGLEVEL=(1,1),USER={},PASSWORD={}
+//* CLEAN UP
+//CLEANUP EXEC PGM=IDCAMS
+//SYSIN    DD *
+  DELETE MVP.WORK SCRATCH PURGE
+  SET MAXCC=0
+  SET LASTCC=0
+//SYSPRINT DD SYSOUT=*
+//* UNLOAD XMIT TO MVP.WORK
+//RECV370 EXEC PGM=RECV370
+//STEPLIB  DD  DISP=SHR,DSN=SYSC.LINKLIB
+//RECVLOG  DD  SYSOUT=*
+//SYSPRINT DD  SYSOUT=*
+//SYSIN    DD  DUMMY
+//* Work temp dataset
+//SYSUT1   DD  DSN=&&SYSUT1,
+//             UNIT=VIO,
+//             SPACE=(CYL,(5,1)),
+//             DISP=(NEW,DELETE,DELETE)
+//* Output dataset
+//SYSUT2   DD  DSN=MVP.WORK,
+//             UNIT=3390,VOL=SER=PUB001,
+//             SPACE=(CYL,(10,10,20),RLSE),
+//             DISP=(NEW,CATLG,DELETE)
+//XMITIN   DD DATA,DLM=$$
+'''
+
+def submit(jcl, host="127.0.0.1", port=3505, xmi=False):
+    '''submits a job to hercules reader'''
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        # Connect to server and send data
+        sock.connect((host, port))
+        if not xmi:
+            sock.send(jcl.encode())
+        else:
+            sock.send(jcl)
+    finally:
+        sock.close()
+
+parser = argparse.ArgumentParser(description='MVS/CE Package manager [Linux]')
+parser.add_argument('instruction',help='MVP instruction',choices=['UPDATE','INSTALL','INSTALL_MVP'])
+parser.add_argument('package',help='MVP software package to install',default=False, nargs="?")
+parser.add_argument('--user','-u',help='User needed to install MVP on RAKF system',default="IBMUSER")
+parser.add_argument('--password','-p',help='Password needed to install MVP on RAKF system',default="SYS1")
+parser.add_argument('--print-only',help='Only print the install JCL but dont submit it',default=False, action="store_true")
+args = parser.parse_args()
+
+if 'password' not in config['DEFAULT'] and args.instruction != "INSTALL_MVP":
+    print("MVP103E - MVP account password missing from MVP.ini")
+    print("MVP103E - Use {} INSTALL_MVP to install MVP and generate a new password".format(sys.argv[0]))
+    print("MVP103E - If MVP has already been installed copy the password from SYS1.SECURE.CNTL(USERS)")
+    exit(1)
+
+if args.instruction == "INSTALL" and not args.package:
+    parser.error("INSTALL received but no software to install")
+
+if args.instruction == 'UPDATE':
+    print("MVP102I - Updating Cache/Packages")
+
+    jcl = update_JOB.format(user=config['DEFAULT']['user'], password=config['DEFAULT']['password'])
+
+    with open(config['DEFAULT']['cache'], 'r') as mvp_db:
+        jcl += mvp_db.read().strip() + "\n"
+
+    for filename in os.listdir(config['DEFAULT']['desc']):
+        jcl += "./ ADD NAME={}\n".format(filename)
+        with open("{}/{}".format(config['DEFAULT']['desc'],filename), 'r') as desc:
+            jcl += desc.read().strip() + "\n"
+    submit(jcl,host=config['DEFAULT']['hercules_ip'],port=int(config['DEFAULT']['ascii_reader']))
+
+if args.instruction == 'INSTALL_MVP':
+    print("MVP101I - Installing MVP")
+    print("MVP101I - Job will run as {} with {} password".format(args.user, args.password))
+    print("MVP101I - this will install SYS2.PARMLIB(MVP0001), SYS2.EXEC(MVP) and MVP.PACKAGES")
+
+    if 'password' not in config['DEFAULT']:
+
+        password = ''.join(random.SystemRandom().choice(
+                                    string.ascii_uppercase + string.digits + "$#"
+                                    ) for _ in range(8))
+
+        with open('MVP.ini', 'w') as configfile:
+            config['DEFAULT']['password'] = password
+            config.write(configfile)
+
+        print("MVP101I - adding MVP user password {} to MVP.ini".format(config['DEFAULT']['password']))
+
+    with open('MVP.parmlib', 'r') as mvp_parm:
+        parmlib = mvp_parm.read().rstrip()
+
+    with open(config['DEFAULT']['cache'], 'r') as mvp_db:
+        mvp_cache = mvp_db.read().rstrip()
+
+    with open("MVP.rexx", 'r') as mvp_rexx:
+        mvprexx = mvp_rexx.read().rstrip()
+
+    desc_files = ''
+    for filename in os.listdir(config['DEFAULT']['desc']):
+        desc_files += "./ ADD NAME={}\n".format(filename)
+        with open("{}/{}".format(config['DEFAULT']['desc'],filename), 'r') as desc:
+            desc_files += desc.read().strip() + "\n"
+
+
+    jcl = INSTALL_JOB.format(user=args.user,
+                            password=args.password,
+                            cache=mvp_cache,
+                            mvprexx = mvprexx,
+                            descriptions=desc_files,
+                            mvpparm = parmlib,
+                            mvp_user = config['DEFAULT']['password']
+                            )
+    if args.print_only:
+        print("-"*20 + " 8>< " + "-"*20 )
+        print(jcl)
+    else:
+        submit(jcl,host=config['DEFAULT']['hercules_ip'],port=int(config['DEFAULT']['ascii_reader']))
+
+elif args.instruction == "INSTALL":
+    print("MVP100I - Installing {}".format(args.package))
+    package_exists = False
+    with open(config['DEFAULT']['cache'], 'r') as mvp_db:
+        for package in mvp_db.readlines():
+            if args.package == package.split()[0]:
+                package_exists=True
+                read_type = "rb"
+
+                if package.split()[1] == "JCL":
+                    read_type = "r"
+
+                    # Update the job card(s) with the MVP user/password
+                    # replace any existing USER=xxx/PASSWORD=xxx with user/password
+                    # from MVP.ini
+
+                    with open("{}/{}".format(config['DEFAULT']['packages'],args.package), read_type) as infile:
+
+                        mvp_user_job = ''
+                        num_offset = 0
+                        jobcard_user = False
+                        jobcard_pass = False
+
+                        for l in infile.readlines():
+                            num_offset += len(l)
+                            l = l.rstrip("\n")
+                            if "USER=" in l:
+                                start = l.find("USER=") + len("USER=")
+                                end = l.find(",",start)
+                                if end > 0:
+                                    l = "{s}{u:.8}{e}".format(s=l[:start],u=config['DEFAULT']['user'],e=l[end:])
+                                else:
+                                    l = "{s}{u:.8}".format(s=l[:start],u=config['DEFAULT']['user'])
+                                jobcard_user=True
+                                if len(l) >= 72:
+                                    print("MVP999E - Jobcard too long after inserting USER=MVP, fix jobcard")
+                                    exit(1)
+
+                            if "PASSWORD=" in l:
+                                start = l.find("PASSWORD=") + len("PASSWORD=")
+                                end = l.find(",",start)
+                                if end > 0:
+                                    l = "{s}{p:.8}{e}".format(s=l[:start],p=config['DEFAULT']['password'],e=l[end:])
+                                else:
+                                    l = "{s}{p:.8}".format(s=l[:start],p=config['DEFAULT']['password'])
+                                jobcard_pass = True
+                                if len(l) >= 72:
+                                    print("MVP999E - Jobcard too long after inserting PASSWORD=********, fix jobcard")
+                                    exit(1)
+
+                            if l[-1] != ",":
+                                # end of jobcard(s)
+                                if not jobcard_user and not jobcard_pass:
+                                    mvp_user_job += "{},\n//   USER={},PASSWORD={}\n".format(l, config['DEFAULT']['user'], config['DEFAULT']['password'])
+                                elif not jobcard_user:
+                                    mvp_user_job += "{},\n//   USER={}\n".format(l,config['DEFAULT']['user'])
+                                elif not jobcard_pass:
+                                    mvp_user_job += "{},\n//   PASSWORD={}\n".format(l,config['DEFAULT']['password'])
+                                else:
+                                    mvp_user_job += "{}\n".format(l)
+                                break
+                            else:
+                                mvp_user_job += "{}\n".format(l)
+
+
+                            #mvp_user_job += "{}\n".format(l)
+
+                        infile.seek(num_offset,0)
+                        mvp_user_job += infile.read()
+                        submit(
+                            mvp_user_job,
+                            host=config['DEFAULT']['hercules_ip'],
+                            port=int(config['DEFAULT']['ascii_reader']))
+
+                if package.split()[1] == "XMI":
+                    t = submit_xmi.format(args.package,config['DEFAULT']['user'], config['DEFAULT']['password'])
+
+                    temp = b''
+                    line = "{:80}"
+                    for l in t.splitlines():
+                        long_line = line.format(l)
+                        temp += long_line.encode('cp500')
+
+                    with open("{}/{}".format(config['DEFAULT']['packages'],args.package), 'rb') as xmi:
+                        temp += xmi.read()
+                    submit(
+                            temp,
+                            host=config['DEFAULT']['hercules_ip'],
+                            port=int(config['DEFAULT']['ebcdic_reader']),
+                            xmi=True)
+                break
+    if not package_exists:
+        print("MVP199E - Could not find {}".format(args.package))
+        submit(ERROR_JOB.format(args.package.upper(),user=config['DEFAULT']['user'], password=config['DEFAULT']['password']),
+                host=config['DEFAULT']['hercules_ip'],
+                port=int(config['DEFAULT']['ascii_reader']))

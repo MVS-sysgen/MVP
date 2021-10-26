@@ -1,0 +1,16 @@
+Package: IMON370
+Version: 1.0
+Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
+Depends:
+Homepage: https://www.prycroft6.com.au/IMON/
+Description: IMON is a real-time system monitor for MVS 3.8j
+
+ The Interactive Monitoring Program (IMP) is a full-screen
+ real-time monitor of the MVS Operating System that runs in the
+ TSO foreground environment and interacts with the TSO user via
+ a 3270-family or compatible terminal.  IMP is designed to
+ exploit terminal features and so is best viewed on a terminal
+ with extended colour and highlighting capability.  Program
+ Access and Program Function Keys are used to simplify input
+ requests while intensity, colour and highlighting are used to
+ assist the understanding of output.

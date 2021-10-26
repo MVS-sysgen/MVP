@@ -1,0 +1,6 @@
+Package: QUEUE
+Version: 1.0
+Maintainer: Greg Price <service2@prycroft6.com.au>
+Depends:
+Homepage: http://www.prycroft6.com.au/vs2sw/index.html#queue
+Description: QUEUE (JES2 SPOOL browser) for MVS 3.8J

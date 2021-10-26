@@ -1,0 +1,19 @@
+Package: FTPD
+Version: 1.5
+Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
+Depends: RANDOMPW
+Homepage: https://github.com/MVS-sysgen/FTPD
+Description: MVS 3.8J FTPD Server
+
+This is the JCC FTPD server with RAKF support, initially from TK4- with
+many addition.
+
+Users in the RAKF group *ADMIN* has access to use FTP. To allow users
+access to FTP add the user or group to the **FTPAUTH** resource in the
+FACILITY class in SYS1.SECURE.CNTL(PROFILES).
+
+To start the FTPD server run the command '/s ftpd' in the hercules console.
+To stop the FTP server run the command '/p ftpd' or '/stop ftpd' on the
+hercules console. To make changes to the configuration (ports, IP etc)
+edit the config file SYS1.PARMLIB(FTPDPM00). Visit the homepage
+for more startup and configuration information.

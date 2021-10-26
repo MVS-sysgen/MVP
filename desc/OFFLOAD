@@ -1,0 +1,20 @@
+Package: OFFLOAD
+Version: 1.0
+Maintainer: Jay Moseley
+Depends:
+CBTTAPE: 316
+Homepage: http://www.jaymoseley.com/hercules/cbt_ware/offload.htm
+Description: Unload Partitioned Dataset contents to sequential dataset
+
+ OFFLOAD will process a Partitioned Dataset as input and extract the
+ contents of the members to a sequential output dataset.  Members may
+ be selected for processing by the use of SELECT control cards or
+ excluded from selection by the use of EXCLUDE control cards.  The
+ contents of members selected for processing may have IEBUPDTE ./ ADD
+ control cards written preceding them on the output dataset by the
+ use of a control card option.
+
+ This utility was written by David Cole of Cole Software (known more
+ recently for his XDC product).  I extracted this version from Jim
+ Marshall's collection of utilities in file #316 of the older version
+ 249 CBT tape.

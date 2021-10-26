@@ -1,0 +1,11 @@
+Package: RPF
+Version: 1.9.0
+Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
+Depends:
+Homepage: http://www.prince-webdesign.nl/index.php/software/
+Description: Rob Prins' Programming Facility
+
+ TSO full screen Editor and multi-utility programmer facility called RPF. RPF
+ runs under native TSO (or as a TSO command processor), even if ISPF is
+ running too, and RPF has an ISPF-like editor, browser, and quite a few other
+ utilities.

@@ -1,0 +1,10 @@
+# MVS/CE Package manager (MVP) parmlib
+# The timeout in seconds for how long MVP should wait
+# for a job to finish
+timeout = 120
+# Package repository
+# Currently only local (i.e. in the MVP folder on Linux) repos are
+# supported
+# Default is local
+# repo = local
+# repo = http://10.10.0.80/MVP

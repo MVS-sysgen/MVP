@@ -1,0 +1,8 @@
+Package: MACLIB
+Version: 1.0
+Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
+Depends:
+Homepage: https://github.com/MVS-sysgen/SOFTWARE/MACLIB
+Description: Collection of maclibs from TK4- stored in
+ SYS2.MACLIB. Also adds/updates proclibs ASMFC, ASMFCG, ASMFCL,
+ and ASMFCLG to add more 'MAC=' symbols.

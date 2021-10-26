@@ -1,0 +1,12 @@
+Package: REVIEW
+Version: 1.0
+Maintainer: Greg Price <service2@prycroft6.com.au>
+Depends:
+Homepage: https://www.prycroft6.com.au/REVIEW/
+Description: The REVIEW Fullscreen Browser, Editor and Workbench for TSO
+
+  REVIEW was written in 1981 by Bill Godfrey in System/370 Assembler
+  as a fullscreen browser before ISPF reached its height of popularity.
+  Since 1984 REVIEW has been maintained by Greg Price, with the assistance
+  of input from several contributors, and has been growing at a rate
+  exceeding 2,000 lines of code per year.

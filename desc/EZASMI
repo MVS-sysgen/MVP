@@ -1,0 +1,17 @@
+Package: EZASMI
+Version: 1.0.0
+Maintainer: Shelby Beach
+Depends: SXMACLIB
+Homepage: https://github.com/MVS-sysgen/SOFTWARE/EZASMI
+Description: Adds EZASMI Macros to MVS 3.8j
+
+TCP/IP for MVS 3.8 Assembler is built upon the original EZASOKET
+interface developed by Jason Winter. It has been extended to provide
+additional functionality, improved error detection, and compatibility
+with the EZASMI macros. For usage instructions please read the
+documentation at https://github.com/MVS-sysgen/SOFTWARE/EZASMI/docs
+
+Shelby Beach
+Ms. Kitty Programming Werks
+
+Installs in SYS2.MACLIB, SYSGEN.TCPIP.SAMPLIB and SYS2.LINKLIB

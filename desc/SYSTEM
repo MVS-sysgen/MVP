@@ -1,0 +1,20 @@
+Package: SYSTEM
+Version: 1.0
+Maintainer: Jay Moseley
+Depends:
+CBTTAPE: 300
+Homepage: http://www.jaymoseley.com/hercules/cbt_ware/system.htm
+Description: Displays IPL information about MVS 3.8j
+
+SYSTEM is a TSO command that displays information about the currently
+IPLed system:
+
+- release
+- CPU model
+- CPU serial number
+- memory online
+- IPL volume
+- date of IPL
+
+It is located in File #300 of the #249 version of the CBT tape and is part
+of a collection of TSO commands from Jim Marshall of the Air Force.

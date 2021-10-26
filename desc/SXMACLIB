@@ -1,0 +1,23 @@
+Package: SXMACLIB
+Version: 1.0
+Maintainer: Shelby Beach
+Depends: MACLIB
+Homepage: https://github.com/MVS-sysgen/SOFTWARE/SXMACLIB
+Description: Adds S37X macros to use S37X instruction
+
+This macro library is mainly intended to provide support for the
+instructions emulated by loading the Hercules S37X module when running
+in S/370 mode. For more information, please see the $$S37X member.
+
+To allow the structured programming macros provided with the original
+TK3 system to utilize the additional S37X instructions, changes
+were required to the structured programming macros. In general these
+changes should be transparent to the user. A few additional features
+have been implemented in the structured programming macros. These new
+features along with the capabilities provided by the original macros
+are fully documented in the $$SPDOC member.
+
+Shelby Beach
+Ms. Kitty Programming Werks
+
+Installed in SYS2.SXMACLIB

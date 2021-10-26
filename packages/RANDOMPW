@@ -1,0 +1,75 @@
+//RANDOMPW JOB (TSO),
+//             'Install LISTPDS',
+//             CLASS=A,
+//             MSGCLASS=A,
+//             MSGLEVEL=(1,1),
+//             USER=IBMUSER,PASSWORD=SYS1
+//* Installs REXX RANDOMPW to RXLIB
+//ADDRAND  EXEC PGM=IEBGENER
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD DUMMY
+//SYSUT2 DD DSN=BREXX.V2R5M0.RXLIB(RANDOMPW),DISP=SHR
+//SYSUT1 DD *
+ /* --------------------------------------------------------------------
+ * RANDOMPW iterates N times and returns an 8 character password
+ * ................... Converted to BREXX By Phil Young October 2021
+ * Author: https://rosettacode.org/wiki/Password_generator#REXX
+ * password=RANDOMPW(<ROUNDS> <SERVICE>)
+ *   password    password generated
+ *   ROUNDS      An integer representing how many rounds. Default=1
+ *   SERVICE     "Yes" makes it so
+ * ---------------------------------------------------------------------
+ */
+RANDOMPW: procedure
+parse arg N service
+
+if service = '' then service = 1
+else service = 0
+
+lower_letters='abcdefghijklmnopqrstuvwxyz';
+upper_letters=UPPER(lower_letters)
+numbers = "0123456789"
+special = '!"#$%&()+,-./:;<=>?@[]^{|}~' || "'"
+special_user = "$@#"
+do g=1  to N;
+ rando = ''
+ do k=1 to 8;
+  z=k
+  if z>4 then z=random(1,4)
+
+ if z==1 then
+ rando=rando||substr(lower_letters,random(1,length(lower_letters)),1)
+
+ if z==2 then
+  rando=rando||substr(upper_letters,random(1,length(upper_letters)),1)
+
+  if z==3  then
+   rando=rando||substr(numbers,random(1,length(numbers)),1)
+
+  if z==4 then do
+   if service then
+     rando=rando||substr(special,random(1,length(special)),1)
+   else
+     rando=rando||substr(special_user,random(1,length(special_user)),1)
+   end
+ end
+ do a=1 to 8
+  b=random(1, 8)
+  parse var rando =(a) x +1 =(b)  y  +1
+  rando=overlay(x,rando,b)
+  rando=overlay(y,rando,a)
+ end
+
+end
+return rando
+/*
+//RANDRX  EXEC PGM=IEBGENER
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD DUMMY
+//SYSUT2 DD DSN=SYS2.EXEC(RANDOMPW),DISP=SHR
+//SYSUT1 DD *
+ /* Random password, call with RX RANDOMPW */
+ /* To generate a TSO password use RX RANDOMPW 20 TSO */
+parse arg number service
+if number = '' then number = 20
+say RANDOMPW(number service)

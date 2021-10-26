@@ -1,0 +1,14 @@
+Package: KLINGON
+Version: 1.0
+Maintainer: Larry Williams <larryw@ix.netcom.com>
+Depends:
+CBTTAPE: 038
+Homepage: https://github.com/MVS-sysgen/SOFTWARE/KLINGON
+Description: Elaborate space war game called KLINGON
+
+ It is a lot like most Star Trek games except you get to be the bad guys
+ the game can run either in line more of in full screen more under TSO
+ on a 3270 type terminal.
+
+ Installs KLINGON clist in SYS1.CMDPROC and the rest of the required
+ components to SYSGEN.KLINGON.*

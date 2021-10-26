@@ -1,0 +1,9 @@
+Package: RANDOMPW
+Version: 1.0
+Maintainer: BILL GODFREY, PRC
+Depends: MACLIB
+Homepage: https://github.com/MVS-sysgen/SOFTWARE/LISTCDS
+Description: Displays SMP information
+
+  THE LISTCDS COMMAND DISPLAYS INFORMATION FROM THE SMP CDS
+  DATA SET. From CBT Tape 860.
