@@ -402,8 +402,11 @@ folder as `i370load.xmi`. From that folder we run the package release tool:
 python3 /path/to/MVP/extras/package_release.py\
  --xmi-files i370load.xmi --task-files \#001JCL.jcl\
  --mvsce /path/to/MVSCE\
- --name /path/to/MVP/packages/IMON370
+ --name /path/to/MVP/packages/IMON370\
+ --dlm '?#'
 ```
+
+For imon370 we must supply the `--dlm` but for most programs you wont need to.
 
 This will generate a file with the following structure:
 

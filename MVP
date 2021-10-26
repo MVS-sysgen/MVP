@@ -271,10 +271,9 @@ elif args.instruction == "INSTALL":
                         num_offset = 0
                         jobcard_user = False
                         jobcard_pass = False
-
                         for l in infile.readlines():
                             num_offset += len(l)
-                            l = l.rstrip("\n")
+                            l = l.rstrip()
                             if "USER=" in l:
                                 start = l.find("USER=") + len("USER=")
                                 end = l.find(",",start)
@@ -317,7 +316,7 @@ elif args.instruction == "INSTALL":
                             #mvp_user_job += "{}\n".format(l)
 
                         infile.seek(num_offset,0)
-                        mvp_user_job += infile.read()
+                        mvp_user_job += infile.read().strip()
                         submit(
                             mvp_user_job,
                             host=config['DEFAULT']['hercules_ip'],

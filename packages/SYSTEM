@@ -1,5 +1,4 @@
-//SYSTEM$  JOB (SYS),'INSTALL SYSTEM CMD',CLASS=S,
-//     USER=IBMUSER,PASSWORD=SYS1
+//SYSTEM  JOB (SYS),'INSTALL SYSTEM CMD',CLASS=S
 //*------------------------------------------------------------*
 //*        INSTALL OF THE 'SYSTEM' TSO CP.  THIS COMMAND GIVES *
 //*        YOU THE FOLLOWING INFORMATION:                      *
