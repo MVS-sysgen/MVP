@@ -11,11 +11,29 @@ import argparse
 import configparser
 import os
 import random
+import subprocess
 import string
 
 os.chdir(os.path.dirname(sys.argv[0]))
 config = configparser.ConfigParser()
 config.read('MVP.ini')
+
+
+def git_pull():
+
+
+    print("MVP103I - Updating MVP Folder")
+    try:
+        git_query_path = subprocess.check_output(["which", "git"]).strip()
+    except:
+        raise Exception('git not found')
+
+    args = [
+        git_query_path,
+        'pull'
+    ]
+
+    rc = subprocess.call(args)
 
 '''Part of MVP this either updates the software database/packages or submits a job'''
 
@@ -191,6 +209,9 @@ if args.instruction == "INSTALL" and not args.package:
 if args.instruction == 'UPDATE':
     print("MVP102I - Updating Cache/Packages")
 
+    git_pull()
+
+
     jcl = update_JOB.format(user=config['DEFAULT']['user'], password=config['DEFAULT']['password'])
 
     with open(config['DEFAULT']['cache'], 'r') as mvp_db:
@@ -200,7 +221,11 @@ if args.instruction == 'UPDATE':
         jcl += "./ ADD NAME={}\n".format(filename)
         with open("{}/{}".format(config['DEFAULT']['desc'],filename), 'r') as desc:
             jcl += desc.read().strip() + "\n"
-    submit(jcl,host=config['DEFAULT']['hercules_ip'],port=int(config['DEFAULT']['ascii_reader']))
+    if args.print_only:
+        print("Printing JCL UPDATE\n" + ("-" * 80))
+        print(jcl)
+    else:
+        submit(jcl,host=config['DEFAULT']['hercules_ip'],port=int(config['DEFAULT']['ascii_reader']))
 
 if args.instruction == 'INSTALL_MVP':
     print("MVP101I - Installing MVP")
@@ -265,7 +290,7 @@ elif args.instruction == "INSTALL":
                     # replace any existing USER=xxx/PASSWORD=xxx with user/password
                     # from MVP.ini
 
-                    with open("{}/{}".format(config['DEFAULT']['packages'],args.package), read_type) as infile:
+                    with open("{}/{}".format(config['DEFAULT']['packages'],args.package), "rb") as infile:
 
                         mvp_user_job = ''
                         num_offset = 0
@@ -273,7 +298,7 @@ elif args.instruction == "INSTALL":
                         jobcard_pass = False
                         for l in infile.readlines():
                             num_offset += len(l)
-                            l = l.rstrip()
+                            l = l.decode().rstrip()
                             if "USER=" in l:
                                 start = l.find("USER=") + len("USER=")
                                 end = l.find(",",start)
@@ -314,13 +339,17 @@ elif args.instruction == "INSTALL":
 
 
                             #mvp_user_job += "{}\n".format(l)
-
                         infile.seek(num_offset,0)
-                        mvp_user_job += infile.read().strip()
-                        submit(
-                            mvp_user_job,
-                            host=config['DEFAULT']['hercules_ip'],
-                            port=int(config['DEFAULT']['ascii_reader']))
+                        mvp_user_job += infile.read().decode().strip()
+                        if args.print_only:
+                            print("Printing JCL package\n" + ("-" * 80))
+                            print(mvp_user_job)
+
+                        else:
+                            submit(
+                                mvp_user_job,
+                                host=config['DEFAULT']['hercules_ip'],
+                                port=int(config['DEFAULT']['ascii_reader']))
 
                 if package.split()[1] == "XMI":
                     t = submit_xmi.format(args.package,config['DEFAULT']['user'], config['DEFAULT']['password'])
@@ -333,11 +362,14 @@ elif args.instruction == "INSTALL":
 
                     with open("{}/{}".format(config['DEFAULT']['packages'],args.package), 'rb') as xmi:
                         temp += xmi.read()
-                    submit(
-                            temp,
-                            host=config['DEFAULT']['hercules_ip'],
-                            port=int(config['DEFAULT']['ebcdic_reader']),
-                            xmi=True)
+                    if args.print_only:
+                        print("MVP100I - Printing XMI packages not supported")
+                    else:
+                        submit(
+                                temp,
+                                host=config['DEFAULT']['hercules_ip'],
+                                port=int(config['DEFAULT']['ebcdic_reader']),
+                                xmi=True)
                 break
     if not package_exists:
         print("MVP199E - Could not find {}".format(args.package))
