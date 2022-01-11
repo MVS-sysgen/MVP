@@ -1,0 +1,30 @@
+Package: SHOWMVS
+Version: 1.0
+Maintainer: Jake Labelle <jake.labelle@hotmail.co.uk>
+Depends: MACLIB
+Homepage: https://github.com/jake-mainframe/SHOWMVS
+Description: SHOWMVS FOR ASMFCL
+
+SHOWMVS from https://cbttape.org/~jmorrison/, remade to be compilable with ASMFCL
+***********************************************************************
+*                                                                     *
+*     THIS PROGRAM RUNS IN BATCH   AND DISPLAYS A LOT OF         <38J>*
+*     INFORMATION THAT YOU GENERALLY HAVE TO GET FROM DIFFERENT       *
+*     SOURCES.                                                        *
+*                                                                     *
+*       ON-LINE CPU'S                                                 *
+*       AMOUNT OF ON-LINE STORAGE (REAL AND EXTENDED)                 *
+*       IPL DATE, TIME, VOLSER, NUC-ID, CLPA                          *
+*       VIRTUAL STORAGE MAP (CSA, SQA, LPA, ETC)                      *
+*       DSN OF THE MASTER CATALOG                                     *
+*       DSN OF THE PAGE DATA SETS                                     *
+*       PRODUCT LEVELS FOR: TSO/E, ISPF, DFDSS, HSM, RACF, VTAM       *
+*       UCB TABLE WITH UNIT NAMES AND DASD VOLUME STATUS              *
+*       SUB-SYSTEM VECTOR TABLE WITH FUNCTIONS PROCESSED              *
+*       ACTIVE LPA QUEUE                                              *
+*       SVC TABLE WITH NAME OF CORRESPONDING LPA MODULE               *
+*       LIST OF AUTHORIZED LIBRARIES                                  *
+*       YOUR TIOT, WITH EXCP COUNTS FOR EACH DD                       *
+*       ENHANCED VIEW OF YOUR JPAQ                                    *
+*       ENHANCED VIEW OF THE LOAD-LISTS OF YOUR ADDRESS SPACE         *
+***********************************************************************
