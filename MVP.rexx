@@ -372,6 +372,7 @@ desc:
       exit 8
   end
   "FREE F(DESC)"
+  return
 
 run_install_job: procedure
   /* Submits a job and waits for the results on MTT */
