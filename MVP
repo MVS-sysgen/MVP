@@ -93,6 +93,38 @@ INSTALL_JOB = '''//MVPINSTL JOB (TSO),
 {cache}
 {descriptions}
 /*
+//MVPPROC  EXEC PGM=PDSLOAD
+//STEPLIB  DD  DSN=SYSC.LINKLIB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSUT2   DD  DISP=SHR,DSN=SYS2.PROCLIB
+//SYSUT1   DD DATA,DLM='><'
+./ ADD NAME=MVP
+//*
+//* ------------------------------------------------------------------*
+//* MVP JCL Procedure
+//* Usage:
+//*    //MVPINST EXEC MVP,INSTALL='DUMMY' 
+//* Where DUMMY is the name of the Package you wish to install
+//* ------------------------------------------------------------------*
+//*
+//MVP      PROC INSTALL='',
+//         LIB='BREXX.CURRENT.RXLIB',
+//         EXECLIB='SYS2.EXEC'
+//EXEC     EXEC PGM=IKJEFT01,
+//       PARM='BREXX MVP INSTALL &INSTALL',
+//       REGION=8192K
+//TSOLIB   DD   DSN=&LIB,DISP=SHR
+//RXLIB    DD   DSN=&LIB,DISP=SHR
+//SYSEXEC  DD   DSN=&EXECLIB,DISP=SHR
+//SYSPRINT DD   SYSOUT=*
+//SYSTSPRT DD   SYSOUT=*
+//SYSTSIN  DD   DUMMY
+//STDOUT   DD   SYSOUT=*,DCB=(RECFM=FB,LRECL=140,BLKSIZE=5600)
+//STDERR   DD   SYSOUT=*,DCB=(RECFM=FB,LRECL=140,BLKSIZE=5600)
+//STDIN    DD   DUMMY
+//*    PEND
+><
+//*
 //MVPRAKF    EXEC PGM=SORT,REGION=512K,PARM='MSG=AP'
 //STEPLIB DD   DSN=SYSC.LINKLIB,DISP=SHR
 //SYSOUT  DD   SYSOUT=A
