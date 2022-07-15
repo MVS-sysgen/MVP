@@ -13,12 +13,12 @@ if pos('-H',upper(arguments)) > 0 then call usage
 
 if (upper(action) = '-D' | upper(action) = '--DEBUG') then do
   call usage
-  return
+  exit 1
 end
 
 if length(action) = 0 then do
   call usage
-  return
+  exit 1
 end
 
 if (upper(package) = '-D' | upper(package) = '--DEBUG') then do
@@ -38,8 +38,8 @@ end
    /*                                        */
   /* Read the parmlib SYS2.PARMLIB(MVP0001) */
  /*                                        */
-
-"ALLOC FI(PARMS) DA('SYS2.PARMLIB(MVP0001)') SHR "
+call debug "Reading config SYS2.PARMLIB(MVP0001)"
+"ALLOC FI(PARMS) DA('SYS2.PARMLIB(MVP0001)') SHR "  
 "EXECIO * DISKR PARMS (FINIS STEM parms."
 if rc > 0 then do
     call error "Error reading SYS2.PARMLIB(MVP0001):" rc
@@ -48,8 +48,11 @@ if rc > 0 then do
 end
 "FREE F(PARMS)"
 
+call debug "SYS2.PARMLIB(MVP0001) contains" parms.0 "lines"
+
 do i=1 to parms.0
     /* Skip comments */
+    call debug "Config line" i||":" parms.i
     if pos("#",parms.i) = 1 then iterate
     /* Get the timeout variable */
     if pos("timeout",parms.i) then do
@@ -61,8 +64,10 @@ do i=1 to parms.0
     if pos("repo",parms.i) then do
         parse var parms.i . "=" r
         call setg('repo', r)
+        call debug "Repo set to:" getg('repo')
     end
 end
+call debug "Done reading config SYS2.PARMLIB(MVP0001)"
 
    /*                                         */
   /* Read packages and installed packaged db */
@@ -615,15 +620,92 @@ process_XMI:
       call debug "process_XMI: task" xmi_num "type" xmi_type
       if xmi_type == "JCL" then do
         call debug "process_XMI:" appname "Submitting" xmi_taskname
-        hj = get_jobnum()
-        ADDRESS TSO "SUBMIT 'MVP.WORK("|| xmi_taskname ||")'"
-        /* The submit command allocates this dataset which breaks EXECIO */
-        "FREE DATASET('MVP.WORK')"
-        call check_job xmi_taskname hj
+        call submit_XMI_jcl "'MVP.WORK("|| xmi_taskname ||")'" 
       end
   end
 
   return
+
+submit_XMI_jcl: 
+/* Inserts the MVP username and password to the XMI JCL */
+/* returns nothing */
+
+  parse arg jcl_location
+  hj = get_jobnum()
+  call debug "submit_XMI_jcl: Processing" jcl_location
+
+  "ALLOC FI(XMIJCL) DA("||jcl_location||") SHR "
+  "EXECIO * DISKR XMIJCL (FINIS STEM XMIJCL."
+  if rc > 0 then do
+      call error "Error reading "||jcl_location||":" rc
+      "FREE F(XMIJCL)"
+      exit 8
+  end
+  "FREE F(XMIJCL)"
+
+  if find(XMIJCL.1,'JOB') < 1 then do
+    call error jcl_location ||"is not a valid JOB"
+    exit 8
+  end
+
+  do j=1 to XMIJCL.0
+    
+    x=0
+    do while (right(XMIJCL.J,x) == left(" ",x))
+      /* if we have spaces find the first non space character */
+      x = x + 1
+      iterate
+    end
+    
+    if right(XMIJCL.J,1) == "," then do
+      /* if the first line has a continuation, keep going */
+      queue XMIJCL.J
+      iterate
+    end
+
+    queue LEFT(XMIJCL.J, LENGTH(XMIJCL.J) - (x - 1))||","
+    queue "//    USER=MVP,PASSWORD="||get_pw()   
+    leave    
+  end
+
+  if j = XMIJCL.0 then do
+    call error "Unable to PARSE XMI JCL File " jcl_location
+    exit 8
+  end
+
+  do j = (j+1) to XMIJCL.0
+    queue XMIJCL.j
+  end
+
+  /*call SUBMIT("'MVP.WORK("|| xmi_taskname ||")'")*/
+  submit('*')
+  call check_job xmi_taskname hj
+
+  return
+
+get_pw: procedure
+/* Returns a string with the MVP user password from RAKF */
+  call debug "get_pw: Opening 'SYS1.SECURE.CNTL(USERS)'"
+  "ALLOC FI(USERS) DA('SYS1.SECURE.CNTL(USERS)') SHR "
+  "EXECIO * DISKR USERS (FINIS STEM users."
+  if rc > 0 then do
+      call error "Error reading SYS1.SECURE.CNTL(USERS):" rc
+      "FREE F(USERS)"
+      exit 8
+  end
+  "FREE F(USERS)"
+
+  call debug "get_pw: Searching for MVP user"
+  do k=1 to USERS.0
+    if left(users.i, 4) == "MVP " then do
+      call debug "get_pw: MVP User found returning"
+      /* returns the password for the MVP user */
+      return substr(USERS.i,19,8)
+    end
+  end
+
+  call debug "get_pw: MVP User not found!"
+  return ""
 
 debug: procedure
   /* Prints a debug message to TSO and console if debugging is enabled
