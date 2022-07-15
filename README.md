@@ -95,18 +95,48 @@ From a high level, when you type a command, for example `RX MVP INSTALL MACLIBS`
 
 1) Gathers dependencies
 2) Reads the Master Trace Table (MTT) and gets the last run job
-3) Issues `ADDRESS COMMAND SH MVP/MVP INSTALL MACLIB` which executes the MVP python script
+3) Issues `ADDRESS COMMAND SH ./MVP/MVP INSTALL MACLIB` which executes the MVP python script
 4) The MVP python script submits a job with the package to install
 5) The MVP rexx script reads the MTT waiting until the submitted job is completed
 6) Checks return codes for each step
 7) Updates the list of installed packages
 8) Exits
 
-So basically: `RX MVP INSTALL MACLIBS` runs the shell command `MVP/MVP INSTALL MACLIBS` which submits the jobstream `packages/MACLIBS`.
+So basically: `RX MVP INSTALL MACLIBS` runs the shell command `./MVP/MVP INSTALL MACLIBS` which submits the jobstream `packages/MACLIBS`.
 It's a little more complicated for XMI files, see the **Packages** section below.
 
 :warning: You should never use the `MVP` python script by itself
 
+## Batch Job Usage
+
+A JCL procedure is included with MVP located at `SYS2.PROCLIB(MVP)` and can be used to install, list, search, packages.
+
+Example 1: Install FTPD
+
+```
+//MVPRFE JOB (SYSGEN),'MVP INSTALL',CLASS=A,MSGCLASS=A,
+//       MSGLEVEL=(1,1),NOTIFY=IBMUSER
+//* This JCL installs FTP using MVP
+//MVPINST EXEC MVP,INSTALL='FTPD' 
+```
+
+Example 2: Install FTPD with debugging enabled
+
+```
+//MVPRFE JOB (SYSGEN),'MVP INSTALL',CLASS=A,MSGCLASS=A,
+//       MSGLEVEL=(1,1),NOTIFY=IBMUSER
+//* This JCL installs FTP using MVP
+//MVPINST EXEC MVP,INSTALL='FTPD -D' 
+```
+
+Example 3: List available packages
+
+```
+//MVPTEST JOB (SYSGEN),'MVP INSTALL',CLASS=A,MSGCLASS=H,
+//       MSGLEVEL=(1,1),NOTIFY=IBMUSER                  
+//* This JCL LISTS available packages                   
+//MVPINST EXEC MVP,ACTION='LIST'                         
+```
 
 ## Security
 
