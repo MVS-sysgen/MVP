@@ -108,10 +108,11 @@ INSTALL_JOB = '''//MVPINSTL JOB (TSO),
 //* ------------------------------------------------------------------*
 //*
 //MVP      PROC INSTALL='',
+//         ACTION='INSTALL',
 //         LIB='BREXX.CURRENT.RXLIB',
 //         EXECLIB='SYS2.EXEC'
 //EXEC     EXEC PGM=IKJEFT01,
-//       PARM='BREXX MVP INSTALL &INSTALL',
+//       PARM='BREXX MVP &ACTION &INSTALL',
 //       REGION=8192K
 //TSOLIB   DD   DSN=&LIB,DISP=SHR
 //RXLIB    DD   DSN=&LIB,DISP=SHR
