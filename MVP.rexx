@@ -695,17 +695,19 @@ get_pw: procedure
   end
   "FREE F(USERS)"
 
+  PW = ""
+
   call debug "get_pw: Searching for MVP user"
   do k=1 to USERS.0
     if left(users.i, 4) == "MVP " then do
       call debug "get_pw: MVP User found returning"
       /* returns the password for the MVP user */
-      return substr(USERS.i,19,8)
+      PW = substr(USERS.i,19,8)
     end
   end
 
   call debug "get_pw: MVP User not found!"
-  return ""
+  return PW
 
 debug: procedure
   /* Prints a debug message to TSO and console if debugging is enabled
