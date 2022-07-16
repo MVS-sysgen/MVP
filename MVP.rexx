@@ -27,13 +27,20 @@ if (upper(package) = '-D' | upper(package) = '--DEBUG') then do
   package = ''
 end
 
+args = arguments
+
 do while length(arguments) > 0
-  parse upper var arguments p arguments
+  parse upper var args p args
   if (p = "-D" | or  p = '--DEBUG') then do
     call setg('debug_on',1)
     call debug "Debugging enabled"
   end
 end
+
+call debug "MVP Started with the following:"
+call debug "Action:" action
+call debug "Package:" package
+call debug "Arguments:" arguments
 
    /*                                        */
   /* Read the parmlib SYS2.PARMLIB(MVP0001) */
@@ -81,6 +88,7 @@ if rc > 0 then do
     exit 8
 end
 "FREE F(CACHE)"
+call debug "Read" cache.0 "lines"
 call debug "MVP.PACKAGES(CACHE) Closed"
 
 call debug "Opening MVP.MVPDB"
@@ -93,6 +101,7 @@ if rc > 0 then do
     exit 8
 end
 "FREE F(MVPDB)"
+call debug "Read" mvpdb.0 "lines"
 call debug "MVP.MVPDB Closed"
 
    /*                         */
@@ -711,7 +720,7 @@ get_pw:
   if PW="" then do
     call debug "get_pw: MVP User not found!"
   end
-  
+
   return PW
 
 debug: procedure
