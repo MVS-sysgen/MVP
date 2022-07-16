@@ -30,7 +30,7 @@ end
 args = arguments
 
 do while length(arguments) > 0
-  parse upper var args p args
+  parse upper var arguments p arguments
   if (p = "-D" | or  p = '--DEBUG') then do
     call setg('debug_on',1)
     call debug "Debugging enabled"
@@ -40,7 +40,7 @@ end
 call debug "MVP Started with the following:"
 call debug "Action:" action
 call debug "Package:" package
-call debug "Arguments:" arguments
+call debug "Arguments:" args
 
    /*                                        */
   /* Read the parmlib SYS2.PARMLIB(MVP0001) */
