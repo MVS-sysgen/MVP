@@ -701,14 +701,17 @@ get_pw:
 
   call debug "get_pw: Searching for MVP user"
   do k=1 to USERS.0
-    if left(users.i, 4) == "MVP " then do
+    if left(users.k, 4) == "MVP " then do
       call debug "get_pw: MVP User found returning"
       /* returns the password for the MVP user */
-      PW = substr(USERS.i,19,8)
+      PW = substr(USERS.k,19,8)
     end
   end
 
-  call debug "get_pw: MVP User not found!"
+  if PW="" then do
+    call debug "get_pw: MVP User not found!"
+  end
+  
   return PW
 
 debug: procedure
