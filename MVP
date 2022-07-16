@@ -210,7 +210,9 @@ submit_xmi = '''//{:8} JOB (TSO),
 
 def submit(jcl, host="127.0.0.1", port=3505, xmi=False):
     '''submits a job to hercules reader'''
-
+    
+    print("MVP104I - Sending {lines} lines to {host}:{port} (xmi: {xmi})")
+    
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
