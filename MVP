@@ -55,8 +55,9 @@ INSTALL_JOB = '''//MVPINSTL JOB (TSO),
 //SYSPRINT DD SYSOUT=*
 //SYSIN DD DUMMY
 //SYSUT2   DD DSN=SYS2.EXEC(MVP),DISP=SHR
-//SYSUT1    DD *
+//SYSUT1    DD DATA,DLM='><'
 {mvprexx}
+><
 /*
 //MVPPARM  EXEC PGM=IEBGENER
 //SYSPRINT DD SYSOUT=*
@@ -263,7 +264,7 @@ if args.instruction == 'UPDATE':
 if args.instruction == 'INSTALL_MVP':
     print("MVP101I - Installing MVP")
     print("MVP101I - Job will run as {} with {} password".format(args.user, args.password))
-    print("MVP101I - this will install SYS2.PARMLIB(MVP0001), SYS2.EXEC(MVP) and MVP.PACKAGES")
+    print("MVP101I - this will install SYS2.PARMLIB(MVP0001), SYS2.EXEC(MVP), SYS2.PROCLIB(MVP), MVP.CACHE, MVPDB, and MVP.PACKAGES")
 
     if 'password' not in config['DEFAULT']:
 
