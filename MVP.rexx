@@ -689,7 +689,7 @@ submit_XMI_jcl:
   end
 
   /*call SUBMIT("'MVP.WORK("|| xmi_taskname ||")'")*/
-  submit('*')
+  call submit('*')
   call check_job xmi_taskname hj
 
   return
