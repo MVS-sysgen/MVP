@@ -683,7 +683,7 @@ submit_XMI_jcl:
 
   return
 
-get_pw: procedure
+get_pw: 
 /* Returns a string with the MVP user password from RAKF */
   call debug "get_pw: Opening 'SYS1.SECURE.CNTL(USERS)'"
   "ALLOC FI(USERS) DA('SYS1.SECURE.CNTL(USERS)') SHR "
