@@ -714,6 +714,7 @@ get_pw:
       call debug "get_pw: MVP User found returning"
       /* returns the password for the MVP user */
       PW = substr(USERS.k,19,8)
+      leave
     end
   end
 
