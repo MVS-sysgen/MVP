@@ -676,18 +676,17 @@ submit_XMI_jcl:
     
     if right(XMIJCL.J,1) == "," then do
       /* if the first line has a continuation, keep going */
-      call debug "submit_XMI_jcl: adding to queue:" XMIJCL.J
       queue XMIJCL.J
       iterate
     end
 
 
     jcl = LEFT(XMIJCL.J, LENGTH(XMIJCL.J) - (x - 1))||","
-    call debug "submit_XMI_jcl: adding to queue:" jcl
+    call debug "submit_XMI_jcl: Changing line" J "to:" jcl
     queue jcl
-    jcl = "//    USER=MVP,PASSWORD="||get_pw()
-    call debug "submit_XMI_jcl: adding to queue:" jcl
-    queue jcl
+
+    call debug "submit_XMI_jcl: adding to MVP USER to job"
+    queue "//    USER=MVP,PASSWORD="||get_pw()
 
     leave    
   end
@@ -698,12 +697,19 @@ submit_XMI_jcl:
   end
 
   do j = (j+1) to XMIJCL.0
-    call debug "submit_XMI_jcl: adding to queue: '"||XMIJCL.j||"'"
     queue XMIJCL.j
   end
 
-  /*call SUBMIT("'MVP.WORK("|| xmi_taskname ||")'")*/
-  call submit('*')
+  total = queued()
+
+  do x=1 to queued()                                
+    pull element                                    
+    jclstem.x = element                             
+  end                                               
+  jclstem.0 = total                                     
+                                                    
+  call debug "submit_XMI_jcl: submitting" jclstem.0 "lines" 
+  call submit('jclstem.')                           
   call check_job xmi_taskname hj
 
   return
