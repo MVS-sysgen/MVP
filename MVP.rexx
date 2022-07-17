@@ -469,6 +469,7 @@ check_job: procedure
   ended = "IEF404I "||jobname||" - ENDED"
   started = "IEF403I "||jobname||" - STARTED"
   failed = "IEF453I "||jobname||" - JOB FAILED"
+  error = "IEF452I "||jobname||"  JOB NOT RUN - JCL ERROR"
 
   notfound = 1
   attempts = 0
@@ -495,7 +496,7 @@ check_job: procedure
           notfound = 0
           leave
         end
-        else if pos(failed, _line.i) > 0 then do
+        else if (pos(failed, _line.i) > 0 | pos(error, _line.i) > 0) then do
           call error jobname "failed to install"
           jobend = i
           notfound = 0
@@ -698,7 +699,7 @@ submit_XMI_jcl:
   end
 
   do j = (j+1) to XMIJCL.0
-    call debug "submit_XMI_jcl: adding to queue:" XMIJCL.j
+    call debug "submit_XMI_jcl: adding to queue: '"||XMIJCL.j||"'"
     queue XMIJCL.j
   end
 
