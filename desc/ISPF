@@ -1,0 +1,14 @@
+Package: ISPF
+Version: 2.2.0
+Maintainer: Wally Mclaughlin
+Depends: REVIEW
+Homepage: N/A
+Description: Wally ISPF for MVS 3.8J
+
+ This product was written for the Hercules MVS 3.8 system and attempts
+ to re-create the functionality of the IBM Program Product ISPF from
+ that era.  The objective is to support most of the familiar features of
+ ISPF, such as menus, panels, variables, tables, messages, ISPF commands
+ and PFKeys, thereby providing the look and feel of the original product.
+ ISPF Version 3.2 was used as the base for development, although some
+ features from subsequent versions, such as AREA support, are included.
