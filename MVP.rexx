@@ -484,7 +484,7 @@ check_job: procedure
     if rc < 0 then iterate
 
     call debug "check_job: Searching MTT for job output for" task jobname
-    call debug "check_job: Searching for" ended
+    call debug "check_job: Searching for successfull job completion"
     do i=_line.0 to 1 by -1
       parse var _line.i . . jobm cur_jobnum .
       if jobm = "JOB" then do
@@ -496,12 +496,18 @@ check_job: procedure
           notfound = 0
           leave
         end
-        else if (pos(failed, _line.i) > 0 | pos(error, _line.i) > 0) then do
+        else if pos(failed, _line.i) > 0  then do
           call error jobname "failed to install"
           jobend = i
           notfound = 0
           leave
         end
+        else if pos(error, _line.i) > 0  then do
+          call error jobname "failed to install"
+          jobend = i
+          notfound = 0
+          leave
+        end                                      
         /* else call debug "check_job:" _line.i */
       end
     end
