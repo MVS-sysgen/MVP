@@ -469,7 +469,6 @@ check_job: procedure
   ended = "IEF404I "||jobname||" - ENDED"
   started = "IEF403I "||jobname||" - STARTED"
   failed = "IEF453I "||jobname||" - JOB FAILED"
-  error = "IEF452I "||jobname||"  JOB NOT RUN - JCL ERROR"
 
   notfound = 1
   attempts = 0
@@ -484,7 +483,7 @@ check_job: procedure
     if rc < 0 then iterate
 
     call debug "check_job: Searching MTT for job output for" task jobname
-    call debug "check_job: Searching for successfull job completion"
+    call debug "check_job: Searching for successfull job completion (IEF404I)"
     do i=_line.0 to 1 by -1
       parse var _line.i . . jobm cur_jobnum .
       if jobm = "JOB" then do
@@ -496,18 +495,12 @@ check_job: procedure
           notfound = 0
           leave
         end
-        else if pos(failed, _line.i) > 0  then do
+        else if pos(failed, _line.i) > 0 then do
           call error jobname "failed to install"
           jobend = i
           notfound = 0
           leave
-        end
-        else if pos(error, _line.i) > 0  then do
-          call error jobname "failed to install"
-          jobend = i
-          notfound = 0
-          leave
-        end                                      
+        end                                   
         /* else call debug "check_job:" _line.i */
       end
     end
@@ -520,7 +513,7 @@ check_job: procedure
     return
   end
 
-  call debug "check_job: searching for" started "in MTT"
+  call debug "check_job: searching for IEF403I in MTT"
   do j=jobend to 1 by -1
     call debug "run_install_job:" _line.j
     if pos(started,_line.j) > 0 then leave
