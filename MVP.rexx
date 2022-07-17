@@ -663,7 +663,7 @@ submit_XMI_jcl:
   do queued()
     pull element
     call debug 'submit_XMI_jcl: previous queue item' element
-  done
+  end
 
   do j=1 to XMIJCL.0
     
