@@ -659,6 +659,12 @@ submit_XMI_jcl:
     exit 8
   end
 
+  /* first make sure the queue is empty */
+  do queued()
+    pull element
+    call debug 'submit_XMI_jcl: previous queue item' element
+  done
+
   do j=1 to XMIJCL.0
     
     x=0
@@ -670,12 +676,19 @@ submit_XMI_jcl:
     
     if right(XMIJCL.J,1) == "," then do
       /* if the first line has a continuation, keep going */
+      call debug "submit_XMI_jcl: adding to queue:" XMIJCL.J
       queue XMIJCL.J
       iterate
     end
 
-    queue LEFT(XMIJCL.J, LENGTH(XMIJCL.J) - (x - 1))||","
-    queue "//    USER=MVP,PASSWORD="||get_pw()   
+
+    jcl = LEFT(XMIJCL.J, LENGTH(XMIJCL.J) - (x - 1))||","
+    call debug "submit_XMI_jcl: adding to queue:" jcl
+    queue jcl
+    jcl = "//    USER=MVP,PASSWORD="||get_pw()
+    call debug "submit_XMI_jcl: adding to queue:" jcl
+    queue jcl
+
     leave    
   end
 
@@ -685,6 +698,7 @@ submit_XMI_jcl:
   end
 
   do j = (j+1) to XMIJCL.0
+    call debug "submit_XMI_jcl: adding to queue:" XMIJCL.j
     queue XMIJCL.j
   end
 
