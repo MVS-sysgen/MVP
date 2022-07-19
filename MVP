@@ -422,6 +422,11 @@ if args.instruction == "WRITE":
 
     write_filename = "../" + args.package.split()[0].lower().strip("../")
     string_to_write = " ".join(args.package.split()[1:])
+
+    # this is such a hack
+    if string_to_write.split()[0] == "INCLUDE":
+        string_to_write = "{} {}".format(string_to_write.split()[0],string_to_write.split()[1:].lower())
+
     print("MVP100I - Appending to {} the following: {}".format(write_filename,string_to_write))
     with open(write_filename, "a+") as outfile:
         outfile.write(string_to_write + "\n")
