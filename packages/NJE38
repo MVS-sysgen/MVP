@@ -32738,8 +32738,6 @@ AUTH  HMVS01   AT MVSB
   .
 /*
 //SMPCNTL  DD  *
- REJECT  S (NJE0001) .
- RESETRC .
  RECEIVE
          SELECT(NJE0001)
          .
