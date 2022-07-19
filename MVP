@@ -226,7 +226,7 @@ def submit(jcl, host="127.0.0.1", port=3505, xmi=False):
         sock.close()
 
 parser = argparse.ArgumentParser(description='MVS/CE Package manager [Linux]')
-parser.add_argument('instruction',help='MVP instruction',choices=['UPDATE','INSTALL','INSTALL_MVP'])
+parser.add_argument('instruction',help='MVP instruction',choices=['UPDATE','INSTALL','INSTALL_MVP','WRITE'])
 parser.add_argument('package',help='MVP software package to install',default=False, nargs="?")
 parser.add_argument('--user','-u',help='User needed to install MVP on RAKF system',default="IBMUSER")
 parser.add_argument('--password','-p',help='Password needed to install MVP on RAKF system',default="SYS1")
@@ -310,7 +310,7 @@ if args.instruction == 'INSTALL_MVP':
     else:
         submit(jcl,host=config['DEFAULT']['hercules_ip'],port=int(config['DEFAULT']['ascii_reader']))
 
-elif args.instruction == "INSTALL":
+if args.instruction == "INSTALL":
     print("MVP100I - Installing {}".format(args.package))
     package_exists = False
     with open(config['DEFAULT']['cache'], 'r') as mvp_db:
@@ -412,3 +412,14 @@ elif args.instruction == "INSTALL":
         submit(ERROR_JOB.format(args.package.upper(),user=config['DEFAULT']['user'], password=config['DEFAULT']['password']),
                 host=config['DEFAULT']['hercules_ip'],
                 port=int(config['DEFAULT']['ascii_reader']))
+
+if args.instruction == "WRITE":
+    # WRITE syntax is:
+    # WRITE path/to/file string to write
+    # path begins in MVS/CE folder
+    # no spaces allowed in filename or filename path
+    write_filename = "../" + args.package.split()[0]
+    string_to_write = " ".join(args.package.split()[1:])
+    print("MVP100I - Appending to {} the following: {}".format(write_filename,string_to_write))
+    with open(write_filename, "a+") as outfile:
+        outfile.write(string_to_write + "\n")
