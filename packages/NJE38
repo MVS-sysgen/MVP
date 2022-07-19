@@ -32774,6 +32774,7 @@ DATASET PUB001.NJE38.NETSPOOL                               UPDATE
 //* Reload profile table
 //*
 //RAKFUPDT EXEC RAKFPROF
+//RAKFUPDT EXEC RAKFUSER
 //*
 //* REXX and MVP to write the new config file
 //* First create temp REXX file
