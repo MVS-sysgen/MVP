@@ -1,0 +1,30 @@
+Package: NJE38
+Version: 2.3.0
+Maintainer: Bob Polmanter
+Depends:
+Homepage: https://github.com/moshix/nje38mvs
+Description: NJE Subsystem for MVS 3.8
+
+ NJE38 provides a mechanism to bring NJE data transmission into MVS 3.8. NJE38
+ can connect to other NJE capable hosts whether they are MVS-, VM-, or 
+ DOS-based, and receive file data from these systems and send file data to 
+ them.
+
+ NJE38 provides connectivity to other systems via binary-synchronous 
+ communication (BSC) lines. These  lines are emulated in a Hercules environment
+ by the use of the TCPNJE device driver in Hercules. The system on the other 
+ end of the connection also uses emulated BSC lines, or for certain operating
+ systems  that appeared after MVS 3.8, a choice of emulated BSC lines or NJE 
+ over TCP/IP in order to connect back to NJE38.
+
+ NJE38 does not provide a JES-based NJE environment like that of later MVS
+ releases. The NJE capability  provided by NJE38 is similar to JES-based NJE,
+ but remains a subset of later capabilities. There are a variety of reasons for
+ only having a subset of the possible capabilities and a major one is that 
+ system security mechanisms employed by MVS 3.8 do not provide the necessary 
+ features to fully implement certain NJE capabilities. Nevertheless, NJE38 
+ provides significant capability and will serve to get data files into and out
+ of MVS 3.8 over an NJE network, including job streams, listings, sequential
+ and partitioned datasets, and more.
+ 
+ Note: After installation you must re-IPL your environment with CLPA
