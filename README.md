@@ -473,3 +473,14 @@ as well as the arguments passed to the script.
 When complete just update the `cache` file with `IMON370 XMI 1.0` and add
 the description `desc/IMON370` file and you've created your first MVP release!
 
+## Appendix B
+
+Some program require changes to hercules config files. With that in mind MVP has
+an action called `WRITE` which takes a file name (the file name and path **must**
+be lowercase) and the string to write, this entire argument must be surrounded
+by quotation marks. The file path begins one directory up from the MVP folder and
+the file will either be created or appended to, if the folder does not exist
+this will end in error. All strings placed in the file will be uppercase.
+
+for example: `./MVP WRITE "conf/local/dummy.cnf This is an example"` will create
+or append to the file `../conf/local/dummy.cnf` the following: `THIS IS AN EXAMPLE`.
