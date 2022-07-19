@@ -419,8 +419,8 @@ if args.instruction == "WRITE":
     # path begins in MVS/CE folder
     # no spaces allowed in filename or filename path
     # known limitation: the path and filename will always be lowercase
-    
-    write_filename = "../" + args.package.split()[0].lower()
+
+    write_filename = "../" + args.package.split()[0].lower().strip("../")
     string_to_write = " ".join(args.package.split()[1:])
     print("MVP100I - Appending to {} the following: {}".format(write_filename,string_to_write))
     with open(write_filename, "a+") as outfile:
