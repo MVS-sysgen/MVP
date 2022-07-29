@@ -10,7 +10,7 @@
 # Author: Soldier of FORTRAN
 # License: GPLv3
 
-import requests, zipfile, io, shutil, ebcdic, os, sys, time
+import zipfile, io, shutil, ebcdic, os, sys, time
 import subprocess
 import threading
 import queue
