@@ -127,12 +127,23 @@ SELECT
         return
       end
       else do
+        
+        do i=1 to cache.0
+          sortin.i = cache.i
+        end
+
+        sortin.0 = cache.0
+
+        call debug "Sorting CACHE before printing"
+        call rxsort
+
         say "Listing Available Packages:"
         say ""
-        do i=1 to cache.0
-          parse var cache.i prog . ver
+        do i=1 to sortin.0
+          parse var sortin.i prog . ver
           say " " prog ver
         end
+
       end
       say ""
       say "Listing Done"
