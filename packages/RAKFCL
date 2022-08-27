@@ -1139,6 +1139,7 @@ if userid \= "*" then do
   say grp
   say attr
   say "COMMENTS="||cmnts
+  say ""
 end
 else do
   current_user = ""
