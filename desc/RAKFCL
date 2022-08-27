@@ -1,0 +1,13 @@
+Package: RAKFCL
+Version: 1.0
+Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
+Depends:
+Homepage: https://github.com/MVS-sysgen/RAKFCL
+Description: RAKF Command Library
+ RAKFCL is a collection of REXX scripts designed to allow for command
+ line manipulation of the RAKF control files. The syntax for each
+ command is available at the package homepage or in SYS2.EXEC($RAKFCL).
+
+ Included with this package are the following commands: ADDGROUP ADDSD 
+ ADDUSER ALTUSER CONNECT DELDSD DELGROUP DELUSER LISTDSD LISTGRP 
+ LISTUSER PERMIT RDEFINE RDELETE REMOVE RLIST RVARY SETROPTS
