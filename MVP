@@ -156,6 +156,14 @@ update_JOB = '''//UPDATE JOB (TSO),
 //             CLASS=A,
 //             MSGCLASS=A,
 //             MSGLEVEL=(1,1),USER={user},PASSWORD={password}
+//COMPRESS EXEC COMPRESS,LIB='SYS2.EXEC'
+//MVPINST  EXEC PGM=IEBGENER
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD DUMMY
+//SYSUT2   DD DSN=SYS2.EXEC(MVP),DISP=SHR
+//SYSUT1    DD DATA,DLM='><'
+{mvprexx}
+><
 //DELETE   EXEC PGM=IDCAMS
 //SYSPRINT DD   SYSOUT=*
 //SYSIN    DD   *
@@ -248,7 +256,12 @@ if args.instruction == 'UPDATE':
     git_pull()
 
 
-    jcl = update_JOB.format(user=config['DEFAULT']['user'], password=config['DEFAULT']['password'])
+    with open("MVP.rexx", 'r') as mvp_rexx:
+        mvprexx = mvp_rexx.read().rstrip()
+
+    jcl = update_JOB.format(user=config['DEFAULT']['user'], 
+                            password=config['DEFAULT']['password'],
+                            mvprexx = mvprexx)
 
     with open(config['DEFAULT']['cache'], 'r') as mvp_db:
         jcl += mvp_db.read().strip() + "\n"
