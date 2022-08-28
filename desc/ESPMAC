@@ -1,0 +1,13 @@
+Package: ESPMAC
+Version: 1.0
+Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
+Depends: RANDOMPW
+Homepage: https://cbttape.org
+Description: EXPERT SYSTEM PROGRAMMING Macro Library
+
+This library contains macros required for programs in CBT file 860.
+Use and distribution is limited as stated in member $$RIGHTS.
+Before assembling any programs, please configure the options in member
+SYSPARM to match your environment.  
+
+These macros were originally from CBT TAPE 861.
