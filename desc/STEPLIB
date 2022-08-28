@@ -1,0 +1,30 @@
+Package: STEPLIB
+Version: 1.5
+Maintainer: Juergen Winkelmann
+Depends: MACLIB RAKFCL
+Homepage: 
+Description: STEPLIB Command processor for TSO
+ THIS IS A TSO COMMAND PROCESSOR THAT WILL ALLOW CONCATENATION   
+ OF LOAD LIBRARIES AS THE 'STEPLIB' IN A TSO SESSION.            
+                                                                 
+ THE COMMAND IS EXECUTED AS FOLLOWS ON THE TSO COMMAND LINE ENTER :                                                   
+      STEPLIB DA(DSN1,DSN2,DSN3...) SHR/OLD                      
+  WHERE :                                                        
+     DSN1/2/3 IS FULLY QUALIFIED AND IN QUOTES IF NOT BELONGING  
+     TO THE USER WHOSE SESSION IS EXECUTING, E.G.,               
+                                                                 
+           STEPLIB ('EXPL.PHASEII') SHR     - OR -               
+                                                                 
+     SIMPLY THE 2ND, 3RD, ETC. LEVEL QUALIFIERS IF BELONGING TO  
+     THE USER WHOSE SESSION IS EXECUTING, E.G.,                  
+                                                                 
+           STEPLIB (JOBS.LOAD) SHR                               
+                                                                 
+  UP TO SIX 'LOAD' DATA SETS MAY BE INCLUDED IN THE CONCATEN-    
+  ATION, EACH SEPARATED BY COMMAS. IF THE DISPOSITION IS NOT     
+  INCLUDED, (I.E., OLD OR SHR), SHR IS ASSUMED.                        
+                                                                 
+  TO DELETE THE 'STEPLIB' CONCATENATIONS SIMPLY ENTER : STEPLIB ON THE 
+  COMMAND LINE.
+                                                                 
+                                                             

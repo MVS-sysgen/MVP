@@ -1,0 +1,25 @@
+Package: BSPHRCMD
+Version: 1.5
+Maintainer: Juergen Winkelmann
+Depends: MACLIB RAKFCL
+Homepage: 
+Description: Execute HERCULES commands from PARM and SYSIN'
+ This program will read a command from the PARM statement or a   
+ sequence of commands from SYSIN and execute them on the Hercules
+ console via the DIAG 8 interface                                
+                                                                 
+ Required DD statement: none                                     
+                                                                 
+ Optional DD statements:                                         
+          SYSIN    -  Input dataset for control statements       
+                                                                 
+          SYSPRINT -  Output dataset for messages etc            
+                      Default: SYSOUT=*                          
+                                                                 
+          SYSUDUMP -  Default: SYSOUT=A                          
+                                                              
+ BSPHRCMD executes only if the caller has read access to profile     
+ DIAG8CMD in the FACILITY class.    
+
+ This program installs to SYS2.LINKLIB with an ALIAS BSPOSCMD                        
+                                                             
