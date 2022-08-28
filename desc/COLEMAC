@@ -1,0 +1,10 @@
+Package: COLEMAC
+Version: 1.0
+Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
+Depends: 
+Homepage: 
+Description: COLEMAC
+
+This library contains the IBM Private Macro Library
+
+Installs to SYS2.COLEMAC

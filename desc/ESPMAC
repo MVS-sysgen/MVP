@@ -1,7 +1,7 @@
 Package: ESPMAC
 Version: 1.0
 Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
-Depends: RANDOMPW
+Depends: 
 Homepage: https://cbttape.org
 Description: EXPERT SYSTEM PROGRAMMING Macro Library
 
@@ -11,3 +11,5 @@ Before assembling any programs, please configure the options in member
 SYSPARM to match your environment.  
 
 These macros were originally from CBT TAPE 861.
+
+Installs to SYS2.ESPMAC
