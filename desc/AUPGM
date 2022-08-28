@@ -1,0 +1,6 @@
+Package: AUPGM
+Version: 1.5
+Maintainer: Juergen Winkelmann
+Depends: MACLIB RAKFCL
+Homepage: 
+Description: AUPGM, AUTHORIZED VERSION OF DOPROG/DOPGM TSO CMD
