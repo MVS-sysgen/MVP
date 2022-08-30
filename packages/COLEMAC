@@ -16,7 +16,7 @@
 //             UNIT=SYSDA,SPACE=(CYL,(2,3,14)),
 //             DCB=(RECFM=FB,LRECL=80,BLKSIZE=19040)
 //SYSUT1   DD  DATA,DLM=@@
-./ ADD NAME=#ald
+./ ADD NAME=#ALD
          MACRO
 &N       #ALD  &R,&A
 .*
@@ -68,7 +68,7 @@
          AL    &R,=F'1' YES, ADJUST HI-ORDER
 ALD&SYSNDX AL  &R,&A GET HI-ORDER SUM
          MEND
-./ ADD NAME=#aldr
+./ ADD NAME=#ALDR
          MACRO
 &N       #ALDR &R1,&R2
 .*
@@ -129,7 +129,7 @@ ALD&SYSNDX AL  &R,&A GET HI-ORDER SUM
          BCTR  &R1,0 YES, ADJUST HI-ORDER
 ALDR&SYSNDX ALR &R1,&R2 GET HI-ORDER SUM
          MEND
-./ ADD NAME=alloc
+./ ADD NAME=ALLOC
          MACRO
 &NAME    ALLOC &DUMMY,&PERM,                                           X
                &WAITDSN=NO,&WAITVOL=NO,&WAITUNI=NO,                    X
@@ -461,7 +461,7 @@ NAME     DYNSPACE             GET NAME FOR SPACE
 &SYSECT  CSECT
          SPACE 3
 .EXIT    MEND
-./ ADD NAME=#dcbd
+./ ADD NAME=#DCBD
          MACRO
 &N       #DCBD &DSORG=,&DEVD=                                       DBC
 .*                                                                  DBC
@@ -2724,7 +2724,7 @@ DCBMRCTL EQU   BIT6 -         CNTRL
          AGO   .LP1                                                 DBC
 .EXIT    ANOP  ,                                                    DBC
          MEND
-./ ADD NAME=dcbexit
+./ ADD NAME=DCBEXIT
          MACRO
 &NFS     DCBEXIT  &BLKSIZE=,&BUFNO=
 .*.
@@ -2760,7 +2760,7 @@ DCBMRCTL EQU   BIT6 -         CNTRL
          POP   USING
          SPACE 3
          MEND
-./ ADD NAME=#diag
+./ ADD NAME=#DIAG
          MACRO
 &N       #DIAG &R1,&R3,&D2
 .*
@@ -2802,7 +2802,7 @@ DCBMRCTL EQU   BIT6 -         CNTRL
          DC    X'83' GENERATE THE DIAGNOSE OPCODE
          ORG   *+3 RELOCATE FORWARD
          MEND
-./ ADD NAME=#die
+./ ADD NAME=#DIE
          MACRO
 &NME     #DIE  &O,&A,&B,&C,&TYPE=MSG
 .*
@@ -2963,7 +2963,7 @@ DCBMRCTL EQU   BIT6 -         CNTRL
 .OP4     ANOP
 &N       B&O   &A,&B,=C'&MSG'
 .MEND    MEND
-./ ADD NAME=#drop
+./ ADD NAME=#DROP
          MACRO
          #DROP  &D
 .*
@@ -3004,7 +3004,7 @@ DCBMRCTL EQU   BIT6 -         CNTRL
          DROP  &#BS(&W1)
          AGO   .LP2
 .END     MEND
-./ ADD NAME=#dsa
+./ ADD NAME=#DSA
          MACRO
 &NME     #DSA  &D
 .*
@@ -3062,7 +3062,7 @@ DCBMRCTL EQU   BIT6 -         CNTRL
 &N.R&A1  DS    A -                 REGISTER SAVE AREA
          AGO   .LP
 .END     MEND
-./ ADD NAME=#dsorg
+./ ADD NAME=#DSORG
          MACRO
 &N       #DSORG &D
 .*
@@ -3123,7 +3123,7 @@ DCBDSGTR EQU   BIT5 -         TR - TCAM 3705                    S22024
 .SKP2    ANOP
 &#DCBDSG SETB  (1)
          MEND
-./ ADD NAME=#enter
+./ ADD NAME=#ENTER
          MACRO
 &N       #ENTER &NME,&ESDTYPE=DEFAULT,&BASES=1,&SAVTYPE=LOCAL,&PFIX=
 .*
@@ -3964,7 +3964,7 @@ E&#.END  DS    0H
 .ENDCHK  AIF   ('&N2' EQ '').MEND
 &N2      DS    0H
 .MEND    MEND
-./ ADD NAME=#exit
+./ ADD NAME=#EXIT
          MACRO
 &NME     #EXIT &R,&PFIX=,&RC=,&MODE=LEAVE                     DBC 04/85
 .*
@@ -4351,7 +4351,7 @@ E&#.LEN  DC    &C                  RSA SUBPOOL AND LENGTH     DBC 06/84
 .NOSPOOL ANOP
 E&#.LEN  DC    A(&#ENTSIZ)         RSA LENGTH                 DBC 06/84
 .END     MEND
-./ ADD NAME=free
+./ ADD NAME=FREE
          MACRO
 &NAME    FREE  &UNALC,&DSN=,&DDN=,&MEMBER=,&DISP=,&SYSOUT=,            X
                &ERROR=,&MF=AUTO,&PREFIX=,&FILE=,&F=,&DA=,&HOLD=
@@ -4485,7 +4485,7 @@ NAME     DYNSPACE             GET NAME FOR SPACE
 &SYSECT  CSECT
          SPACE 3
 .EXIT    MEND
-./ ADD NAME=gsamcall
+./ ADD NAME=GSAMCALL
          MACRO
 &LABEL   GSAMCALL &VERB,                                               *
                &MF=,                                                   *
@@ -4709,7 +4709,7 @@ NAME     DYNSPACE             GET NAME FOR SPACE
          MEXIT
 .BADMF   MNOTE 8,'GSAM003E IMPROPER OR OMITTED ''MF'' PARAMETER'
 .EXIT    MEND
-./ ADD NAME=gsb
+./ ADD NAME=GSB
          MACRO
          GSB   &DSECT=YES
 .************************************************************
@@ -4864,13 +4864,13 @@ GSAMEIO  EQU   44                  I/O PHYSICAL ERROR
 GSAMEBUG EQU   48                  BUG IN THE SVC
 GSAMEUBG EQU   52                  BUG IN INSTALLATION EXIT
          MEND
-./ ADD NAME=oldpdptp
+./ ADD NAME=OLDPDPTP
 *    TEMPORARY ADDITION TO ALLOW MVSSUPA TO ASSEMBLE
 *
  GBLC &SYS,&COMP   *****DEBUG*****
 &SYS     SETC  'S370' *****DEBUG*****
 &COMP    SETC  'C/370'  *****DEBUG*****
-./ ADD NAME=#parms
+./ ADD NAME=#PARMS
          MACRO
 &NME     #PARMS &P1,&P2,&P3,&P4,&P5,&P6,&P7,&P8,&P9,&P10,              *
                &P11,&P12,&P13,&P14,&P15,&P16,&P17,&P18,&P19,&P20,      *
@@ -5158,7 +5158,7 @@ GSAMEUBG EQU   52                  BUG IN INSTALLATION EXIT
          DC    AL1(&C1&N.ERRM)
 &N.ERRM  DC    C'0ERRORS HAVE BEEN DETECTED AT THE ABOVE ASTERISKS.'
          MEND
-./ ADD NAME=#plienv
+./ ADD NAME=#PLIENV
          MACRO
 &N       #PLIENV &ISASIZE=,&DSASIZE=,&RECOVER=LOCAL,&BASES=1,          *
                &ESDTYPE=CSECT,&PFIX=
@@ -5413,7 +5413,7 @@ PNV&#.R  #ENTER &N,SAVTYPE=(PLI,&DSASIZE),BASES=&BASES,                *
 *************************************************************
          SPACE 1
          MEND
-./ ADD NAME=#put
+./ ADD NAME=#PUT
          MACRO
 &NME     #PUT  &MSG,&PFIX=,&SUBAD=,&MF=
 .*
@@ -5494,7 +5494,7 @@ PNV&#.R  #ENTER &N,SAVTYPE=(PLI,&DSASIZE),BASES=&BASES,                *
 &N       L     &@.15,=A(&C1)       --> MESSAGE PRINTING ROUTINE
          BALR  &@.14,&@.15         GO DISPLAY THE MESSAGE
 .MEND    MEND
-./ ADD NAME=rcpbfrgs
+./ ADD NAME=RCPBFRGS
          MACRO
          RCPBFRGS &BUFPTR,&WKREGS
          GBLC  &RCPBFRP,&RCPBFR1,&RCPBFR2
@@ -5514,7 +5514,7 @@ PNV&#.R  #ENTER &N,SAVTYPE=(PLI,&DSASIZE),BASES=&BASES,                *
 .TG2     AIF   ('&RCPBFR2' NE '').EXIT
 &RCPBFR2 SETC  'R15'
 .EXIT    MEND
-./ ADD NAME=rcpbtu2
+./ ADD NAME=RCPBTU2
          MACRO
          RCPBTU &KEY,&NUM,&PAR
          GBLA  &DTUPO
@@ -5534,7 +5534,7 @@ PNV&#.R  #ENTER &N,SAVTYPE=(PLI,&DSASIZE),BASES=&BASES,                *
          ST    R14,&DYNP.TUP+&DTUPO    STORE TEXT UNIT ADDRESS
 &DTUPO   SETA  &DTUPO+4
          MEND ,
-./ ADD NAME=rcpbtu
+./ ADD NAME=RCPBTU
          MACRO
          RCPBTU &KEY,&NUM,&PAR
          LCLA  &L
@@ -5552,7 +5552,7 @@ PNV&#.R  #ENTER &N,SAVTYPE=(PLI,&DSASIZE),BASES=&BASES,                *
 &L       SETA  &L+1
 .LOK     RCPDINC &L
          MEND
-./ ADD NAME=rcpckid
+./ ADD NAME=RCPCKID
          MACRO
 &NAME    RCPCKID              &CHECKID
          GBLB  &RCPECT(2),&RCPPSCB(2)
@@ -5598,7 +5598,7 @@ PNV&#.R  #ENTER &N,SAVTYPE=(PLI,&DSASIZE),BASES=&BASES,                *
 &P.EXECN DC    CL8'EXEC'               NAME OF EXEC PROCESSOR
 &P.IDOK  DS    0H
          MEND
-./ ADD NAME=rcpddcb
+./ ADD NAME=RCPDDCB
          MACRO
          RCPDDCB &LRECL=,&BLKSIZE=,&RECFM=,&DEN=,&DSORG=,&KEYLEN=
          GBLC  &DYNP
@@ -5763,7 +5763,7 @@ PNV&#.R  #ENTER &N,SAVTYPE=(PLI,&DSASIZE),BASES=&BASES,                *
          MVI   S99TUPAR,AL1(&KEYLEN)   SET PARAMETER
          RCPDINC 8
 .EXIT    MEND
-./ ADD NAME=rcpddn
+./ ADD NAME=RCPDDN
          MACRO
          RCPDDN &DDN
          GBLC  &DYNP
@@ -5791,7 +5791,7 @@ PNV&#.R  #ENTER &N,SAVTYPE=(PLI,&DSASIZE),BASES=&BASES,                *
          MEXIT
 .BTU     RCPTUBFR DALDDNAM,14,&DDN
          MEND
-./ ADD NAME=rcpddnrt
+./ ADD NAME=RCPDDNRT
          MACRO
          RCPDDNRT
          SPACE 1
@@ -5804,7 +5804,7 @@ PNV&#.R  #ENTER &N,SAVTYPE=(PLI,&DSASIZE),BASES=&BASES,                *
          MVC   S99TUPAR(8),=CL8' '     INITIALIZE FIELD TO BLANKS
          RCPDINC 14
          MEND
-./ ADD NAME=rcpdebug
+./ ADD NAME=RCPDEBUG
          MACRO
          RCPDEBUG &ON
          GBLA  &RCPBGN#,&RCPSWS(10)
@@ -5824,7 +5824,7 @@ PNV&#.R  #ENTER &N,SAVTYPE=(PLI,&DSASIZE),BASES=&BASES,                *
          MNOTE *,'RCPWKDS IS ''&RCPWKDS'''
          MNOTE *,'RCPPRE IS ''&RCPPRE'''
          MEND
-./ ADD NAME=rcpdefer
+./ ADD NAME=RCPDEFER
          MACRO
          RCPDEFER
          SPACE
@@ -5834,7 +5834,7 @@ PNV&#.R  #ENTER &N,SAVTYPE=(PLI,&DSASIZE),BASES=&BASES,                *
          MVI   S99TUKEY+1,DALDEFER     SET TEXT UNIT KEY
          RCPDINC  4
          MEND
-./ ADD NAME=rcpdfpl
+./ ADD NAME=RCPDFPL
          MACRO
          RCPDFPL
          GBLC  &RCPPRE
@@ -5879,7 +5879,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          DROP  R15                     DFPB NO LONGER ADDRESSABLE
          EJECT
          MEND
-./ ADD NAME=rcpdinc
+./ ADD NAME=RCPDINC
          MACRO
          RCPDINC &L1
          GBLA  &DTUO,&DTUPO
@@ -5893,7 +5893,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
 .T2      ST    R14,&DYNP.TUP+&DTUPO    STORE TEXT UNIT ADDRESS
 &DTUPO   SETA  &DTUPO+4
          MEND
-./ ADD NAME=rcpdisp
+./ ADD NAME=RCPDISP
          MACRO
          RCPDISP &DISP
          LCLA  &I
@@ -5947,7 +5947,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          MVC   S99TUKEY(8),=Y(DALCDISP,1,1,X'0&I.00')
          RCPDINC 8
 .EXIT    MEND
-./ ADD NAME=rcpdsect
+./ ADD NAME=RCPDSECT
          MACRO
 &NAME    RCPDSECT &LTORG=YES
          AIF   ('&LTORG' NE 'YES').RCPDS
@@ -5959,7 +5959,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          EJECT
 .RCPDS   RCPDS
          MEND
-./ ADD NAME=rcpds
+./ ADD NAME=RCPDS
          MACRO
          RCPDS
          GBLB  &RCPDSBR
@@ -5986,7 +5986,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
 &RCPDSBR SETB  0
 &RCPDS   SETC  ''
          MEND
-./ ADD NAME=rcpdsn
+./ ADD NAME=RCPDSN
          MACRO
          RCPDSN &DSN,&MEM
          LCLC  &MEMBER
@@ -6055,7 +6055,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          MEXIT
 .QM      RCPBTU DALMEMBR,1,&MEMBER
 .EXIT    MEND
-./ ADD NAME=rcpdsnpd
+./ ADD NAME=RCPDSNPD
          MACRO
          RCPDSNPD &PDE
          AIF   ('&PDE'(1,1) EQ '(').RPDE
@@ -6065,7 +6065,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
 .RPDE    RCPDSN &PDE,8&PDE
          RCPPSWD 16(&PDE)
          MEND
-./ ADD NAME=rcpdsnrt
+./ ADD NAME=RCPDSNRT
          MACRO
          RCPDSNRT
          SPACE
@@ -6077,7 +6077,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          MVI   S99TULNG+1,44           SET LENGTH FIELD
          RCPDINC 50
          MEND
-./ ADD NAME=rcpdsrgr
+./ ADD NAME=RCPDSRGR
          MACRO
          RCPDSRGR
          SPACE
@@ -6090,7 +6090,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          XC    S99TUPAR(2),S99TUPAR    INITIALIZE FIELD TO ZERO
          RCPDINC 8
          MEND
-./ ADD NAME=rcpdummy
+./ ADD NAME=RCPDUMMY
          MACRO
          RCPDUMMY &DUMMY
          SPACE
@@ -6100,7 +6100,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          MVI   S99TUPAR+1,DALDUMMY     MOVE IN DUMMY DS TEXT UNIT KEY
          RCPDINC 4
          MEND
-./ ADD NAME=rcpendd
+./ ADD NAME=RCPENDD
          MACRO
 &NAME    RCPENDD
          GBLB  &RCPECT(2),&RCPUPT(2),&RCPPSCB(2),&RCPS99(2)
@@ -6138,7 +6138,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          EJECT
 &RCPS99(2) SETB  1
 .TRYREST MEND
-./ ADD NAME=rcpfddn
+./ ADD NAME=RCPFDDN
          MACRO
          RCPFDDN &DDN
          GBLC &DYNP
@@ -6166,7 +6166,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          MEXIT
 .B       RCPTUBFR DUNDDNAM,14,&DDN
          MEND
-./ ADD NAME=rcpfdisp
+./ ADD NAME=RCPFDISP
          MACRO
          RCPFDISP &DISP
          LCLB  &B(4)
@@ -6187,7 +6187,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          MVC   S99TUKEY(8),=Y(DUNOVDSP,1,1,X'0&I.00')
          RCPDINC 8
 .EXIT    MEND
-./ ADD NAME=rcpfdsn
+./ ADD NAME=RCPFDSN
          MACRO
          RCPFDSN &DSN,&MEM
          LCLC  &MEMBER
@@ -6252,7 +6252,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          MEXIT
 .QM      RCPBTU DUNMEMBR,1,&MEMBER
 .EXIT    MEND
-./ ADD NAME=rcpfhold
+./ ADD NAME=RCPFHOLD
          MACRO
          RCPFHOLD &H
          AIF   ('&H' EQ 'YES').YES
@@ -6277,7 +6277,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          MVI   S99TUKEY+1,DUNOVSHQ MOVE IN TEXT UNIT KEY
          RCPDINC 4
          MEND
-./ ADD NAME=rcpforus
+./ ADD NAME=RCPFORUS
          MACRO - TO SET UP SVC 99 TEXT UNIT 'FOR USER'
          RCPFORUS &T
          SPACE 1
@@ -6286,7 +6286,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
 ***********************************************************************
          RCPVCHAR 0,5,&T,N=DALUSRID
          MEND
-./ ADD NAME=rcpfree
+./ ADD NAME=RCPFREE
          MACRO
          RCPFREE &FREE
          SPACE
@@ -6297,7 +6297,7 @@ L#DFPB   EQU   *-DFPB                  LENGTH OF DEFAULT PARAM BLOCK
          MVI   S99TUKEY+1,DALCLOSE     MOVE IN CLOSE TEXT UNIT KEY
          RCPDINC 4
          MEND
-./ ADD NAME=rcpiopl
+./ ADD NAME=RCPIOPL
          MACRO
 &NAME    RCPIOPL
          GBLC  &RCPPRE
@@ -6369,7 +6369,7 @@ L#PGPB   EQU   *-PGPB         LENGTH OF PGPB
 &L       SETC  '&P'.'&L1'(3,4)
          XC    &L.(&L1.),&L            CLEAR IOPB AREA
          MEND
-./ ADD NAME=rcplink
+./ ADD NAME=RCPLINK
          MACRO
 &NAME    RCPLINK &MODULE
          LCLC  &OFFSET,&C
@@ -6423,7 +6423,7 @@ L#PGPB   EQU   *-PGPB         LENGTH OF PGPB
          MEXIT
 .ERROR   MNOTE 4,'NO MODULE NAME SPECIFIED'
          MEND  ,
-./ ADD NAME=rcpload
+./ ADD NAME=RCPLOAD
          MACRO
 &NAME    RCPLOAD &MOD,&EP1
          GBLC  &RCPPTEP,&RCPGTEP,&RCPPGEP
@@ -6540,7 +6540,7 @@ L#PGPB   EQU   *-PGPB         LENGTH OF PGPB
          MEXIT
 .NOLB    MNOTE 4,'INVALID MODULE NAME ''&MOD'''
          MEND
-./ ADD NAME=rcplocs1
+./ ADD NAME=RCPLOCS1
 *23456789*12345*78921234567893123456789*
          MACRO
          RCPLOCSW &SW
@@ -6618,7 +6618,7 @@ L#PGPB   EQU   *-PGPB         LENGTH OF PGPB
 .NOTFND  MNOTE 4,'SWITCH ''&SW2'' NOT DECLARED'
          AGO   .LOOP1
 .EXIT    MEND
-./ ADD NAME=rcplocs2
+./ ADD NAME=RCPLOCS2
 *23456789*12345*78921234567893123456789*
          MACRO
          RCPLOCSW &SW
@@ -6714,7 +6714,7 @@ L#PGPB   EQU   *-PGPB         LENGTH OF PGPB
 .ERROR   MNOTE 8,'SWITCH ''&SW(1)'' NOT DECLARED'
 &RCPDSW1 SETC  ''             INDICATE ERROR
 .EXIT    MEND
-./ ADD NAME=rcplocsw
+./ ADD NAME=RCPLOCSW
 *23456789*12345*78921234567893123456789*
          MACRO
          RCPLOCSW &SW
@@ -6806,7 +6806,7 @@ L#PGPB   EQU   *-PGPB         LENGTH OF PGPB
 .NOTFND  MNOTE 4,'SWITCH ''&SW2'' NOT DECLARED'
          AGO   .LOOP1
 .EXIT    MEND
-./ ADD NAME=rcpmca
+./ ADD NAME=RCPMCA
          MACRO
          RCPMCA &DSECT=YES
          GBLC  &RCPPRE
@@ -6830,7 +6830,7 @@ L#PGPB   EQU   *-PGPB         LENGTH OF PGPB
 &P.#C    DS    F                       ADDRESS OF NEXT LIFO STACK
 &P.#L    DS    F                       LENGTH OF CURRENT LIFO STACK
 .EXIT    MEND
-./ ADD NAME=rcpmsvgp
+./ ADD NAME=RCPMSVGP
          MACRO
          RCPMSVGP &MSVGP
          GBLC  &DYNP
@@ -6858,7 +6858,7 @@ L#PGPB   EQU   *-PGPB         LENGTH OF PGPB
          MEXIT
 .BTU     RCPTUBFR DALMSVGP,14,&MSVGP
          MEND
-./ ADD NAME=rcpntu
+./ ADD NAME=RCPNTU
          MACRO
          RCPNTU &KEY,&LEN,&PAR
 .*
@@ -6906,7 +6906,7 @@ L#PGPB   EQU   *-PGPB         LENGTH OF PGPB
 .STCM    STCM  &C,7,S99TUPAR           STORE TEXT UNIT QUANTITY
 .RCPDINC RCPDINC 10
          MEND
-./ ADD NAME=rcpperm
+./ ADD NAME=RCPPERM
          MACRO
          RCPPERM
          SPACE
@@ -6916,7 +6916,7 @@ L#PGPB   EQU   *-PGPB         LENGTH OF PGPB
          MVI   S99TUKEY+1,DALPERMA     SET TEXT UNIT KEY
          RCPDINC  4
          MEND
-./ ADD NAME=rcpppl
+./ ADD NAME=RCPPPL
          MACRO
 &NAME    RCPPPL &PCL=,&NOPARM=,&PARSERR=,&PDLREG=R11,                  X
                &PDLNAME=,&PARSEP=,&PARSWKA=
@@ -7009,7 +7009,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          L     &PDLREG,&P.PDLP         LOAD PDL ADDRESS
          USING &PDLNAME,&PDLREG        PDL DSECT ADDRESSABLE
 .EXIT    MEND  ,
-./ ADD NAME=rcpproc
+./ ADD NAME=RCPPROC
          MACRO
          RCPPROC &WKCSECT=,&WKDSECT=,                                  X
                &REG1=,&REG0=,&ISA=,&SAVEPRE=,                          X
@@ -7167,7 +7167,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          DROP  R1,R15                  KILL ADDRESSABILITY
 &SYSECT  CSECT                         RESUME MAIN PROGRAM CSECT
 .EXIT    MEND
-./ ADD NAME=rcppswd
+./ ADD NAME=RCPPSWD
          MACRO
          RCPPSWD &PASSW
          GBLC  &DYNP
@@ -7177,7 +7177,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
 ***********************************************************************
          RCPVCHAR DALPASSW,14,&PASSW
          MEND
-./ ADD NAME=rcpqname
+./ ADD NAME=RCPQNAME
          MACRO
          RCPQNAME &QNAME
          GBLC  &DYNP
@@ -7187,7 +7187,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
 ***********************************************************************
          RCPVCHAR DALQNAME,14,&QNAME
          MEND
-./ ADD NAME=rcprnge
+./ ADD NAME=RCPRNGE
          MACRO - BREAK A RANGE PARAMETER INTO TWO
          RCPRNGE &P
          GBLC  &RCPRNGE(2)
@@ -7205,7 +7205,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
 .NR      ANOP
 &RCPRNGE(1) SETC '&P'
          MEND
-./ ADD NAME=rcpspace
+./ ADD NAME=RCPSPACE
          MACRO
          RCPSPACE &SPACE
          GBLA  &RCPSUB#                NO OF SUBLIST ELEMENTS
@@ -7301,7 +7301,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          MVI   S99TUKEY+1,DALROUND     MOVE IN TEXT UNIT KEY
          RCPDINC 4
          MEND
-./ ADD NAME=rcpspec
+./ ADD NAME=RCPSPEC
          MACRO - SET UP USER DEFINED TEXT UNIT
          RCPSPEC &T
          LCLA  &I,&J
@@ -7315,7 +7315,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
 &I       SETA  &I+4
          AIF   (&I LE &J).LOOP
          MEND
-./ ADD NAME=rcpsr2
+./ ADD NAME=RCPSR2
          MACRO
          RCPSR2 &A
          GBLB  &RCPSR2
@@ -7336,7 +7336,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          LR    R2,R0                   RESTORE CONTENTS OF REGISTER 2
 &RCPSR2  SETB  0
 .EXIT    MEND
-./ ADD NAME=rcpssreq
+./ ADD NAME=RCPSSREQ
          MACRO
          RCPSSREQ
          SPACE 1
@@ -7347,7 +7347,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          MVI   S99TUKEY+1,DALSSREQ MOVE IN TEXT UNIT KEY
          RCPDINC                   4
          MEND
-./ ADD NAME=rcpsubl
+./ ADD NAME=RCPSUBL
          MACRO - BREAK DOWN A SUBLIST
          RCPSUBL &L
          GBLA  &RCPSUB#                NO OF ELEMENTS FOUND
@@ -7384,7 +7384,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
 &RCPSUBL(1) SETC '&L'
 &RCPSUB# SETA 1
 .EXIT    MEND
-./ ADD NAME=rcpsysou
+./ ADD NAME=RCPSYSOU
          MACRO
          RCPSYSOU &CLASS,&COPIES=,&FREE=,&DEST=,&FORMS=,&FCB=,&UCS=
          GBLC  &DYNP
@@ -7460,7 +7460,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
 ***********************************************************************
          RCPVCHAR DALUCS,14,&UCS                                 92013
 .EXIT    MEND
-./ ADD NAME=rcpterm
+./ ADD NAME=RCPTERM
          MACRO
          RCPTERM
          SPACE
@@ -7470,7 +7470,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          MVI   S99TUKEY+1,DALTERM      MOVE IN TERM DS TEXT UNIT KEY
          RCPDINC 4
          MEND
-./ ADD NAME=rcptubfr
+./ ADD NAME=RCPTUBFR
          MACRO  - BUILD TEXT UNIT FROM BUFFER
          RCPTUBFR &KEY,                TEXT UNIT KEY                   X
                &L,                     MAXIMUM LENGTH VALUE            X
@@ -7531,7 +7531,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          EX    R14,&EXECNAM            MOVE IN TEXT UNIT
          RCPDINC &L
          MEND
-./ ADD NAME=rcptu
+./ ADD NAME=RCPTU
          MACRO
          RCPTU &TU            TEXT UNIT LIST
          GBLA  &DTUPO         TEXT UNIT POINTER OFFSET
@@ -7557,7 +7557,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
 &DTUPO   SETA  &DTUPO+4
          AGO   .LOOP
 .EXIT    MEND
-./ ADD NAME=rcptxtl
+./ ADD NAME=RCPTXTL
          MACRO - TO COUNT CHARACTERS IN A STRING
          RCPTXTL &S
          GBLA  &RCPTXTL
@@ -7575,7 +7575,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
 &RCPTXTL SETA  &RCPTXTL-1
          AGO   .LOOP2
 .MEND    MEND
-./ ADD NAME=rcptype
+./ ADD NAME=RCPTYPE
          MACRO
          RCPTYPE &T
          GBLC  &RCPTYPE
@@ -7590,7 +7590,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          AIF   (&I LT &K).LOOP
 &RCPTYPE SETC  'N'
 .EXIT    MEND
-./ ADD NAME=rcpunalc
+./ ADD NAME=RCPUNALC
          MACRO
          RCPUNALC
          SPACE 1
@@ -7600,7 +7600,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          MVI   S99TUKEY+1,DUNUNALC     SET TEXT UNIT KEY
          RCPDINC  4
          MEND
-./ ADD NAME=rcpunitc
+./ ADD NAME=RCPUNITC
          MACRO
          RCPUNITC &CNT
          SPACE
@@ -7609,7 +7609,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
 ***********************************************************************
          RCPNTU DALUNCNT,1,&CNT
          MEND
-./ ADD NAME=rcpunit
+./ ADD NAME=RCPUNIT
          MACRO
          RCPUNIT &U,&V
          GBLC  &DYNP
@@ -7626,7 +7626,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
 ***********************************************************************
          RCPVCHAR DALVLSER,14,&V
 .EXIT    MEND
-./ ADD NAME=rcpvchar
+./ ADD NAME=RCPVCHAR
          MACRO
          RCPVCHAR &KEY,&LEN,&C,&N=1
          GBLC  &DYNP
@@ -7658,7 +7658,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          MEXIT
 .QM      RCPBTU &KEY,&N,&C
          MEND
-./ ADD NAME=rcpvolrt
+./ ADD NAME=RCPVOLRT
          MACRO
          RCPVOLRT
          SPACE 1
@@ -7671,7 +7671,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          MVC   S99TUPAR(6),=CL6' '     INITIALIZE FIELD TO BLANKS
          RCPDINC 14
          MEND
-./ ADD NAME=#regs
+./ ADD NAME=#REGS
          MACRO
          #REGS &GEN=YES
 .*
@@ -7869,7 +7869,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
 &C1      SETC  'R'
          AIF   (NOT &B1).NULL
          MEND
-./ ADD NAME=#reload
+./ ADD NAME=#RELOAD
          MACRO
 &N       #RELOAD &D,&LCLBASE=NONE,&PGMBASE=
 .*
@@ -7936,7 +7936,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
 #RL&#.B  DC    A(&#BS(14))         PROGRAM BASE ADDRESS
 #RL&#.Y  DS    0H                  RECEIVE BRANCH
 .MEND    MEND
-./ ADD NAME=#sal
+./ ADD NAME=#SAL
          MACRO
 &N       #SAL  &D
 .*
@@ -8036,7 +8036,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          REPRO
 Õ 1§ûÕ 0Êû
          MEND
-./ ADD NAME=#search
+./ ADD NAME=#SEARCH
          MACRO
 &NME     #SEARCH &DUMMY,&PFIX=,&SVID=,&CMPRID=
 .*
@@ -8260,7 +8260,7 @@ L#PPL    EQU   *-PPL                   LENGTH OF PPL
          SPACE 1
 &N.SAVE  DC    16A(0)              REGISTER SAVE AREA
 .MEND    MEND
-./ ADD NAME=sfr
+./ ADD NAME=SFR
          MACRO
 &NME     SFR   &MF=D
 .*
@@ -8397,7 +8397,7 @@ SFMRLEN  EQU   SFMREND-SFMR        L'SFMR
          DC    CL(L'SFMRFID)'SCHEDULE' SFMRFID
          DC    H'0'                SFMRNXID
          MEND
-./ ADD NAME=#sld
+./ ADD NAME=#SLD
          MACRO
 &N       #SLD  &R,&A
 .*
@@ -8449,7 +8449,7 @@ SFMRLEN  EQU   SFMREND-SFMR        L'SFMR
          BCTR  &R,0 YES, ADJUST HI-ORDER
 SLD&SYSNDX SL  &R,&A GET HI-ORDER DIFFERENCE
          MEND
-./ ADD NAME=#sldr
+./ ADD NAME=#SLDR
          MACRO
 &N       #SLDR &R1,&R2
 .*
@@ -8510,7 +8510,7 @@ SLD&SYSNDX SL  &R,&A GET HI-ORDER DIFFERENCE
          BCTR  &R1,0 YES, ADJUST HI-ORDER
 SLDR&SYSNDX SLR &R1,&R2 GET HI-ORDER DIFFERENCE
          MEND
-./ ADD NAME=#sortdb
+./ ADD NAME=#SORTDB
          MACRO
 &NME     #SORTDB &SEQ,&PFIX=,&SVID=,&CMPRID=                    GP11205
 .*
@@ -8758,7 +8758,7 @@ SLDR&SYSNDX SLR &R1,&R2 GET HI-ORDER DIFFERENCE
 .DATA3   AIF   ('&SVID' NE '').DATA4
 &N.SAVE  DC    &SAVESZ.A(0)        LOCAL SAVE AREA
 .DATA4   MEND
-./ ADD NAME=#sort
+./ ADD NAME=#SORT
          MACRO
 &NME     #SORT &SEQ,&PFIX=,&SVID=,&CMPRID=
 .*
@@ -9006,7 +9006,7 @@ SLDR&SYSNDX SLR &R1,&R2 GET HI-ORDER DIFFERENCE
 .DATA3   AIF   ('&SVID' NE '').DATA4
 &N.SAVE  DC    &SAVESZ.A(0)        LOCAL SAVE AREA
 .DATA4   MEND
-./ ADD NAME=ssshipe
+./ ADD NAME=SSSHIPE
          MACRO
 &NME     SSSHIPE &IID=,&IADR=,&IDA=,&SVC#=,&PRIO=,&MF=D
          LCLC  &LIID,&LIADR,&LIDA,&LSVC#,&LPRIO,&LBL,&R,&D
@@ -9141,7 +9141,7 @@ SSSHILEN EQU   SSSHIEND-SSSHIPE    LENGTH OF THE IPE.
 .PRIOREG STC   &PRIO(1),SSSHPRIO-SSSHIPE(,&R) STORE QUEUING PRIORITY
 .NOPRIO  ANOP
          MEND
-./ ADD NAME=ssshspe
+./ ADD NAME=SSSHSPE
          MACRO
 &NME     SSSHSPE &SID=,&SDA=,&TCB=,&FLAG=,&SVC=XXX,&MF=D
          LCLA  &A1
@@ -9284,7 +9284,7 @@ SSSHSVC  EQU   &SVC                SSSH'S SVC
 &LBL     SETC  ''
 .NOFLAG  ANOP
          MEND
-./ ADD NAME=string10
+./ ADD NAME=STRING10
 */GILBERTM JOB (ACCT#),STRING,
 */ NOTIFY=&SYSUID,
 */ CLASS=A,MSGCLASS=X,COND=(0,NE)
@@ -10723,7 +10723,7 @@ Programming Notes:
   d.  the $STRING symbol (generated in the $LTORG LOCTR during the
       GENERATE invocation of the STRING macro) is not addressable
       in some of the STRING calls.
-./ ADD NAME=string38
+./ ADD NAME=STRING38
 ***********************************************************************
 *                                                                     *
 * MACRO NAME = STRING                                                 *
@@ -11544,7 +11544,7 @@ $LIT&I   DC    &$$LITS(&N)
 .MEND    AIF   ('&PRINT' EQ 'NOGEN').MEND99
          POP   PRINT
 .MEND99  MEND
-./ ADD NAME=string
+./ ADD NAME=STRING
 ***********************************************************************
 *                                                                     *
 * MACRO NAME = STRING                                                 *
@@ -12365,7 +12365,7 @@ $LIT&I   DC    &$$LITS(&N)
 .MEND    AIF   ('&PRINT' EQ 'NOGEN').MEND99
          POP   PRINT
 .MEND99  MEND
-./ ADD NAME=stringos
+./ ADD NAME=STRINGOS
          MACRO
 &NAME    STRING &INTO=,&PRINT=NOGEN
          GBLC  &STRING_MACRO_VERSION
@@ -13404,7 +13404,7 @@ $STRING  BASR  R15,0                   Local Base
 .MEND    AIF   ('&PRINT' EQ 'NOGEN').MEND99
          POP   PRINT
 .MEND99  MEND
-./ ADD NAME=#test
+./ ADD NAME=#TEST
          MACRO
 &N       #TEST &DCODE=OMITTED,&MEXCL=,&NUM=OMITTED,                    *
                &PFIX=OMITTED,&REGS=,&SIZE=,&GEN=
@@ -14055,7 +14055,7 @@ $STRING  BASR  R15,0                   Local Base
 .*
 .*
 .END     MEND
-./ ADD NAME=#unalign
+./ ADD NAME=#UNALIGN
          MACRO
 &NME     #UNALIGN &OP,&A1,&A2,&A3
 .*
@@ -14145,7 +14145,7 @@ $STRING  BASR  R15,0                   Local Base
          DC    X'&O(&W1)'
          ORG   *+3
          MEND
-./ ADD NAME=#using
+./ ADD NAME=#USING
          MACRO
          #USING &D
 .*
@@ -14188,7 +14188,7 @@ $STRING  BASR  R15,0                   Local Base
          USING &#BS(14)+&DISPL,&#BS(&A1)
          AGO   .LP
 .END     MEND
-./ ADD NAME=#xxc
+./ ADD NAME=#XXC
          MACRO
 &NAME    #XXC  &OP,&T,&F,&L,&SVID=,&PFIX=,&MF=INLINE
 .*

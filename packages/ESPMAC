@@ -15348,7 +15348,8 @@ IIOO     EQU   12
 IIOI     EQU   13
 IIIO     EQU   14
 IIII     EQU   15
-         MEND  ,./ ADD NAME=MAXH
+         MEND  ,
+./ ADD NAME=MAXH
          MACRO ,                                                        00010000
 &NM      MAXH  &R,&A                                     ADDED  GP04128 00020000
          LCLA  &I                                                       00030000
