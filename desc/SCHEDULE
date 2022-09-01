@@ -1,0 +1,67 @@
+Package: SCHEDULE
+Version: 1.0
+Maintainer: Jake Labelle
+Depends: MACLIB 
+Homepage: https://github.com/jake-mainframe/schedule
+Description: Converted SCHEDULE program from Xephon MVS Feb 1999                   
+https://github.com/MarkDickinson/mvs38j_utils/blob/master/mvs38j/SCHEDULE.txt                                                                 
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+---                                                             ---
+---                         doc                                 ---
+---                                                             ---
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+The scheduler is composed of two programs a driver program SCHEDM01,
+and a subtask program SCHEDM02. Both programs have authorization
+requirements so they should reside in an APF authorized library and
+be linked AC(1).
+
+The SCHEDM01 program is responsible for interpreting the parameter
+library, for building the schedule, for establishing operator
+communication, and for attaching the SCHEDM02 program.
+
+The SCHEDM02 program is responsible for checking the schedule that
+was built by SCHEDM01 and determining when the next scheduled event
+is to occur. The basic approach is to:
+ 1 Determine what day of the week the program is operating in.
+ 2 Check to see if any events are waiting to occur for that day.
+ 3 If they are, do an STIMER wait for the time of day of the first
+   event scheduled to occur that day. If there are not any events
+   waiting to occur for that day, do an STIMER wait for 23:59:59.
+ 4 When the STIMER triggers, perform the required function and
+   return to step 1.
+
+The following sample JCL can be used when creating your scheduler:
+ //SCHEDULE EXEC PGM=SCHEDM01,TIME=1440
+ //SYSIN    DD   DSN=SCHEDULE.PARMLIB,DISP=SHR
+ //JOBFILE  DD   DSN=SCHEDULE.JOBFILE,DISP=SHR
+ //CMDFILE  DD   DSN=SCHEDULE.CMDFILE,DISP=SHR
+ //CHKPOINT DD   DSN=SCHEDULE.CHKPOINT,DISP=SHR
+ //INTRDR   DD   SYSOUT=(A,INTRDR)
+ //SYSABEND DD   SYSOUT=A
+
+The datasets that are referenced above are used in the following ways:
+    SYSIN     contains the parameter information used for scheduler
+              start-up. This dataset has DCB characteristics of
+              DSORG=PS, LRECL=80, RECFM=FB.
+    JOBFILE   contains one member for each JOB referenced in SYSIN.
+              Each JOB referenced in the JOB=jobname parameter must
+              have a corresponding jobname member in the JOBFILE
+              dataset. This dataset has DCB characteristics of
+              DSORG=PO, LRECL=80, RECFM=FB.
+    CMDFILE   contains one member for each CMD referenced in SYSIN.
+              Each CMD referenced in the CMD=cmdname parameter must
+              have a corresponding cmdname member in the CMDFILE
+              dataset. This dataset has DCB chracteristics of
+              DSORG=PO, LRECL=80, RECFM=FB.
+    CHKPOINT  contains the scheduler checkpoint record. This dataset
+              has DCB characteristics mDSORG=PS, LRECL=80, RECFM=F.
+              For initial scheduler start-up, this file should contain
+              a single record, in columns 1 through 16, of the
+              following format:
+                 CHKPOINTCHKPOINT
+              This indicates to the scheduler that this is a first-time
+              start-up and that RECOVER processing should not take
+              place.
