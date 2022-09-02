@@ -1,0 +1,55 @@
+Package: BSPRUNSC
+Version: 1.0
+Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
+Depends: MACLIB
+Homepage: CBT Tape FILE 547
+Description: MVS Auto-Pilot Runscript module
+ This program will read input data from a member of a PDS with      
+ DDNAME SCRIPTS.  If no SCRIPTS DDNAME is found, SYS1.PARMLIB       
+ will be used. Sample scripts are available in SYS2.SAMPLIB.
+                                                                    
+ The member to be used is specified via the PARM passed to the      
+ program.  If none if specified, a default of BSPRUNSC is used      
+                                                                    
+ Syntax of script files:                                            
+ Leading spaces will be removed from the script line                
+                                                                    
+ An asteriks (*) in col 1 means a comment, this line gets ignored   
+ PARM TEST       - don't exec, just simulate (default),             
+ PARM CHECK      - same as PARM TEST                                
+ PARM ECHO       - show commands on console (default)               
+ PARM NOECHO     - no longer echo commands to console               
+ PARM EXEC       - Execute the script, ask operator first           
+ PARM NOREPLYU   - Execute the script, don't ask operator permission
+ PARM REPLYU     - Next time, ask operator permission again         
+ WAIT xxx        - Wait specified number of seconds before going on 
+                   Default is 10 seconds                            
+ COM  ccc        - Execute the command ccc                          
+ CMD  ccc        - Execute the command ccc, equivalent to COM       
+ MSG  ttt        - show the message with the text ttttt             
+ WTO  ttt        - equivalent to MSG                                
+ IF xxxxxxxx     - execute following command if xxxxxxxx is active  
+ ELSE            - otherwise execute the second branch              
+ ENDIF           - end of IF constructs.  IF may not be nested      
+                                                                    
+ JCL Execution Parameters are specified via the                     
+ PARM statement on the EXEC card:                                   
+                                                                    
+      PARM=xxxxxxxx - Member name of script to process              
+                                                                    
+ Required DD statement: none                                        
+                                                                    
+ Optional DD statements:                                            
+          SCRIPTS  -  Input dataset for control statements          
+                      Default: SYS1.PARMLIB                         
+                                                                    
+          SYSPRINT -  (When running as a batch job)                 
+                      Default: SYSOUT=A                             
+                                                                    
+          SYSUDUMP -  Default: SYSOUT=A                             
+                                                                    
+          SNAPDUMP -  (When compiled with &DEBUG=YES)               
+                      Default: SYSOUT=A                             
+                                                                    
+          JCLPDS   -  (When compiled with &DEBUG=YES)               
+                      Default: SYS1.PARMLIB                     

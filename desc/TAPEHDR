@@ -1,0 +1,10 @@
+Package: BSPRUNSC
+Version: 1.0
+Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
+Depends: MACLIB
+Homepage: CBT Tape FILE 547
+Description: Analyse Tape Header                                                           
+ This program reads the beginning of a magnetic tape and report (on the
+ MVS console) the infomration found in the tape header
+
+ Sample JCL to use TAPEHDR in available in SYS2.SAMPLIB(TAPEHDR)

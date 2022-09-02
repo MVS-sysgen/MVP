@@ -1,7 +1,7 @@
 Package: BRODSCAN
 Version: 1.0
 Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
-Depends: 
+Depends: MACLIB
 Homepage: CBT Tape FILE 547
 Description: This program analyzes the TSO broadcast dataset
   It displays the number of available blocks and how they

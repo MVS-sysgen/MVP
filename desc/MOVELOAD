@@ -1,7 +1,7 @@
 Package: MOVELOAD
 Version: 1.0
 Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
-Depends: 
+Depends: MACLIB
 Homepage: CBT Tape FILE 547
 Description: Load IEHMOVE modules & link to IEHMOVE
 

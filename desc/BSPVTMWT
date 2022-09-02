@@ -1,7 +1,7 @@
 Package: BSPVTMWT
 Version: 1.0
 Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
-Depends: 
+Depends: MACLIB
 Homepage: CBT Tape FILE 547
 Description: Wait for VTAM ACB
  This routine waits for a VTAM ACB to become available.  The ACB

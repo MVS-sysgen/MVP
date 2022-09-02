@@ -1,0 +1,44 @@
+Package: SMPTFSEL
+Version: 1.0
+Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
+Depends: MACLIB
+Homepage: CBT Tape FILE 547
+Description: SMP ELEMENT SELECTION PROGRAM
+ FUNCTION                                                    
+         ALLOW SELECTION OF SMP ELEMENTS                     
+             FOR GENERATION OF SELECT, EXCLUDE LISTS, ETC.   
+ PROCESS                                                     
+         SCANS SMP LIST OUTPUT FOR FIELD NAMES AND VALUES    
+         SPECIFIED ON INPUT PARAMETERS.                      
+ INPUT   DDNAME                                              
+         INPUT    SMP SMPLIST OUTPUT DATASET                 
+         SYSIN    ELEMENT SELECTION PARAMETERS               
+ OUTPUT  DDNAME                                              
+         OUTPUT   CARD IMAGE FILE OF SELECTED ELEMENT I.D.'S 
+         SYSPRINT SMPLIST PRINT RECORDS THAT CAUSED SELECTION
+                                                            
+ PARAMETER SYNTAX: (FREE FORMAT)                             
+         FIELDNAME(VALUE) FIELDNAME(VALUE)...                
+         WHERE:                                              
+               FIELDNAME IS FIELD LABEL IN SMPLIST REPORT    
+               VALUE IS GENERIC VALUE TO BE SELECTED         
+                     OR GENERIC VALUE RANGE                  
+               . INDICATES END OF PARAMETERS                 
+         EXAMPLES:                                           
+          A-   FMID(ESP1200) FMID(JSP1210) .                 
+          B-   APP(80-80.122) .                              
+          C-   REQ(UZ9-UZ95).                                
+          D-   PRE(UZ27866) .                                
+          E-   LMOD(IKJCT469) .                              
+          F-   UMID(USER-USER50) UMID(USER900).              
+          G-   SZAP(IRARMCNS) .                              
+         RESULTS: (DEPENDING ON SMP LIST PARAMETERS)         
+          A-   ALL ELEMENTS OF THE FMIDS                     
+          B-   ALL ELEMENTS APPLIED 80.000 THRU 80.122       
+          C-   ALL ELEMENTS THAT REQ ANY ELEMENT IN THE RANGE
+          D-   ALL ELEMENTS THAT PRE-REQ UZ27866             
+          E-   ALL MODULES OF IKJCT469                       
+          F-   ALL ELEMENTS UPDATED BY USER50. THRU USER900  
+          G-   ALL SUPERZAPS FOR IRARMCNS                    
+                                                            
+ SAMPLE EXECUTION JCL IS PROVIDED FOLLOWING ALC SOURCE       
