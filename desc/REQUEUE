@@ -1,0 +1,10 @@
+Package: REQUEUE
+Version: 1.0
+Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
+Depends: 
+Homepage: CBT Tape FILE 547
+Description: Requeue job after one minute
+ This program delays 1 minute and issues an operator command
+ to re-queue the job that executed it.
+
+ SAMPLE EXECUTION JCL can be found in SYS2.SAMPLIB(REQUEUE)

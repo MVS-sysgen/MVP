@@ -21,5 +21,8 @@ Description: Execute HERCULES commands from PARM and SYSIN'
  BSPHRCMD executes only if the caller has read access to profile     
  DIAG8CMD in the FACILITY class.    
 
- This program installs to SYS2.LINKLIB with an ALIAS BSPOSCMD                        
+ This program installs to SYS2.LINKLIB with an ALIAS BSPOSCMD      
+
+ SAMPLE EXECUTION JCL can be found in SYS2.SAMPLIB(BSPOSCMD)
+                  
                                                              

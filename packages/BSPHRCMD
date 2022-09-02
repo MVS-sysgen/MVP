@@ -662,4 +662,29 @@ PAGENUM  DS    PL2                                                      05820000
  RX PERMIT 'DIAG8CMD CLASS(FACILITY) ID(ADMIN) ACCESS(READ)'
 //STDOUT   DD   SYSOUT=*,DCB=(RECFM=FB,LRECL=140,BLKSIZE=5600)
 //STDERR   DD   SYSOUT=*,DCB=(RECFM=FB,LRECL=140,BLKSIZE=5600)
-//STDIN    DD   DUMMY   
+//STDIN    DD   DUMMY
+//*
+//SAMPLIB  EXEC PGM=PDSLOAD
+//STEPLIB  DD  DSN=SYSC.LINKLIB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSUT2   DD  DISP=SHR,DSN=SYS2.SAMPLIB
+//SYSUT1   DD DATA,DLM=@@
+./ ADD NAME=BSPOSCMD
+//BSPOSCMD  JOB  (SETUP),
+//             'Run BSPOSCMD',
+//             CLASS=A,
+//             MSGCLASS=H,
+//             MSGLEVEL=(1,1),
+//             NOTIFY=&SYSUID
+//********************************************************************
+//*
+//* Name: BSPOSCMD
+//*
+//* Desc: Run the BSPOSCMD program
+//*
+//********************************************************************
+//GO1     EXEC PGM=BSPOSCMD,PARM='D A,L'
+//GO2     EXEC PGM=BSPOSCMD,PARM='S DBREPORT'
+//SYSIN DD *
+I SMF
+D A,L 

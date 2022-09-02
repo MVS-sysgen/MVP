@@ -1,0 +1,14 @@
+Package: BSPVTMWT
+Version: 1.0
+Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
+Depends: 
+Homepage: CBT Tape FILE 547
+Description: Wait for VTAM ACB
+ This routine waits for a VTAM ACB to become available.  The ACB
+ name to be waited for is specified in the PARM keyword of the
+ JCL EXEC Card
+
+ This module can be used to start a VTAM application only if its
+ related ACB is available
+
+ SAMPLE EXECUTION JCL can be found in SYS2.SAMPLIB(BSPVTMWT)

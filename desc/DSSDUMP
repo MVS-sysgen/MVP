@@ -1,0 +1,87 @@
+Package: DSSDUMP
+Version: 1.1
+Maintainer: gerhard (at) postpischil (dot) com
+Depends: ESPMAC PVTMACS
+Homepage: CBT Tape FILE 860
+Description: DATA SET DUMP IN ADRDSSU FORM
+ DSSDUMP - QUICK AND DIRTY SUBSTITUTE FOR MVS 3.8J USERS         
+
+ To run authorized requires READ access to the profile DSSAUTH in the
+ FACILITY class.
+                                                            
+ PROGRAM IS AUTHORIZED, AND REENTRANT (but not all subroutines)  
+ REQUIRED DD CARDS:                                              
+  SYSPRINT - PROCESSING LOG                                     
+  SYSIN    - REQUESTS:                                          
+        Note that all reserved words may be abbreviated to the 
+        first three characters (e.g., OPT for OPTIONS)         
+   OPTIONS {ENQ,NOENQ,TEST,DEBUG,NODEBUG}   <anwhere in SYSIN> 
+           {ALLDATA,EXPORT,LIST,SHOW}       <anwhere in SYSIN> 
+        ENQ       issues an exclusive ENQ TEST for each data   
+                  set. Dump continues if DS not available,     
+                  and issues RC=4. Applies from prior DUMP on. 
+        NOENQ     (default). Dumps DS as is.                   
+        ALLDATA / ALLEXCP   Causes all tracks, including unused
+                  ones, to be written out. May be needed to    
+                  recover from invalid, non-zero LSTAR.        
+                  This option also preserves LABEL=SUL data.   
+        EXPORT    modifies the output DSCB1 by removing any    
+                  expiration date and password flags.          
+        TEST      bypasses all TAPE output. Note that file has 
+                  been opened already, and will be empty.      
+        DEBUG     -not implemented-                            
+        NODEBUG   -not implemented-                            
+        LIST / SHOW   - display current OPTION settings.       
+   INCLUDE mask / DUMP mask - one or more dump requests per run
+        mask      specifies a data set name (unquoted). If it  
+                  contains an asterisk, question mark, or      
+                  percent sign, it is treated as a mask.       
+                  A name ending in a period is treated as a    
+                  mask followed by an implied **               
+                  In MVS (VSAM catalog), the first index level 
+                  may not contain a mask character. Also note  
+                  that VSAM catalog processing does not support
+                  detection or processing of alias entries.    
+                  Note that a percent sign is treated as a     
+                  positional mask (one to one correspondence   
+                  of characters/mask to dsname).               
+                  Any number of DUMP cards may be used in a run
+                  but only about 700 data sets will fit in the 
+                  name table (assembly option)                 
+   DUMP mask VOLUME(serial)   Processes matching data sets on  
+                  that volume serial only. If this results in  
+                  duplicate data set names, a .D#nnnnnn is     
+                  appended to duplicates on higher volume      
+                  serials (i.e., the cataloged entry may be the
+                  one that gets renamed). Masking bytes are    
+                  valid in any position in the mask.           
+   EXCLUDE mask        (optional) follows relevant DUMP card   
+        mask      as above. Excludes matching data sets chosen 
+                  by the previous DUMP/INCLUDE/SELECT card.    
+   PREFIX name    causes all data set names to be prefixed by  
+                  the specified text string. It is not required
+                  to be an index level (e.g., SYS9.), but if   
+                  not, generated names may be syntactically    
+                  invalid. Result names are truncated to 44    
+                  characters, and a trailing period is blanked.
+                  Only one PREFIX card may be used per run,    
+                  and it is mutually exclusive of RENAME and   
+                  STRIP options.                               
+   STRIP name     The specified string is removed from any DSN 
+                  where it is found. Multiple STRIP and RENAME 
+                  requests are supported (up to 16; ASM option)
+   RENAME oldname newname   The specified string is replaced in
+                  any DSN found and replaced by prefix newname.
+                  Up to 16 RENAME and STRIP requests are legal.
+                  All strings in PREFIX/RENAME/STRIP are       
+                  limited to 23 characters (assembly option).  
+                                                            
+  TAPE     - UNIT,DSN,VOLSER - dump tape(s) - in DSS format,    
+                       uncompressed; TEST assumed if missing.  
+   RECFM=U, BLKSIZE=65520 is the default for tape output.      
+   RECFM=U  7892<block size<65520 is supported.                
+   RECFM=V  is supported, with blocks 7900<block size<32760    
+                                                            
+   For DASD output, the range is 7892<data size<32760, with    
+   the default being either the track size (if >=7892) or the  
+   half-track size for modulo devices.                         

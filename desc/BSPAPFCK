@@ -1,0 +1,20 @@
+Package: BSPAPFCK
+Version: 1.0
+Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
+Depends: 
+Homepage: CBT Tape FILE 547
+Description: Check IEAAPFxx members for Plausibility
+ This program scans PARMLIB for members with the name IEAAPFxx.
+ For each line in each member the following checks are made:
+
+  a1) Is the dataset cataloged?
+  a2) If yes, is the dataset cataloged on the named volume?
+  b)  Is the named volume available?
+  c)  Is the dataset physically located on the named volume?
+
+  Required DD names:
+
+  PARMLIB    points to PDS with IEAAPFxx members to be checked
+  SYSPRINT   output queue for report
+
+SAMPLE EXECUTION JCL can be found in SYS2.SAMPLIB(BSPAPFCK)

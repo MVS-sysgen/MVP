@@ -1,0 +1,18 @@
+Package: DISKMAP
+Version: 1.4
+Maintainer: Jay Moseley
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/cbtware.htm
+Description: MAP DIRECT ACCESS DEVICE ALLOCATION
+ DISKMAP reads the VTOC for one or more DASD volumes specified and 
+ produces a report that includes detailed allocation information for 
+ each dataset on the selected volume(s) followed by an allocation report
+ showing what tracks on the volume are allocated to each dataset.
+
+ From the comments at the top of the source, DISKMAP originated at 
+ Triangle Universities and has had extensions/modifications at several 
+ installations, the last being AFDSC/SFI (Pentagon) in 1982.  There are
+ a couple of versions on the CBT tape, one on the base tape at file #316
+ and another on the overflow tape at file #131.  The two versions are 
+ identical.
+

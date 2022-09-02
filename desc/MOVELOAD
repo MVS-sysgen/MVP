@@ -1,0 +1,22 @@
+Package: MOVELOAD
+Version: 1.0
+Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
+Depends: 
+Homepage: CBT Tape FILE 547
+Description: Load IEHMOVE modules & link to IEHMOVE
+
+   MOVELOAD - Load IEHMOVE modules & link to IEHMOVE
+   MOVELOD - Load/Delete IEHMOVE modules
+
+     Entry:  As at entry to IEHMOVE
+
+     Exit:   As at exit from IEHMOVE
+
+ When using IEHMOVE on small data sets, IEHMOVE can do as much
+ I/O loading its modules as copying data.  This program
+ pre-loads all RENT or REUS IEHMOVE modules to avoid the
+ program load I/O.
+
+ Since the normal IEHMOVE requires APF authorization to run,
+ this module would have to be linked AC=1 to run it.                 
+                                                                    

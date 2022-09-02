@@ -1,0 +1,16 @@
+Package: BSPPA2SI
+Version: 1.0
+Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
+Depends: 
+Homepage: CBT Tape FILE 547
+Description: BSPPA2SI - Parm to SYSIN 
+
+This program takes the APRM statement (which can contain procedure
+variables), and plaes it into an output file
+
+This output file can then be fed later as input to another program
+Required DD statements:
+
+   SYSUT1  :  Card image output file
+
+SAMPLE EXECUTION JCL can be found in SYS2.SAMPLIB(BSPPA2SI)

@@ -1,0 +1,109 @@
+Package: BSPPILOT
+Version: 1.0
+Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
+Depends: 
+Homepage: CBT Tape FILE 547
+Description: BSPPILOT - The MVS Auto Pilot 
+
+ The idea to the MVS auto pilot was taken from CBT tape 249, file 33.
+ Unfortunately, I couldn't get it to assemble correctly fro MVS 3.8.
+
+ After a little bit of poking around in the source and doing a few
+ changes here and there I could get it to compile, but it didn't
+ work reliably.  That's when I decided to rewrite the whole thing
+ and, while being at it, add a few functions as well
+
+ Rewrite might be too strong a word, though.  Large portions of the
+ R2D2 part in IEECVXIT were taken unchanged from the CBT tape
+
+ SAMPLE EXECUTION JCL can be found in SYS2.SAMPLIB(BSPPILOT)
+
+ Add the following to SYS1.PARLIB(COMMND00) to start BSPPILOT on IPL:
+ COM='S BSPPILOT'
+
+ What do we have now:
+    * IEECVXIT - The WTO exit to automatically react to WTOs.  This
+                 function is table driven, and currently the following
+                 messages are recognized (and are being processed on)
+                   IST020I        S TSO          s TSO
+                   IEE362A        S DUMPSMF      dump full SYS1.MANx
+                   IEEXXXA        S DUMPEREP     dump full SYS1.LOGREC
+                   IEA994A        S DUMPDUMP     dump full dump datasets
+                   $HASP190       $SPRTx         setup printer
+                   BSPSD999       S BSPSHUTD     Initiate shutdown
+                 The routing and descriptor codes of the following
+                 messages are altered such that they are now
+                 roll-deletetable
+                    IEA911E        full dump on XXXX for asid N
+                    IEA994E        partial dump.....
+                    IEA994A        all dump datasets are full
+                    IGF995I        I/O Restart scheduled
+                    IGF991E        IGF msg for mount, swap etc
+                 The following messages are suppressed altogether
+                    BSPTEST1       used for playtesting Autopilot
+                    $HASP000       JEs OK msg
+    * R2D2     - An SRB routine that runs in the BSPPILOT address
+                 space and replies to the following WTORs
+                  IEF238D  - Device name, Wait, or Cancel      WAIT
+                  IEF433D  - Hold or Nohold                    NOHOLD
+                  IEF434D  - invalid reply, Hold or Nohold     NOHOLD
+                  IKT010D  - SIC or FSTOP                      SIC
+                  IKT012D  - Reply U                           U
+                  IEC301A  - Master catalog password           U
+                  IEC804A  -                                   POST
+                  IFA006A  - Dump request for active MANx      CANCEL
+                  BSPTEST0 - Autopilot test message            U
+    * BSPPILOT - (Or should this be called C3PO)? A address space which
+                 is doing nothing most of the time. It serves as the
+                 companion address space to R2D2 and IEECVXIT.  The
+                 WTO exit and the WTOR reply processor will only if and
+                 only if the BSPPILOT address space is running.  You
+                 might consider starting it via COMMND00 processing of
+                 SYS1.PARMLIB
+ 
+                 The operator (that is you) can communicate with
+                 BSPPILOT via modify commands.  Some of them are useful
+                 some not quite so useful
+                   P BSPPILOT            These commands will gracefully
+                   F BSPPILOT,STOP       terminate the MVS autopilot
+                   F BSPPILOT,END        and disable WTO(R) processing
+ 
+                   F BSPPILOT,SHUTDOWN   will initiate the MVS shutdown
+                                         processing.  A script in
+                                         SYS1.PARMLIB(SHUTDOWN) will
+                                         be used to run operator
+                                         commands shutdown sequence
+ 
+                   F BSPPILOT,SHUTFAST   Same as above, except that the
+                                         operator will not be asked for
+                                         confirmation of the shutdown
+                                         request first
+                                         commands shutdown sequence
+ 
+                   F BSPPILOT,SHUTCANC   Will cancel the shutdown
+                                         sequence that was initiated via
+                                         the SHUTDOWN or SHUTFAST modify
+                                         command
+                                         commands shutdown sequence
+ 
+                   F BSPPILOT,CAT        Shows the splash screen
+ 
+                   F BSPPILOT,COOKIE     Gives you a wisdom from the
+                                         fortune cookie jar
+ 
+                   F BSPPILOT,SETPF      Invokes BSPSETPF program to
+                                         set MVS console function keys
+ 
+                   F BSPPILOT,LISTAPF    Invokes BSPAPFLS to list the
+                   F BSPPILOT,APFLIST    APF priviledged data sets
+ 
+                   F BSPPILOT,TEST       Issues a WTOR and a WTO that
+                                         can be used in play testing
+                                         the autooperator
+                   F BSPPILOT,SCRIPT=sss This runs the script sss from
+                   F BSPPILOT,RUN=sss    the PDS that is in the SCRIPTS
+                                         DDNAME of the BSPPILOT proc.
+                                         If there is no SCRIPTS DD name
+                                         SYS1.PARMLIB will be used
+                                         for more info see BSPRUNSC
+                                         doc in member RUNSC@

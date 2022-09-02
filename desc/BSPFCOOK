@@ -1,0 +1,30 @@
+Package: BSPFCOOK
+Version: 1.0
+Maintainer: "Volker Bandke" <vbandke@bsp-gmbh.com>
+Depends: 
+Homepage: CBT Tape FILE 547
+Description: Fortune Cookie Jar'
+
+ This program display my snoozing little cat (well, actually, he   
+ is no longer little at all, but a proud, big tomcat.  But snoozing
+ is still his favourite pastime)                                   
+                                                                   
+ As usual, my little cat comes with some wisdom from the fortune   
+ cookie jar.  I merged my database with about 7000 entries with    
+ the one found on CBTTAPE 429, file 300, member MURPHY
+
+ The program detects the environment it is running in and uses
+ WTO when running as STC, PUT when running as batch, and TPUT
+ when running under TSO             
+                                                                   
+                |l      _,,,---,,_
+          ZZZzz /,:.-':'    -.  ;-;;,
+               |,4-  ) )-,_. ,( (  :'-'
+              '---''(_/--'  :-')_)
+
+ If not controlled, work will flow to the competent man ....
+ .... until he submerges
+
+    (Another wisdom from the fortune cookie jar)
+
+ Also aliased as: COOKIE, MURPHY, FCOOKIE, and FORTUNE
