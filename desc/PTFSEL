@@ -1,0 +1,12 @@
+Package: PTFSEL
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/ptfsel.htm
+Description: Lists and optionally copies PTFs from an input PTF file 
+ PTFSEL will list and optionally copy either all or selected PTFs from
+ an input PTF dataset.
+ 
+ It is located in File #65 of the CBT overflow tape and was written by
+ Lionel Dyck at Rockwell Internationall in Seal Beach, CA.
+ 

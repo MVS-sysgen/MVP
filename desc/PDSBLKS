@@ -1,0 +1,18 @@
+Package: PDSBLKS
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/pdsblks.htm
+Description: TSO command to display directory blocks allocated/used for a Partitioned Dataset 
+ PDSBLKS is a TSO command that displays the number of directory blocks
+ allocated and used for a specified Partitioned Dataset.
+ 
+ I retrieved it from the Goddard AWS tape image at the CBT tape site.
+ It was originally designed and developed by J. Schindler at the NASA,
+ Goddard Space Flight Center in Greenbeld, MD.  There is no date of
+ origin in the source code and no updates listed, but the source and
+ help were offloaded from a 2314 and the entire Goddard tape contents
+ seem to be relevant to OS/360 MVT, so it seems safe to say this code
+ has been around for a while.  But it still works as designed under MVS
+ 3.8j.
+ 

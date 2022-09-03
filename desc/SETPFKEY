@@ -1,0 +1,18 @@
+Package: SETPFKEY
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/setpfkey.htm
+Description: Allows console Program Function Keys to be set at IPL time 
+ The functions assigned to the console(s) Program Function Keys persist
+ from IPL to IPL, but there is no convenient way for those settings to
+ be assigned under MVS 3.8j.  Under later MVS-OS/390-zOS versions there
+ is a SYS1.PARMLIB member that may be used for that function.
+ Fortunately, this utility was written in the era of MVS 3.8j (actually
+ prior to OS/VS2) to solve this requirement and is available for our
+ use.
+ 
+ It is located in File #295 of the older CBT tape version #249 and was
+ written by Barry Goldberg at the Auto Club of Southern California.
+ 
+ 

@@ -1,0 +1,21 @@
+Package: MS
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/ms.htm
+Description: TSO command displays various system statistics and execution information.
+ The MS (Master Summary) TSO command displays various MVS System
+ Information through the use of subcommands (System Statistics, Link
+ Pack Information, TSO statistics, System Initiators, and information on
+ executing Jobs, Started Tasks and TSO users).
+ 
+ The source for this was the SHARE MVS GROUP Modification tape, version
+ 80-007 from July 28, 1980; specifically from the embedded Los Angeles
+ MVS Users Group tapes contained at files #48 through #55.  I see that
+ the version of this tape available from CBT at this time no longer
+ contains these files, so I am glad that I have an earlier version of
+ the tape available.  The load module for the command is built from
+ three CSECTs (MS, JOBS, and USERS) contained on file #53; the help
+ member is found in file #49, and a required macro is from file #51.
+ 
+ 

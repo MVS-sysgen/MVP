@@ -1,0 +1,14 @@
+Package: TAPEMAP
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/tapemap.htm
+Description: Analyze tapes and report on contents of datasets 
+ TAPEMAP will read a tape and produce a detailed report of the contents
+ of the datasets it contains.  It recognizes a variety of tape formats,
+ including IEBCOPY, SMP, and IEBUPDTE.
+ 
+ TAPEMAP is located in File #299 of the CBT tape and was written by
+ Leonard D. Woren.
+ 
+ 

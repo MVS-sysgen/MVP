@@ -1,0 +1,22 @@
+Package: VSAMLIST
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/vsamlist.htm
+Description: VSAM Catalog List Utility 
+ VSAMLIST scans one or more specified VSAM Catalogs and produces a
+ summary report of the catalog contents, a detail report of the VSAM
+ volume contents, and a VSAM track allocation map.  It can also be used
+ to maintain a history file for all VSAM entries reported by the
+ program.  The most useful feature that it provides is the means to
+ review allocation and utilization information for VSAM objects, similar
+ to a VTOC listing for Non-VSAM datasets.
+ 
+ It is located in File #38 of the CBT Overflow tape and originally came
+ from Memorex.  The version I have used for installation came from
+ Version #466 of the CBT collection.
+ 
+ Prerequisite:  The MVT Sort/Merge must be installed on your system for
+ this program to execute.
+ 
+ 

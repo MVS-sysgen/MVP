@@ -1,0 +1,12 @@
+Package: CONSAMS
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/consams.htm
+Description: Execute IDCAMS commands from system console 
+ CONSAMS provides an operator console interface to Access Method
+ Services (IDCAMS).
+ 
+ It is located in File #65 of the CBT overflow tape and is part of a
+ collection from the Los Angeles User Group tape.
+ 

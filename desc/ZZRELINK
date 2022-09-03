@@ -1,0 +1,19 @@
+Package: ZZRELINK
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/zzrelink.htm
+Description: Builds JCL to re link edit load module(s)
+ ZZRELINK is a utility that can be used to examine selected load modules
+ from a PDS (or an entire PDS) and either generate JCL to execute the
+ link editor to re-link the modules or dynamically invoke the link
+ editor to re-link them modules.
+ 
+ ZZRELINK is located in File #361 of the CBT tape and was written by
+ Frank Johnston of Chambersburg, Pennsylvania.  The assembled load
+ modules for the utilities on File #361 are contained in file #362, but
+ since most of the contents of the CBT tape were assembled on much later
+ operating systems than we are using under Hercules, I prefer to take
+ the source and re-assemble it.
+ 
+ 

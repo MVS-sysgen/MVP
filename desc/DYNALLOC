@@ -1,0 +1,15 @@
+Package: DYNALLOC
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/dynalloc.htm
+Description: Subroutine allows COBOL main program to dynamically allocate datasets 
+ DYNALLOC is a subroutine, actually two subroutines linked into a single
+ load module, that may be called from a COBOL main program to
+ dynamically allocate datasets at run time.
+ 
+ It is located in File #270 of the CBT tape and is part of a collection
+ submitted by the Washington Department of Information Services.  The
+ main routine was written by Jeff Sprehn and the secondary subroutine,
+ BREAKDSN, was written by Gary Duffield.
+ 

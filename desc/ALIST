@@ -1,0 +1,17 @@
+Package: ALIST
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/alist.htm
+Description: TSO command lists information about all allocated datasets
+ ALIST is a TSO command that provides a better display of the same
+ information that the IBM supplied LISTALC command shows, which is all
+ datasets allocated to the current TSO User session.  Where LISTALC only
+ shows the dataset name, ALIST includes the DD Name, dataset
+ organization (DSORG), allocation type, volume serial number, and
+ dataset name.
+ 
+ ALIST is a product of Lionel Dyck at Rockwell International in Seal
+ Beach, CA.  This version is from the older CBT tape, version #249.
+ 
+ 

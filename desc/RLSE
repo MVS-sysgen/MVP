@@ -1,0 +1,14 @@
+Package: RLSE
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/rlse.htm
+Description: TSO command releases unused space allocated to DASD resident datasets
+ RLSE is a TSO command that releases unused DASD space allocated to
+ datasets.
+ 
+ It is located in File #300 of the #249 version of the CBT tape and is
+ part of a collection of TSO commands from Jim Marshall of the Air
+ Force.  It was originally written by Bill Godfrey at the Planning
+ Research Corporation in November of 1978.
+ 

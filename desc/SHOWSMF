@@ -1,0 +1,15 @@
+Package: SHOWSMF
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/showsmf.htm
+Description: Display information about SMF datasets (TSO command or STC) 
+ SHOWSMF may be executed as a TSO command or as a Started Task to
+ display information about the SMF datasets (SYS1.MANX and SYS1.MANY).
+ Information shown is the allocation for the datasets and the amount of
+ space used, plus which dataset is currently active (receiving records
+ from the SMF writer).
+ 
+ It is located in File #301 of the CBT overflow tape and is part of a
+ huge collection of programs submitted by Intel Corporation.
+ 

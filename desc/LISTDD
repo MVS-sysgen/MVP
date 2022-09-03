@@ -1,0 +1,15 @@
+Package: LISTDD
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/listdd.htm
+Description: TSO command to list attributes of allocated datasets 
+ The LISTDD TSO command displays dataset information for a specified
+ allocated DD name or for all allocated DD names.  The format is similar
+ to LISTA output, but allows selection of single DD name and displays
+ all information at one time.
+ 
+ The source for LISTDD was the XEPHON MVS Update (1988) from the CBT
+ tape (file #830); the original author was Paul Horak.
+ 
+ 

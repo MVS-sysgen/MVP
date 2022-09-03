@@ -1,0 +1,16 @@
+Package: LISTPDS
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/listpds.htm
+Description: List and/or punch source libraries or datasets 
+ LISTPDS is a dataset utility program for listing and/or punching source
+ libraries or datasets.  It generates formatted listings of a PDS's
+ directory, the contents of processed members or sequential files, as
+ well as (optionally) punching processed members and/or sequential
+ datasets.  Records may be generated which allow the output to be used
+ in conjunction with the IBM utility IEBUPDTE.
+ 
+ LISTPDS is located in File #316 of the CBT tape and was developed by
+ Gene Czarcinski at the NASA/Goddard Space Flight Center.
+ 

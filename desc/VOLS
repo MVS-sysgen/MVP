@@ -1,0 +1,19 @@
+Package: VOLS
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/vols.htm
+Description: TSO command to display online DASD volumes + available space 
+ VOLS is a TSO command that displays information about DASD volumes that
+ are currently online; the information displayed for each volume
+ includes
+ * the amount of free space available
+ * the largest block of free space available
+ * indication if datasets on the volume are currently in use
+ * volume attribute (storage, public, or private)
+ * number of DSCBs currently open
+ 
+ It is located in File #360 of the CBT tape and is part of a collection
+ contributed by the Wilson Street Regional Computing Center for the
+ State of Wisconsin.
+ 

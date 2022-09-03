@@ -1,0 +1,15 @@
+Package: DDN
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/ddn.htm
+Description: TSO command shorthand version of ALLOC
+ DDN is a TSO command that provides an easier way to allocate datasets
+ for a TSO User session than using the ALLOCate TSO command provided by
+ IBM.
+ 
+ It is located in File #300 of the #249 version of the CBT tape and is
+ part of a collection of TSO commands from Jim Marshall of the Air
+ Force.  It was originally written by Bill Godfrey at the Planning
+ Research Corporation in May of 1980.
+ 

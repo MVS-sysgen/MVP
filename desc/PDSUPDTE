@@ -1,0 +1,17 @@
+Package: PDSUPDTE
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/pdsupdte.htm
+Description: Allows global modifications of contents of libraries 
+ PDSUPDTE is a reconstituted version of the IPOUPDTE program (also
+ distributed as CPPUPDTE).  It provides the ability to apply a group of
+ search/replace type modifications to JCL or control cards contained in
+ all members of one to several libraries (Partitioned Datasets).  It can
+ also be useful for searching for and changing fields in source code
+ statements.
+ 
+ PDSUPDTE is located in File #65 of the CBT Overflow tape and is part of
+ a collection submitted by the Los Angeles User Group.
+ 
+ 

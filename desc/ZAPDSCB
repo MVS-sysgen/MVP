@@ -1,0 +1,24 @@
+Package: ZAPDSCB
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/zapdscb.htm
+Description: Batch program to change DSCB attributes of any DASD dataset 
+ ZAPDSCB is a batch program that can be used to change the attributes of
+ any existing DASD dataset.  Elements that may be changed with the
+ program are:
+ * DCB characteristics
+ * protection status
+ * expiration date
+ * use count
+ * secondary space allocation amount
+ 
+ It is located in File #163 of the CBT tape and is part of a collection
+ of batch programs and TSO commands contributed by Dave Phillips of
+ Ouiedo, FL.  He includes this caution in the comments of the program's
+ source:
+ 
+ "... care must be taken using this program - it is about as
+ dangerous as SUPERZAP."
+ 
+ 

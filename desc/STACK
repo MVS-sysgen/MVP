@@ -1,0 +1,24 @@
+Package: STACK
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/stack.htm
+Description: TSO command capture output from PUTGET I/O of next TSO command
+ STACK is a TSO command processor which enables interception of PUTGET
+ IO for the duration of the TSO command following STACK.  Thus the
+ output from a TSO command may be directed to a dataset.  STACK imitates
+ the TMP to obtain the next TSO command and attach it with the IO
+ redirected via the STACK macro.  STACK can be used to execute a command
+ from a specific library (for example a test version) or to call a
+ program using dynamic linkage since the optional TASKDD is also used as
+ the tasklib for the duration of the command.  VIO datasets may be used
+ for the IO files. All operands are optional.  All file I/O must be done
+ via PUTGET module to be intercepted.
+ 
+ The source for STACK is located in File #270 of the CBT tape.  It also
+ requires two additional module - KMDPARS and OPERSCAN - as well as
+ several macros, all also located in File #270.  STACK was written by
+ Kermit Kiser at the Washington Department of Information Services in
+ Olympia, WA.
+ 
+ 

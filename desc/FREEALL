@@ -1,0 +1,24 @@
+Package: FREEALL
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/freeall.htm
+Description: TSO command frees all allocated datasets
+ FREEALL is a TSO command that has been around for a long time, and
+ there are many different versions out there.  It was on my "want to
+ install" list when I started digging around in the old 249 version of
+ the CBT tape, so when I saw a couple of different versions there, I
+ pulled them off to examine.  The notes on each version said that they
+ occasionally experienced unresolved ABENDs,  Not what I wanted to have
+ first-hand experience with, nor did I particularly want to search for
+ the problem and resolve it.  So, I looked at the current version of the
+ CBT tape and found several versions there, as well.
+ 
+ I chose the one located in File #300, which is part of a collection of
+ TSO commands contributed by Jim Marshall, formerly of the U.S. Air
+ Force and now with U.S. Treasury Department.  You will find some of his
+ batch utilities in my CBT ware collection, also.  He does wonderful
+ work!  I was delighted to find that his FREEALL assembles and functions
+ perfectly under MVS 3.8j.
+ 
+ 

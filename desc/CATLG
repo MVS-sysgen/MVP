@@ -1,0 +1,14 @@
+Package: CATLG
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/catlg.htm
+Description: TSO commands adds three IEHPROGM functions
+ CATLG is a collection of three TSO commands that add the equivalent
+ IEHPROGM functions - CATLG, UNCATLG, and SCRATCH - to TSO.
+ 
+ It is located in File #163 of the CBT tape and is part of a collection
+ of batch programs and TSO commands contributed by Dave Phillips of
+ Ouiedo, FL.
+ 
+ 

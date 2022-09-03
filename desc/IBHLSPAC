@@ -1,0 +1,19 @@
+Package: IBHLSPAC
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/ibhlspac.htm
+Description: List all availble space on DASD that are online 
+ 
+ IBHLSPAC produces a list of free DASD space by using the SMF LSPACE
+ routine (SVC 78).  Information is provided for all online DASD volumes
+ by scanning the UCB and additional information is included by matching
+ the online volumes with the comment information contained in the
+ VATLST00 member of SYS1.PARMLIB.
+ 
+ It is located in File #21 of the CBT tape and originated from G M
+ Schlesak at Bell & Howell, Evanston, IL.
+ 
+ A sample of the output can be seen in [1]IBHLSPAC Output.
+ 
+ 

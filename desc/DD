@@ -1,0 +1,15 @@
+Package: DD
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/dd.htm
+Description: TSO command displays the attributes of datasets
+ DD is a TSO command that displays the attributes of datasets.  It does
+ not require the dataset for which information is to be displayed be
+ catalogued, and it provides more information for Non-VSAM datasets (and
+ Generation Data Groups) than LISTCAT does.
+ 
+ It is located in File #163 of the CBT tape and is part of a collection
+ of batch programs and TSO commands contributed by Dave Phillips of
+ Ouiedo, FL.
+ 

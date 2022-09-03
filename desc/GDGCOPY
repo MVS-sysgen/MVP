@@ -1,0 +1,21 @@
+Package: GDGCOPY
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/gdgcopy.htm
+Description: Copies Generation Data Groups in correct order 
+ GDGCOPY is a handy little utility that will copy all the generations in
+ a Generation Data Group into their ascending order by creation
+ (generation) number, rather than in descending order, which is what you
+ will get if you allow MVS to do the concatenation for you.
+ 
+ GDGCOPY is located in File #482 of the CBT tape and was written by Eric
+ Bielefeld at P&H Mining Equipment in Milwaukee, WI.  He posted
+ information about his utility on bit.listserv.ibm-main back in 2001 and
+ I have kept a hardcopy of the message on the wall by my desk since
+ then, thinking someday I would get around to installing this under
+ Hercules/MVS.  Finally!  I'm not sure there will be a great deal of use
+ for this utility in the Hercules/MVS community, but it is great to know
+ that it exists and how to use it.
+ 
+ 

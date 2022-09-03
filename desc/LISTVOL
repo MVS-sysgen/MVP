@@ -1,0 +1,17 @@
+Package: LISTVOL
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/listvol.htm
+Description: TSO command displays volume(s) on which dataset is allocated
+ The LISTVOL TSO command displays the volume serial number for the DASD
+ volumes on which selected datasets are allocated.  Although the DD TSO
+ command displays more useful information for datasets, I had this
+ pulled from the CBT tape so I thought I would include it here.
+ 
+ The source for LISTVOL is located in File #48 of the older version #129
+ CBT tape.  It also requires a separate external module - LOCINDEX -
+ which is located in File #50.  The help text is located in File #51,
+ combined with the help for another command.
+ 
+ 

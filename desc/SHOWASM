@@ -1,0 +1,15 @@
+Package: SHOWASM
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/showasm.htm
+Description: TSO command display aux storage, page/swap dataset information
+ SHOWASM is a TSO command that displays the current auxiliary storage
+ manager slot status and the status for all current page and swap
+ datasets on the IPLed system.  It may also be executed as a started
+ task from the MVS operator's console.
+ 
+ It is located in File #301 of the CBT overflow tape (was formerly
+ located in file #352 of the main CBT tape) and is part of a collection
+ of batch programs and TSO commands contributed by Ken True at INTEL.
+ 

@@ -1,0 +1,12 @@
+Package: ZDUMPTP
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/ztdumptp.htm
+Description: Generalized dump of tape datasets in hex format 
+ ZDUMPTP can be used to examine tapes to determine what is on them.
+ 
+ It is located in File #316 of the CBT tape and originated at the U.S.
+ Treasury Financial Management Service
+ 
+ 

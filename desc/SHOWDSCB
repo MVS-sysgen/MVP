@@ -1,0 +1,13 @@
+Package: SHOWDSCB
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/showdscb.htm
+Description: Batch program to decode and display DSCB information for dataset(s) 
+ SHOWDSCB reads the DSCB for one or more datasets, then decodes and
+ prints the information.
+ 
+ It is located in File #860 of the CBT tape and is part of the large
+ suite of programs written by Gerhard Postpischil.
+ 
+ 

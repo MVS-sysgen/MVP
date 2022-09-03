@@ -1,0 +1,16 @@
+Package: SYSREPRO
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/sysrepro.htm
+Description: Another IEBGENER clone, but with some useful features 
+ Although SUPERGEN has more options, SYSREPRO is a good stand-in for
+ IEBGENER when you need to quickly copy all or part of a sequential
+ dataset.  As a bonus, you get a summary report of what was copied.
+ 
+ It is located in File #316 of the CBT tape and is part of the large
+ suite of batch utility programs contributed by Jim Marshall of the U.S.
+ Treasury.  The program was originally written by Bill Godfrey at the
+ Planning Research Corporation.
+ 
+ 

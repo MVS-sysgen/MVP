@@ -1,0 +1,15 @@
+Package: FINDFILE
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/findfile.htm
+Description: TSO command displays the catalog and DASD location of a specified dataset
+ FINDFILE is a TSO command that displays the catalog and location
+ information for a specified dataset.  It is useful for locating a
+ dataset that may have versions on more than one DASD volume.
+ 
+ It is located in File #300 of the #249 version of the CBT tape and is
+ part of a collection of TSO commands from Jim Marshall of the Air
+ Force.  From the program's source, the original author was Scott
+ Heilman in October, 1977.
+ 

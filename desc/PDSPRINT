@@ -1,0 +1,19 @@
+Package: PDSPRINT
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/pdsprint.htm
+Description: Print/punch members of partitioned datasets 
+ PDSPRINT will print or punch, in alphabetical order, all or selected
+ member(s) of a partitioned dataset.
+ 
+ It is located in File #316 of the CBT tape and originated at the U.S.
+ Treasury Financial Management Service.
+ 
+ A sample of the output can be seen in [1]PDSPRINT output.  This example
+ contains the output of two executions, the first uses the PRINT MEMBER
+ command syntax to select a single member while the second uses the
+ PRINT SCAN command syntax to select all members that have names
+ matching the parameter argument.
+ 
+ 

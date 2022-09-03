@@ -1,0 +1,18 @@
+Package: VTOC
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/vtoc.htm
+Description: TSO command to display DASD VTOC information 
+ The VTOC TSO command displays information from the Volume Table of
+ Contents of selected DASD.  It allows an incredible permutation of
+ various selection criteria, yielding a very powerful command for your
+ toolbox.
+ 
+ It is located in File #112 of the older version #129 CBT tape.  It was
+ written by R. L. Miller of Fireman's Fund Insurance in San Rafael, CA.
+ There is a later version of VTOC on the more current versions of CBT,
+ but they require modification in order to install/use on MVS 3.8j, and
+ this version is quite acceptable on our older version of MVS.
+ 
+ 

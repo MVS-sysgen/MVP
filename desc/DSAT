@@ -1,0 +1,18 @@
+Package: DSAT
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/dsat.htm
+Description: TSO command displays data set information by index level.
+ DSAT is a TSO command that displays information about one or several
+ datasets which are selected based upon operands specified with the
+ command.
+ 
+ It is located in file #860 of version 488 of the CBT tape.  This file
+ contains a collection of programs written, or modified, by Gerhard
+ Postpischil.  The program was originally submitted to the CBT by
+ Florida Power and Light and the version Gerhard has included was from
+ the older version 249 of CBT.  I went back to the original submission
+ to retrieve the help information and updated it to match Gerhard's
+ version of the program.
+ 

@@ -1,0 +1,20 @@
+Package: TAPESCAN
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/tapescan.htm
+Description: Report (and copy) contents of datasets on tapes 
+ TAPESCAN can be used to read a tape volume and produce a report giving
+ an overview of the contents.  Although perhaps of less value running
+ against virtual tapes in the Hercules environment, it also has the
+ ability to copy datasets and recover data past the first end-of-volume
+ indicator. Information on the report produced includes record and byte
+ count, length estimate (again not very useful in our environment), and
+ the display of the first 100 bytes of a specifiable number of records
+ from the beginning of each data block read.
+ 
+ TAPESCAN is located in File #102 of the CBT tape and was written by
+ Will Daland at the University of North Carolina at Chapel Hill. It was
+ modified by Sam Golob in 2000 to handle 64K blocks.
+ 
+ 

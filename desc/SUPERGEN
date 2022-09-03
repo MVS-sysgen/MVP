@@ -1,0 +1,20 @@
+Package: SUPERGEN
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/supergen.htm
+Description: Like IEBGENER, but with many more options 
+ SUPERGEN (SUPER IEBGENER) allows selective copying of records from
+ sequential datasets with a limited facility to change the records
+ during the copy operation.  It may also be used to produce hex dumps of
+ data similar to the IDCAMS PRINT function.
+ 
+ It is located in File #40 of the CBT tape and is contributed by Peoples
+ National Bank of Washington.
+ 
+ Peoples National Bank also included user documentation for all the
+ utilities they submitted in CBT File 40.  I have included an Adobe PDF
+ document containing the pages relevant to SUPERGEN in the installation
+ archive.
+ 
+ 

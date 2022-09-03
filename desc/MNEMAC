@@ -1,0 +1,24 @@
+Package: MNEMAC
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/mnemac.htm
+Description: Extended mnemonic macros for IFOX assembler 
+ Many of the more recent programs written in assembler rely upon
+ extended mnemonic op codes that were not available in the MVS assembler
+ - Assembler H (IFOX00).  Jan Jaeger has written a set of macros that
+ provide the equivalent functionality of these newer opcodes to
+ Assembler H, which will allow a number of programs to correctly
+ assemble that would otherwise be unavailable for use by the Hercules'
+ community.
+ 
+ From the documentation member of file #177 of the CBT tape:
+ 
+ ... is from Jan Jaeger, and contains an IEBUPDTE-
+ unloaded library of macros, which simulate XA, ESA, OS/390,
+ and z/OS (64-bit) instructions. The intent of this
+ library is to be able to assemble newer code on an
+ older version of the Assembler, even perhaps on
+ IFOX00 ... The original version of this file came from the
+ (now defunct) FILES section of the Hercules 390 Yahoo group.
+ 

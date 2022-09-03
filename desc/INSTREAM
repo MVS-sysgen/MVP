@@ -1,0 +1,14 @@
+Package: INSTREAM
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/instream.htm
+Description: TSO command to copy statements embedded in CLIST to a dataset 
+ INSTREAM is a TSO command that provides a means to pass embeded
+ statements in a Command List to an invoked program.
+ 
+ I retrieved it from File #300 of the #437 version of the CBT tape and
+ is part of a collection of TSO commands from Jim Marshall of the Air
+ Force.  It was originally written by Bill Godfrey at the Planning
+ Research Corporation in July of 1976.
+ 

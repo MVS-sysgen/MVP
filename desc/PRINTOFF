@@ -1,0 +1,24 @@
+Package: PRINTOFF
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/printoff.htm
+Description: TSO command prints PDS or sequential dataset to SYSOUT
+ The PRINTOFF TSO command allows you to print the contents of a
+ sequential dataset or partitioned dataset members.  The output from the
+ command is released to JES2 immediately for processing, so you can use
+ the command to produce output to an attached (to Hercules) printer
+ while you remain logged onto your TSO session.
+ 
+ There are several versions of the PRINTOFF command available, depending
+ upon which version of the CBT tape you are using.  I chose the one
+ located in File #325 of the current version, which includes this
+ comment:
+ 
+ PRINTOFF - The widely modified IPO supplied TSO command to print a
+ (01/87)   dataset, with yet more functions added. After researching
+ all versions on the CBT tape, Wells Fargo created this
+ version from source from four separate files. We believe this
+ contains all features currently available from all sources.
+ 
+ 

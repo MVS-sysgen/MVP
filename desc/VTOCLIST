@@ -1,0 +1,16 @@
+Package: VTOCLIST
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/vtoclist.htm
+Description: User friendly formatted VTOC
+ VTOCLIST produces a more user-friendly listing of a disk volume's Table
+ of Contents information.
+ 
+ It is located in File #343 of the CBT tape and, according to the $$DOC,
+ originated from the European G.U.I.D.E. tapes.  The author of the
+ original program is Peter Havercan.
+ 
+ A sample of the output can be seen in [1]VTOCLIST.
+ 
+ 

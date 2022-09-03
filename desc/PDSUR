@@ -1,0 +1,22 @@
+Package: PDSUR
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/pdsur.htm
+Description: Unload/Reload PDS in IEHMOVE format 
+ 
+ In February 2018 Sam Golub notified me that the PDSUR utility,
+ originally written by Gene Czarcinski in 1973, has been added to the
+ CBT collection.  I am making the installation jobstream and
+ documentation available here, as well as adding the utility to my
+ SYSCPK tools volume, as I think it is a great alternative when you find
+ yourself needing to reload datasets that were offloaded using the IBM
+ utility IEHMOVE.  It may also be used to create tapes containing
+ offloaded datasets that is compatible with IEHMOVE.
+ 
+ PDSUR is presently located in the Updates section of the CBT website,
+ but will likely appear on the next version of the CBT tape when it is
+ cut.  It will reside in in File #949.
+ 
+ 
+ 

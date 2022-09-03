@@ -1,0 +1,17 @@
+Package: LM
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/lm.htm
+Description: TSO command displays directory for Partitioned Datasets
+ The LM TSO command displays the directory (member list) from a
+ Partitioned Dataset.  A mask may be specified to select members to list
+ based upon their name.  The command may also be used to create a
+ sequential dataset containing the name list for use by another program
+ or command.
+ 
+ The source for LM is located in File #300 of the older version #249 CBT
+ tape.  It was written by Dick Szeide and this version has modifications
+ by Rick Duvall and J. Schindler.
+ 
+ 

@@ -1,0 +1,13 @@
+Package: PDSGEN
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/pdsgen.htm
+Description: Generate card images from one or more PDS libraries 
+ PDSGEN will read the directories of one or more input partitioned
+ datasets and, using a template card image, generate a card image for
+ each member.
+ 
+ It is located in File #357 of the CBT tape and was written by Carl
+ Hafner at Steli, Inc. in Monroe, NY.
+ 

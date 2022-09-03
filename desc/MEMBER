@@ -1,0 +1,17 @@
+Package: MEMBER
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/member.htm
+Description: TSO command to display information about a member of PDS. 
+ MEMBER is a TSO command that displays the information returned by the
+ BLDL macro for the specified member of a Partitioned Dataset.  For load
+ modules, it formats the information contained in the user data field.
+ For members created by ISPF or RPF, it formats the statistics.  For
+ load modules, it can list ESD and IDR information.
+ 
+ I retrieved it from File #300 of the #437 version of the CBT tape and
+ is part of a collection of TSO commands from Jim Marshall of the Air
+ Force.  It was originally written by Bill Godfrey at the Planning
+ Research Corporation in January of 1977.
+ 

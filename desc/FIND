@@ -1,0 +1,12 @@
+Package: FIND
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/find.htm
+Description: TSO command searchs members of PDS for string (similar to 'check' function of PDSUPDTE)
+ FIND is a TSO command that scans all members of a Partitioned Dataset
+ for an argument string and reports the number of occurrences found.
+ 
+ I retrieved it from File #166 of the #341 version of the CBT tape and
+ is part of a collection submitted by Vinh Vu of Frito Lay.
+ 

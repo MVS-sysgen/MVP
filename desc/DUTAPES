@@ -1,0 +1,17 @@
+Package: DUTAPES
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/dutapes.htm
+Description: TSO command display TAPE unit information on TSO User's screen (also STC)
+ DUTAPES is a TSO command that displays information about all Tape
+ devices defined in the IPLed system.  It may also be executed as a
+ started task from the MVS operator's console.
+ 
+ It is located in File #301 of the CBT overflow tape (was formerly
+ located in file #352 of the main CBT tape) and is part of a collection
+ of batch programs and TSO commands contributed by Ken True at INTEL,
+ although from the comments at the top of this module, the original
+ version may have been derived from a program created a United Air
+ Lines.
+ 

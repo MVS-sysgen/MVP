@@ -1,0 +1,15 @@
+Package: FILEATTR
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/fileattr.htm
+Description: Subroutine allows COBOL main program to retrieve dataset attributes 
+ FILEATTR is a subroutine, actually three subroutines linked into a
+ single load module, that may be called from a COBOL main program to
+ return dataset attributes for a supplied dataset name.  The dataset may
+ be catalogued or the Volume Serial number may be supplied to return
+ attributes for an uncatalogued dataset.
+ 
+ It is located in File #270 of the CBT tape and is part of a collection
+ submitted by the Washington Department of Information Services.
+ 

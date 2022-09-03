@@ -1,0 +1,13 @@
+Package: PRINTALL
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/printall.htm
+Description: Read any dataset and prints contents with optional hex dump. 
+ PRINTALL reads any format dataset and prints, with optional hexadecimal
+ dump, all or just records selected based upon PARM or scan arguments.
+ 
+ It is located in File #860 of the CBT tape and is part of the large
+ suite of programs written by Gerhard Postpischil.
+ 
+ 

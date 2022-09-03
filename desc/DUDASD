@@ -1,0 +1,13 @@
+Package: DUDASD
+Version: 1.0
+Maintainer: Jay Moseley <dino@jaymoseley.com>
+Depends: 
+Homepage: https://www.jaymoseley.com/hercules/cbt_ware/dudasd.htm
+Description: TSO command displays DASD unit information on TSO User's screen
+ DUDASD is a TSO command that displays the information returned by the D
+ U,DASD console command.
+ 
+ It is located in File #300 of the #249 version of the CBT tape and is
+ part of a collection of TSO commands from Jim Marshall of the Air
+ Force.
+ 
