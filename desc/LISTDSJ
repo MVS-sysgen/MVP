@@ -1,7 +1,7 @@
 Package: LISTDSJ
 Version: 2.0
 Maintainer: Larry Belmontes Jr.
-Depends: 
+Depends: MACLIB
 Homepage: https://ShareABitofIT.net/LISTDSJ-for-MVS-3-8J
 Description: Dataset Information for MVS3.8J / Hercules
  LISTDSJ, accepts a data set name and provides
