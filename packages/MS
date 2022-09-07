@@ -701,7 +701,7 @@ TABLE    DC    200CL10' '                                               00910000
 //*
 //HELP   EXEC  PGM=IEBUPDTE,PARM=NEW,COND=(0,NE)
 //SYSPRINT DD  SYSOUT=*
-//SYSUT2   DD  DISP=OLD,DSN=SYS2.HELP         <== TARGET HELP LIBRARY
+//SYSUT2   DD  DISP=SHR,DSN=SYS2.HELP         <== TARGET HELP LIBRARY
 //SYSIN    DD  *
 ./ ADD NAME=MS
 )S SUBCOMMANDS -                                                        00000010
