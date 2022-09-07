@@ -1,0 +1,482 @@
+//IFALC JOB (JOB),
+//             'INSTALL IFALC',
+//             CLASS=A,
+//             MSGCLASS=A,
+//             MSGLEVEL=(1,1),
+//             USER=IBMUSER,
+//             PASSWORD=SYS1
+//ASMFCL EXEC ASMFCL,PARM.ASM='NODECK,OBJECT,NOXREF,NORLD',
+//             PARM.LKED='LIST,MAP,NCAL,RENT,REUS,REFR',
+//             COND.LKED=(0,NE,ASM)
+//ASM.SYSIN DD DATA,DLM=@@
+*
+* Sets registers
+*
+         MACRO
+         REGISTER
+R0       EQU   0
+R1       EQU   1
+R2       EQU   2
+R3       EQU   3
+R4       EQU   4
+R5       EQU   5
+R6       EQU   6
+R7       EQU   7
+R8       EQU   8
+R9       EQU   9
+R10      EQU   10
+R11      EQU   11
+R12      EQU   12
+R13      EQU   13
+R14      EQU   14
+R15      EQU   15
+         MEND
+*
+* ENTER MACRO
+*
+         MACRO
+&SUBR    ENTER &REGS,&BASES,&SAVE
+         GBLC  &LV,&SP,&SAVED(2)
+         LCLA  &K,&N
+         LCLC  &AREA,&B(16),&SUBNAME,&S
+&SAVED(1) SETC '&REGS(1)'
+&SAVED(2) SETC '&REGS(2)'
+&SUBNAME SETC  '&SUBR'
+         AIF   ('&SUBNAME' NE '').P1
+&SUBNAME SETC  'MAIN'
+.P1      ANOP
+&SUBNAME CSECT
+         AIF   ('&REGS' EQ '').PA
+         SAVE  &REGS,T,*
+.PA      AIF   ('&BASES(1)' EQ '15' OR '&BASES' EQ '').PC
+         AIF   ('&BASES(1)' EQ '13' AND '&SAVE' NE '').PC
+         LR    &BASES(1),15
+.PC      CNOP  0,4
+&S       SETC  '&SUBNAME'
+         AIF   (N'&SAVE EQ 2).P4
+         AIF   ('&SAVE' EQ '').P3
+&AREA    SETC  '&SAVE'
+         AIF   ('&SAVE' NE '*').P2
+&AREA    SETC  'SAVEAREA'
+.P2      AIF   ('&SAVE' NE '+').PB
+&AREA    SETC  'SAVE'.'&SYSNDX'
+.PB      AIF   ('&BASES(1)' NE '13').P4
+&S       SETC  '*'
+         USING &SUBNAME,15
+         AIF   ('&REGS' EQ '').PD
+         ST    14,&AREA+4
+         LA    14,&AREA
+         ST    14,8(13)
+         L     14,&AREA+4
+         ST    13,&AREA+4
+.PD      BAL   13,*+76
+         DROP  15
+         AGO   .P4
+.P3      AIF   ('&BASES(1)' NE '13').P4
+         MNOTE 8,'*** THE CONTENTS OF REG. 13 ARE LOST. NO SAVE AREA WAX
+               S ESTABLISHED.'
+.P4      AIF   ('&BASES(1)' NE '14' OR '&SAVE' EQ '').P5
+         MNOTE 8,'*** MACRO RESTRICTION - REG. 14 MUST NOT BE USED AS TX
+               HE FIRST BASE REGISTER IF A SAVE AREA IS USED.'
+.P5      AIF   ('&BASES' EQ '').P9
+&N       SETA  N'&BASES
+.P6      ANOP
+&K       SETA  &K+1
+&B(&K)   SETC  ','.'&BASES(&K)'
+         AIF   (N'&SAVE EQ 1).PE
+         AIF   ('&BASES(&K)' NE '13').P7
+         MNOTE 8,'*** REG. 13 MAY NOT BE USED AS A BASE REGISTER FOR REX
+               ENTRANT CODE.'
+         AGO   .P7
+.PE      AIF   ('&BASES(&K+1)' NE '13' OR '&SAVE' EQ '').P7
+         MNOTE 8,'*** WHEN USING A SAVE AREA, REG. 13 MAY NOT BE USED AX
+               S A SECONDARY BASE REGISTER.'
+.P7      AIF   ('&BASES(&K+1)' NE '').P6
+         USING &S&B(1)&B(2)&B(3)&B(4)&B(5)&B(6)&B(7)&B(8)&B(9)&B(10)&B(X
+               11)&B(12)&B(13)&B(14)&B(15)&B(16)
+&K       SETA  1
+         AIF   ('&BASES(1)' NE '13' OR '&SAVE' EQ '').P8
+&AREA    DC    18F'0'
+.P8      AIF   (&K GE &N).P10
+         LA    &BASES(&K+1),X'FFF'(&BASES(&K))
+         LA    &BASES(&K+1),1(&BASES(&K+1))
+&K       SETA  &K+1
+         AGO   .P8
+.P9      USING &SUBNAME,15
+.P10     AIF   (N'&SAVE EQ 2).P13
+         AIF   ('&SAVE' EQ '' OR '&BASES(1)' EQ '13').P12
+         AIF   ('&REGS' EQ '').P11
+         ST    14,&AREA+4
+         LA    14,&AREA
+         ST    14,8(13)
+         L     14,&AREA+4
+         ST    13,&AREA+4
+.P11     BAL   13,*+76
+&AREA    DC    18F'0'
+.P12     MEXIT
+.P13     ANOP
+&LV      SETC  '&SAVE(2)'
+&SP      SETC  '0'
+         AIF   ('&SAVE(1)' EQ '').P14
+&SP      SETC  '&SAVE(1)'
+.P14     GETMAIN R,LV=&LV,SP=&SP
+         ST    13,4(1)
+         ST    1,8(13)
+         LR    2,13
+         LR    13,1
+         LM    0,2,20(2)
+         MEND
+*         
+* LEAVE MACRO
+*
+         MACRO
+&NAME    LEAVE  &EQ,&CC=
+         GBLC  &LV,&SP,&SAVED(2)
+&NAME    LR    2,13               SAVE CURRENT WORK/SAVE AREA
+         L     13,4(13)           PICK UP LAST SAVE AREA
+         STM   15,1,16(13)        STORE RETURN REGS
+         AIF   ('&LV' EQ '').L1
+         FREEMAIN R,LV=&LV,SP=&SP,A=(2)  FREE SAVE AREA
+.L1      AIF   ('&SAVED(2)' EQ '').L2
+         AIF   ('&CC' EQ '').L15       WAS CC SPECIFIED
+         RETURN (&SAVED(1),&SAVED(2)),T,RC=&CC RETURN
+         AGO   .L3
+.L15     RETURN (&SAVED(1),&SAVED(2)),T        RETURN
+         AGO   .L3
+.L2      RETURN &SAVED(1),T *   RETURN TO CALLER
+.L3      AIF   ('&EQ' NE 'EQ').L4
+         REGISTER
+.L4      MEND
+*          DATA SET 761KKIFALC AT LEVEL 001 AS OF 10/13/80
+         TITLE 'IFALOC -- COMMAND PROCESSER'
+***********************************************************************
+*                                                                     *
+* IFALC DA(----)                                                      *
+*   "   DA(----) F(====)                                              *
+*   "   DA(*) F(====)                                                 *
+*   "   F(====)                                                       *
+*                                                                     *
+***********************************************************************
+*
+* REGISTER USEAGE
+*
+*        R2-R7 WORK REGISTERS
+*        R8    BASE REGISTER FOR PDES
+*        R9    BASE REGISTER FOR DAPL
+*        R10   BASE REGISTER FOR PPL
+*        R11   BASE REGISTER FOR CPPL
+*        R12   BASE REGISTER FOR PROGRAM
+*        R13   BASE REGISTER FOR WORKAREA
+*        R14   LINK REGISTER
+IFALOC    ENTER (14,12),12,(,WORKL1)
+         SPACE 3
+*        SET UP ADDRESSABILITY
+*        COMMAND PROCCESSOR PARM LIST,PARSE PARM LIST,DYNAMIC ALLOC
+*        PARM LIST,WORKAREA. (CPPL,PPL,DAPL,W.A.)
+         USING WORK1,R13
+         LR    R11,R1
+         USING CPPL,R11
+         LA    R10,PPLAREA
+         USING PPL,R10
+         LA    R9,DAPLAREA
+         USING DAPL,R9
+         SPACE 3
+*
+*        PREPARE PARSE AND DAIR CONTROL BLOCKS
+*        TRANSFER INFO FROM CPPL TO PPL AND DAPL
+         L     R5,CPPLCBUF    COMMAND BUFFER
+         ST    R5,PPLCBUF
+         L     R5,CPPLUPT    UPT
+         ST    R5,PPLUPT
+         ST    R5,DAPLUPT
+         L     R5,CPPLECT    ECT
+         ST    R5,PPLECT
+         ST    R5,DAPLECT
+         LA    R5,PARSECB    MOVE OUR ECB
+         ST    R5,PPLECB
+         ST    R5,DAPLECB
+         L     R5,CPPLPSCB   PSCB
+         ST    R5,DAPLPSCB
+         L     R5,=A(PARMS)
+         ST    R5,PPLPCL
+         LA    R5,ANSAREA
+         ST    R5,PPLANS
+         XC    PPLUWA(4),PPLUWA
+         XC    PARSECB(4),PARSECB
+         SPACE 3
+*
+*        PARSE COMMAND BUFFER
+*
+         LR    R1,R10
+         DROP  R10
+         LINK  EP=IKJPARS
+         SPACE 3
+*
+*        CHECK RETURN CODE
+*
+         LTR   R15,R15
+         BNZ   PARSERR
+         SPACE 3
+*
+*        SET UP PDL ADDRESSABILITY
+*
+         L     R8,ANSAREA
+         USING IKJPARMD,R8
+         SPACE 3
+          CLI   FILE+1,0
+          BE    NOFILE
+          CLI   DA+1,0
+          BNE   BOTH
+          SPACE 3
+* HERE ONLY FILE IS SPECIFIED, WE USE A TIOT LOOP
+GETTIOT  EQU   *
+         L     R6,DDNAME
+         LA    R7,TIOTADDR
+         EXTRACT (R7),FIELDS=(TIOT),MF=(E,EXPARM)   *KK* 5/1/80
+         L     R7,TIOTADDR        GET TIOT ADDR
+         LH    R3,DDNAME+4  LOAD LENGTH
+         BCTR  R3,0
+         SR    R4,R4               CLEAR REG
+         LA    R7,24(,R7)        GET 1ST DD ENTRY
+         LA    R4,24(R4)           ADD OFSET TO REG FOR LATER USE
+FINDDD   EQU   *
+         EX    R3,COMPDDN1        IS THIS OUR ENTRY?
+         BE    CHKCC               YES GET OUT
+         SR    R5,R5             CLEAR R5
+         IC    R5,0(R7)          GET OFFSET TO NEXT ENTRY
+         LA    R4,0(R5,R4)        ADD TO OFFSET REG
+         LA    R7,0(R5,R7)      GET ADDR OF NEXT ENTRY
+         CLC   0(4,R7),=F'0'      IS THIS LAST ENTRY
+         BE    ERROR4              YES GO SEND ERROR
+         B     FINDDD              GO LOOK AT THIS ONE
+         SPACE 3
+COMPDDN1 CLC   4(0,R7),0(R6)
+COMPDSN2 CLC   0(0,R5),0(R6)
+MOVEDSN3 MVC   0(0,R4),0(R5)
+         SPACE 3
+CHKCC    EQU   *
+         SLR   R15,R15
+         CLI   DA+1,0
+         BE    EXIT
+* WE KNOW BOTH OPERANDS WERE SPECIFIED
+         LR    R5,R6
+         MVC   CDCB(MODCBLEN),MODCB
+         MVI   CDCB+40,C' '
+         MVC   CDCB+41(7),CDCB+40
+         LA    R4,CDCB+40
+         EX    R3,MOVEDSN3
+         LA    R6,AJ
+         ST    R6,CDCB+36
+         LA    R6,JFCB
+         ST    R6,AJ
+         MVI   AJ,X'87'
+         MVC   RDL,RDLR                                           WDPSC
+         LA    R5,CDCB
+         RDJFCB ((R5),INPUT),MF=(E,RDL)
+         L     R5,DSTRING
+         LH    R3,DSTRING+4
+         BCTR  R3,0
+         EX    R3,COMPDSN2
+         BE    EXIT
+         B     ERROR4
+          SPACE 3
+NOFILE    EQU   *
+          CLI   DA+1,0
+          BE    NEITHER
+          SPACE 3
+* NOFILE WILL USE DAIR TO SEE IF DATASET IS ALLOCATED
+*
+*
+*        COMPLETE DAIR CONTROL BLOCKS
+*
+         MVC   DAPB(20),DAPB00
+         LA    R5,DAPB
+         ST    R5,DAPLDAPB
+         LA    R4,DSN
+         ST    R4,DAPB+4
+         MVI   0(R4),C' '
+         MVC   1(45,R4),0(R4)
+         L     R5,DSTRING
+         LH    R3,DSTRING+4
+         STH   R3,0(R4)
+         LA    R4,2(R4)
+CUTIN    EQU   *
+         BCTR  R3,0
+         EX    R3,MOVEDSN3
+*
+*        IF DATA SET WAS NOT IN QUOTES, ADD USERID TO FRONT
+*
+         TM    DSTRING+6,B'01000000'
+         BNZ   QUOTED01
+         OI    DAPB+16,B'00100000'
+QUOTED01 EQU   *
+         SPACE 3
+*
+*        CREATE DD CARD FOR DATA SET WITH DAIR
+*
+         LA    R1,DAPL
+         LINK  EP=IKJEFD00
+         SPACE 3
+*
+*        CHECK RETURN CODE FROM DAIR
+*
+         LTR   R15,R15
+         BNZ   DAIRERR
+         LA    R5,DAPB
+         L     R3,DSTRING
+         CLI   0(R3),C'*'
+         BE    TDAIRTRM
+         TM    2(R5),X'02'
+         BZ    ERROR4
+         B     EXIT
+TDAIRTRM EQU   *
+         TM    2(R5),X'01'
+         BZ    ERROR4
+         B     EXIT
+          SPACE 3
+BOTH      EQU   *
+* BOTH WILL CHECK TO SEE IF DATASET=TERMINAL, IF YES,IT USES DAIR,IF
+* NO, IT USES A TIOT LOOP AND THEN IT READS THE JFCB.
+         L     R3,DSTRING
+         CLI   0(R3),C'*'
+         BE    DAIRTERM
+         TM    DSTRING+6,B'01000000'                        *KK*
+         BNZ   GETTIOT                                      *KK*
+         L     R1,CPPLUPT               R1->UPT             *KK*
+         MVC   PFXDSN(7),16(R1)         SAVE PREFIX         *KK*
+         SLR   R15,R15                                      *KK*
+         IC    R15,23(,R1)              R15=PREFIX LEN      *KK*
+         IC    R0,=C'.'                 R0 = PERIOD         *KK*
+         STC   R0,PFXDSN(R15)           MOVE IT             *KK*
+         LA    R4,PFXDSN+1(R15)         PT PAST             *KK*
+         L     R5,DSTRING               R5->REST OF DSN     *KK*
+         LH    R3,DSTRING+4             R3=LEN "            *KK*
+         BCTR  R3,R0                    -1 FOR EX           *KK*
+         EX    R3,MOVEDSN3              MOVE REST OF DSN    *KK*
+         LA    R3,2(R3,R15)             GET NEW LEN         *KK*
+         STH   R3,DSTRING+4             SAVE IT             *KK*
+         LA    R1,PFXDSN                PT TO NEW DSN       *KK*
+         ST    R1,DSTRING               SAVE NEW DSN PTR    *KK*
+         B     GETTIOT
+          SPACE 3
+DAIRTERM EQU   *
+         MVC   DAPB(20),DAPB00
+         LA    R5,DAPB
+         ST    R5,DAPLDAPB
+         MVI   DAPB+8,C' '
+         MVC   DAPB+9(7),DAPB+8
+         LA    R4,DAPB+8
+         L     R5,DDNAME
+         LH    R3,DDNAME+4
+         B     CUTIN
+          SPACE 3
+NEITHER  EQU   *
+* NEITHER KEYWORD IS SPECIFIED, GIVE ERROR, SET COND.CODES ,BYE
+         TPUT  NOOP,21
+         TITLE 'EXITS...BOTH GOOD AND BAD'
+ERROR4   LEAVE CC=4
+EXIT     EQU   *
+         LEAVE EQ
+         TITLE 'IFALOC -- ERROR PROCESSING'
+*
+*        AN ERROR OCCURED IN PARSE
+*
+PARSERR  EQU   *
+         TPUT  BADPARS,11
+         B     ERROR4
+         SPACE 3
+*
+*        AN ERROR OCCURED IN DAIR.
+*
+DAIRERR  EQU   *
+         TPUT  BADAIR,24
+         B     ERROR4
+         SPACE 3
+         TITLE 'IFALOC -- CONSTANTS, STORAGE, AND DSECTS'
+NOOP     DC    CL21'NO OPERANDS SPECIFIED'
+BADPARS  DC    CL11'PARSE ERROR'
+BADAIR   DC    CL24'DYNAMIC ALLOCATION ERROR'
+         SPACE 2
+MODCB    DCB  DDNAME=DUMMY,DSORG=PS,MACRF=GM
+MODCBLEN EQU   *-MODCB
+RDLR     RDJFCB  (MODCB,INPUT),MF=L                              WDPSC
+         SPACE 3
+DAPB00   DC    F'0'
+         DC    A(0)           DSNAME BUFFER ADDRESS
+         DC    CL8' '         DDNAME ASSIGNED BY DAIR
+         DC    4XL1'00'
+PARMS    IKJPARM
+FILE     IKJKEYWD
+         IKJNAME 'FILE',SUBFLD=FIL,ALIAS=('DDNAME')
+DA       IKJKEYWD
+         IKJNAME 'DATASET',SUBFLD=DSET,ALIAS=('DSNAME')
+FIL      IKJSUBF
+DDNAME   IKJIDENT 'FILE',MAXLNTH=8,FIRST=ALPHA,OTHER=ALPHANUM,      XXXX
+               PROMPT='FILE'
+DSET     IKJSUBF
+DSTRING  IKJPOSIT DSTHING,PROMPT='DATASET'
+         IKJENDP
+WORK1    DSECT
+         DS    18F
+PPLAREA  DS    7F
+ANSAREA  DS    F
+PARSECB  DS    F
+DAPLAREA DS    5F
+         DS    0F
+DAPB     DS    CL20
+RDL      RDJFCB  (MODCB,INPUT),MF=L                              WDPSC
+CDCB     DS    60F
+AJ       DS   F
+JFCB     DS   CL176
+TIOTADDR DS    F
+         DS   F
+DSN      DS   CL46
+EXPARM   EXTRACT  MF=L                                *KK*
+PFXDSN   DS   CL46                                    *KK*
+**********
+WORKL1   EQU   *-WORK1
+         IKJCPPL
+         IKJPPL
+         IKJDAPL
+         END
+@@
+//LKED.SYSLMOD DD DSN=SYS2.CMDLIB(IFALC),UNIT=,SPACE=,DISP=SHR
+//LKED.SYSIN   DD DUMMY
+//*
+//SAMPLIB  EXEC PGM=PDSLOAD
+//STEPLIB  DD  DSN=SYSC.LINKLIB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSUT2   DD  DISP=SHR,DSN=SYS2.HELP
+//SYSUT1   DD DATA,DLM=@@
+./ ADD NAME=IFALC
+)F FUNCTION -
+  The IFALC command is intended for use in command procedures. It allows
+  conditional execution based on whether a ddname or dataset name is 
+  allocated or not allocated.
+
+  NOTE:   IFALC returns a condition code of 0 if any of
+        the following conditions are met:
+
+   (1)  The FILE keyword  only is given:  The  ddname specified
+        is currently allocated to the TSO session.
+
+   (2)  The  DATASET   keyword  only  is  given:    The  dsname
+        specified is currently allocated to the TSO session.
+
+   (3)  Both  the FILE  and DATASET  keywords  are given:   The
+        dsname  specified   is  currently   allocated  to   the
+        specified ddname.
+
+        IFALC returns  a condition code of  4 if none  of these
+        conditions  were  met.   The   condition  code  may  be
+        obtained from the CLIST variable &LASTCC.
+)X SYNTAX  -
+         IFALC   FILE(ddname)   DATASET(dsname)
+  REQUIRED - FILE() or DATASET()
+  DEFAULTS - NONE
+  ALIAS    - NONE
+  EXAMPLES -
+         IFALC FILE(SYSPRINT) DATASET(OUT.PRINT)
+)O OPERANDS -
+))FILE -  The ddname you wish to check.
+))DATASET -  The dataset name you wish to check.

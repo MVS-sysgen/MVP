@@ -1,0 +1,21 @@
+Package: LISTDSJ
+Version: 2.0
+Maintainer: Larry Belmontes Jr.
+Depends: 
+Homepage: https://ShareABitofIT.net/LISTDSJ-for-MVS-3-8J
+Description: Dataset Information for MVS3.8J / Hercules
+ LISTDSJ, accepts a data set name and provides
+ dataset information from various VTOC DSCBs including directory
+ information for PDS files via CLIST variables.  A full list of
+ CLIST (symbolic) variables is provided below in Table 3.
+
+ LISTDSJ is similar to LISTDSI introduced and enhanced after
+ MVS3.8J.  Some of the symbolic names used by LISTDSJ may not
+ use the same values of a current LISTDSI version or may not be
+ defined as in the current version of LISTDSI.
+
+ All CLIST variables are initialized to question marks (?)
+ and accordingly set to dataset attribute values as processed by
+ LISTDSJ.
+
+ ALIAS: LISTDSI

@@ -1,0 +1,8 @@
+Package: ILRBIRD
+Version: 1.0
+Maintainer: Brian_Westerman@SyzygyInc.com
+Depends: 
+Homepage: CBT Tape FILE 077
+Description: TSO response time test
+ TSO command to test TSO response time. 
+ Alias: BIRD

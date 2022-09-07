@@ -1,0 +1,12 @@
+Package: ADDSUBS
+Version: 1.0
+Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
+Depends:
+Homepage: https://github.com/MVS-sysgen/SOFTWARE/ADDSUBS
+Description: Adds a provided subsytem to MVS
+ This rexx script takes a 4 character subsystem name and adds it to 
+ MVS. It takes two arguments: 
+ - subsystem name: the name of the subsytem
+ - y: if the second argument is Y it will skip reviewing the changes
+ 
+ Script is located in SYS2.EXEC(ADDSUBS)

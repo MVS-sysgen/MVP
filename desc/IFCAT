@@ -1,0 +1,9 @@
+Package: IFCAT
+Version: 1.0
+Maintainer: KERMIT KISER
+Depends: 
+Homepage: CBT Tape FILE 270
+Description: TSO Command to check catalog status of supplied dataset
+ The IFCAT command is intended for use in command  procedures. It allows
+ conditional execution based on whether a dataset is cataloged or not 
+ cataloged.

@@ -1,0 +1,13 @@
+Package: KERMITT
+Version: 1.0
+Maintainer: Brian_Westerman@SyzygyInc.com
+Depends: 
+Homepage: CBT Tape FILE 077
+Description: Kermit - KL10 Error-ridden Reciprocol Micro Interface Transfer
+ This program is the IBM MVS/TSO side of a file transfer system.
+ It can be used to transfer files between a micro and a system
+ running under MVS/TSO. It MUST be run as a Command Processor.
+ See the KERMIT manual for the complete program specifications
+ to which this program and any other component of the system
+ must adhere.
+ 
