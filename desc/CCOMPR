@@ -1,0 +1,19 @@
+Package: DUCBD
+Version: 1.0
+Maintainer: Larry Belmontes Jr.
+Depends: MACLIB COMPARE PRINTOFF
+Homepage: https://www.shareabitofit.net/ccompr-in-mvs38j/
+Description: ISPF Compare Front-end Interface 
+ CCOMPR acts as a ISPF front-end to manage a COMPARE dialogue and
+ releases control when END/RETURN is detected.
+
+ Functions associated with CCOMPR include the following:
+ - Dynamically allocate / Unallocate a results sequential file
+     using DD OUT
+ - Format command lines for TSO requests (i.e. COMPARE CP)
+ - Verify compare datasets existence
+ - Cross-edits on compare panel options
+ - Invoke COMPARE CP
+ - Browse compare results via ISPF Browse service (if selected)
+ - Print compare results via PRINTOFF CP (if selected)
+ - Delete results dataset (if selected)

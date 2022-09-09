@@ -1,0 +1,12 @@
+Package: DALCDS
+Version: 1.0
+Maintainer: Larry Belmontes Jr.
+Depends: MACLIB CHKDSN LISTDSJ CUTIL00 VTOC 
+Homepage: https://www.shareabitofit.net/findsrch-in-mvs38j/
+Description: ISPF Find/Search Utilities
+ ISPF application that offers such functions as:
+ – Finding PDS Members
+ – Finding Datasets on online DASD volumes
+ – Searching for PDS members with a given Search String
+ – Finding a load member across system libraries
+ – Finding a PDS member in allocated DDNs 

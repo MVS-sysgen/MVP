@@ -1,0 +1,11 @@
+Package: CUTIL00
+Version: 1.1.5
+Maintainer: Larry Belmontes Jr.
+Depends: MACLIB
+Homepage: https://www.shareabitofit.net/cutil00-for-mvs-3-8j/
+Description: CLIST Variable Utility for MVS38J / Hercules
+  The CUTIL00 command performs functions on CLIST variables
+  such as CENTER, TRIM, and RJUST string functions.  All
+  processing occurs internally on CLIST variables.  Return
+  code is returned via &LASTCC.  See program documentation
+  for more functional details.

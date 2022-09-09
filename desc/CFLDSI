@@ -1,0 +1,9 @@
+Package: CFLDSI
+Version: 1.0
+Maintainer: Larry Belmontes Jr.
+Depends: LISTDSJ
+Homepage: https://www.shareabitofit.net/cfldsi-in-mvs38j/
+Description: List session allocated datasets using LISTA and LISTDSI
+ CFLDSI traps the output of LISTALC STATUS (since it uses PUTLINE to 
+ display on the terminal) and formats a more readable response for 
+ current TSO session allocations.

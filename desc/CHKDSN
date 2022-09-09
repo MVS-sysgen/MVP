@@ -1,0 +1,10 @@
+Package: CHKDSN
+Version: 1.0
+Maintainer: Larry Belmontes Jr.
+Depends: MACLIB
+Homepage: https://www.shareabitofit.net/chkdsn-in-mvs38j/
+Description: TSO command to check for DSN existence 
+ The CHKDSN command checks for existence of a DSN or DSN(member)
+ in the system catalog and cataloged volume.  Additionally, CHKDSN
+ will search the DSN for existence of a PDS member, if member name is
+ provided.

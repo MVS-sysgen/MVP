@@ -1,0 +1,40 @@
+Package: GETDTE
+Version: 1.0
+Maintainer: Larry Belmontes Jr.
+Depends: MACLIB
+Homepage: https://www.shareabitofit.net/getdte-in-mvs38j/
+Description: Get Date-Time-Env Utility
+ GETDTE is a utility used to obtain current date-time and
+ environment information.  This subroutine requires a work area
+ passed from the calling program.
+
+ Results are returned to the caller via the provided commarea
+ and/or CLIST variable, RDTEANSR.
+
+ Based on how GETDTE is called, results are returned as listed
+ below:
+
+ 1) If GETDTE is called from higher-level lanaguage (i.e. COBOL)
+    with a commarea, results are returned in the commarea.
+ 2) If GETDTE is called from assembler (i.e. IFOX00) with a
+    commarea, results are returned in the commarea.
+ 3) If GETDTE is called from TSO (foreground or background)
+    with a commarea, results are returned in commarea and CLIST
+    variable, RDTEANSR.
+    Note:  If IKJCT441 is not located, no CLIST variable is
+           created and return code set to 8.  Commarea contains
+           valid data.
+ 4) If GETDTE is called from TSO (foreground or background)
+    with NO commarea, results are returned ONLY in CLIST
+    variable, RDTEANSR.
+    Note:  If IKJCT441 is not located, no CLIST variable is
+           created and return code set to 8.  No data is
+           returned in the commarea.
+ 5) If GETDTE is called from BATCH (EXEC PGM=GETDTE),
+    job step will most likely abend with S0C4!
+    -- NOTE: INVALID use scenerio
+ 6) If GETDTE is called from BATCH (EXEC PGM=GETDTE,PARM='xyz..'),
+    job step will most likely abend with S0C4!
+    -- NOTE: INVALID use scenerio
+
+Sample COBOL, PL1 and JCL are installed in SYS2.SAMPLIB

@@ -1,0 +1,7 @@
+Package: DSCOPY
+Version: 0.9
+Maintainer: Larry Belmontes Jr.
+Depends: COPYPDS IFALC LISTDSJ CUTIL00 DD DDN $
+Homepage: https://www.shareabitofit.net/dscopy-in-mvs38j/
+Description: ISPF Copy dataset panels
+ This adds the dataset copy panels to ISPF.

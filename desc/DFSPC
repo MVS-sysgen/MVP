@@ -1,0 +1,12 @@
+Package: DFSPC
+Version: 1.0
+Maintainer: Larry Belmontes Jr.
+Depends: MACLIB GETDTE
+Homepage: https://www.shareabitofit.net/dfspc-in-mvs38j/
+Description: ISPF command to displays volume freespace
+ DFSPC displays volume freespace and attributes for each online DASD
+ device. The initial display is in Volume Serial order.  Data can be 
+ sorted by typing SORT ColName into the Command line.  For descending 
+ order, preceed column name
+
+ To use open ISPF and run 'TSO DFSPC'

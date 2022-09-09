@@ -1,0 +1,12 @@
+Package: DALCDS
+Version: 1.0
+Maintainer: Larry Belmontes Jr.
+Depends: MACLIB GETDTE
+Homepage: https://www.shareabitofit.net/dalcds-in-mvs38j/
+Description: ISPF Display Allocated Dataset Information
+ DALCDS displays allocated dataset information for the current
+ TSO session under the MVS 3.8J environment. Similar to ISRDDN.
+
+ Alias: ISRDDN
+
+ To use in ISPF run the command 'TSO DALCDS' or 'TSO ISRDDN'

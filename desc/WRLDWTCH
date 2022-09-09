@@ -1,0 +1,8 @@
+Package: WRLDWTCH
+Version: 0.9
+Maintainer: Larry Belmontes Jr.
+Depends: MACLIB
+Homepage: https://www.shareabitofit.net/wrldwtch-in-mvs38j/
+Description: World WATCH for ISPF 
+ ISPF application displays a world map with time zones 
+ on a 3270 terminal

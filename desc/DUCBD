@@ -1,0 +1,15 @@
+Package: DUCBD
+Version: 1.0
+Maintainer: Larry Belmontes Jr.
+Depends: MACLIB GETDTE
+Homepage: https://www.shareabitofit.net/dalcds-in-mvs38j/
+Description: ISPF Display UCB Device Information 
+ DUCBD displays device information from the UCB (Unit Control
+ Block) for DASD and TAPE devices as utilized by MVS 38J.
+
+ The UCB is scanned as offered via MVS38J using the CVT UCB Table
+ lookup address and checks for terminator x'FFFF'.  DUCBD processes
+ standard UCBs for DASD and TAPE devices.  For more details,
+ see code!
+
+ To run in ISPF use TSO DUCBD
