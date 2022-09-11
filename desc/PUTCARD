@@ -1,0 +1,7 @@
+Package: PUTCARD
+Version: 1.0
+Maintainer: 
+Depends: MACLIB 
+Homepage: mvs9809.pdf on https://www.cbttape.org/xephon
+Description: CONTROL CARD IMAGE QUICK BUILDER 
+ Builds control cards for use within CLIST/REXX scripts.
