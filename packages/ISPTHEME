@@ -1,0 +1,553 @@
+//ISPTHEME  JOB (TSO),
+//             'New ISPF Theme',
+//             CLASS=A,
+//             MSGCLASS=A,
+//             MSGLEVEL=(1,1),
+//             USER=IBMUSER,
+//             PASSWORD=SYS1
+//*
+//* Backup ISPF PLIB
+//BACKUP   EXEC PGM=IEBCOPY
+//SYSPRINT DD   SYSOUT=*
+//SYSUT1   DD   DSN=SYSGEN.ISPF.PLIB,DISP=SHR
+//SYSIN    DD  DUMMY
+//SYSUT2   DD  DISP=(NEW,CATLG),
+//             DSN=SYSGEN.ISPF.PLIB.BACKUP,
+//             DCB=SYS1.MACLIB,
+//             SPACE=(CYL,(2,0,20),RLSE),
+//             UNIT=SYSDA,
+//             VOL=SER=PUB001
+//*
+//*  Installs Wally ISPF Theme
+//*
+//STEP1   EXEC PGM=PDSLOAD
+//STEPLIB  DD  DSN=SYSC.LINKLIB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSUT2   DD  DSN=SYSGEN.ISPF.PLIB,DISP=SHR
+//SYSUT1   DD  DATA,DLM=@@
+./ ADD NAME=ISPMORE
+)ATTR
+ + TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(GREEN)
+ % TYPE(TEXT)   INTENS(HIGH) SKIP(ON)    COLOR(WHITE)
+ _ TYPE(INPUT)  INTENS(LOW)  JUST(LEFT)  COLOR(TURQ)
+ # TYPE(INPUT)  INTENS(LOW)  JUST(ASIS)
+ ~ TYPE(INPUT)  INTENS(HIGH) JUST(LEFT)
+ ! TYPE(INPUT)  INTENS(HIGH) JUST(RIGHT)
+ { TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(TURQ)
+ } TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(BLUE)
+ ] TYPE(OUTPUT) INTENS(HIGH) JUST(LEFT)
+ [ TYPE(OUTPUT) INTENS(HIGH) JUST(RIGHT)
+)BODY WIDTH(&ZSCREENW) EXPAND(//)
+}                     Additional Products
++
++ Option ===>_ZCMD
++                                                     
+% R {RAKF       + RAKF Administrator Panels          / /
+% G {Games      + TSO Games                          / /
+% C {Calendar   + A calendar for ISPF                / /
+% F {DFSPCE     + DASD Freespace                     / /
+% A {DALCDS     + ISRDDN Like TSO Allocations listing / /
+% D {DUCBD      + Display UCB information            / / 
+% WW{WorldWatch + Displays timezone information      / / 
+% U {ULXL01     + Display Disk Space Information for a volume / /
+% 
+%
+%
+%
+%
+%
+%
+% 
+~  Add more items by editing SYSGEN.ISPF.PLIB(ISPMORE)
+%
+)INIT
+  .HELP = ISP00000
+  &ZPRIM = YES        /* ALWAYS A PRIMARY OPTION MENU      */
+  &ZHTOP = ISP00000   /* TUTORIAL TABLE OF CONTENTS        */
+  &ZHINDEX = ISP91000 /* TUTORIAL INDEX - 1ST PAGE isptutor*/
+)PROC
+  &ZSEL = TRANS(TRUNC(&ZCMD,'.')
+                R,'PANEL(ISPRAKF)'
+                G,'PANEL(ISPGAMES)'
+                C,'PANEL(CALENDR)'
+                F,'CMD(DFSPC) NEWAPPL(DFSP)'
+                A,'CMD(DALCDS) NEWAPPL(DALC)'
+                D,'CMD(DUCBD) NEWAPPL(DUCB)' 
+                WW,'CMD(WRLDWTCH -6)' 
+                U,'CMD(ULXL01)'
+              ' ',' '
+                X,'EXIT'
+                *,'?' )
+  &ZTRAIL = .TRAIL
+)END
+./ ADD NAME=ISPOP01
+)ATTR
+ + TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(GREEN)
+ % TYPE(TEXT)   INTENS(HIGH) SKIP(ON)    COLOR(WHITE)
+ $ TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(YELLOW)
+ _ TYPE(INPUT)  INTENS(LOW)  JUST(LEFT)  COLOR(TURQ)
+ # TYPE(INPUT)  INTENS(LOW)  JUST(ASIS)
+ ~ TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(BLUE)
+ ! TYPE(INPUT)  INTENS(HIGH) JUST(RIGHT)
+ { TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT)
+ } TYPE(OUTPUT) INTENS(LOW)  JUST(RIGHT)
+ ] TYPE(OUTPUT) INTENS(HIGH) JUST(LEFT)
+ [ TYPE(OUTPUT) INTENS(HIGH) JUST(RIGHT)
+)BODY WIDTH(&ZSCREENW) EXPAND(//)
+~-------------------------  TERMINAL CHARACTERISTICS  ----------/-/-------------
++Command ===>_ZCMD
+%
++Terminal Type     ===>_ZTERM   +(3277   - 3275/3277 terminal)
+$                                (3277A  - 3275/3277 with APL keyboard)
++                                (3278   - 3276/3278/3279/3290 terminal)
+$                                (3278A  - 3276/3278/3279/3290 APL)
+$                                (3278T  - 3276/3278/3290 TEXT keyboard)
++
++Number of PF Keys ===>_Z   +    (12 or 24)
++
++Input Field Pad   ===>_Z+       (N - Nulls) (B - Blanks) (Special Characters -
++                                 must not be the same as COMMAND DELIMITER)
++
++Command Delimiter ===>_Z+       (Special character for command stacking)
++
++Screen Format     ===>_Z   +    (Select one of the following:)
++ (3278 Model 5 only)            (DATA - Format based on data width)
++                                (STD  - Always format 24 lines by 80 chars)
++                                (MAX  - Always format 27 lines by 132 chars)
++
+$ (3290 Only)                    (PART - Format using hardware partitions -
+$                                 effective the next ISPF invocation.)
++
+)INIT
+.ZVARS='(ZKEYS,ZPAD,ZDEL,ZSCRFMT)'
+  .HELP = ISP00000
+  &ZPRIM = NO         /* NOT A PRIMARY OPTION MENU         */
+  &ZHTOP = ISP00000   /* TUTORIAL TABLE OF CONTENTS        */
+  &ZHINDEX = ISP01100 /* TUTORIAL INDEX - 1ST PAGE isptutor*/
+)PROC
+  VER (&ZTERM,NB,LIST,3277,3277A,3278,3278A,3278T)
+  VER (&ZKEYS,NB,LIST,12,012,0012,24,024,0024)
+  IF  (&ZKEYS EQ 12)
+   &ZKEYS = '0012'
+  ELSE
+  IF  (&ZKEYS EQ 24)
+   &ZKEYS = '0024'
+  ELSE
+  VER (&ZPAD,NB,LEN,EQ,1)
+  VER (&ZDEL,NB,LEN,EQ,1)
+  VER (&ZSCRFMT,NB,LIST,DATA,STD,MAX,PART)
+)END
+./ ADD NAME=ISPOP03A
+)ATTR
+ + TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(GREEN)
+ % TYPE(TEXT)   INTENS(HIGH) SKIP(ON)    COLOR(WHITE)
+ ¬ TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(YELLOW)
+ _ TYPE(INPUT)  INTENS(LOW)  JUST(LEFT)  COLOR(TURQ)
+ # TYPE(INPUT)  INTENS(LOW)  JUST(ASIS)
+ ~ TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(BLUE)
+ ! TYPE(INPUT)  INTENS(HIGH) JUST(RIGHT)
+ { TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT)
+ } TYPE(OUTPUT) INTENS(LOW)  JUST(RIGHT)
+ Ý TYPE(OUTPUT) INTENS(HIGH) JUST(LEFT)
+ ¨ TYPE(OUTPUT) INTENS(HIGH) JUST(RIGHT)
+)BODY WIDTH(&ZSCREENW) EXPAND(//)
+~-------------------------  PF KEY DEFINITION  -------/-/-----------------------
++Command ===>_ZCMD
++
++Number of PF keys ===>{Z   + Terminal Type ===>{ZTERM
++
++PF1  ===>_zpf01
++PF2  ===>_zpf02
++PF3  ===>_zpf03
++PF4  ===>_zpf04
++PF5  ===>_zpf05
++PF6  ===>_zpf06
++PF7  ===>_zpf07
++PF8  ===>_zpf08
++PF9  ===>_zpf09
++PF10 ===>_zpf10
++PF11 ===>_zpf11
++PF12 ===>_zpf12
++
++LABEL1  ===>_zpfl01  +  LABEL2  ===>_zpfl02  + LABEL3  ===>_zpfl03  +
++LABEL4  ===>_zpfl04  +  LABEL5  ===>_zpfl05  + LABEL6  ===>_zpfl06  +
++LABEL7  ===>_zpfl07  +  LABEL8  ===>_zpfl08  + LABEL9  ===>_zpfl09  +
++LABEL10 ===>_zpfl10  +  LABEL11 ===>_zpfl11  + LABEL12 ===>_zpfl12  +
++
++  Press Enter key to save changes. Enter END to save changes and exit.
+)INIT
+.ZVARS='(ZKEYS)'
+  .HELP = ISP00000
+  &ZPRIM = NO         /* NOT A PRIMARY OPTION MENU         */
+  &ZHTOP = ISP00000   /* TUTORIAL TABLE OF CONTENTS        */
+  &ZHINDEX = ISP01100 /* TUTORIAL INDEX - 1ST PAGE isptutor*/
+)PROC
+)END
+./ ADD NAME=ISPOP0
+)ATTR
+ + TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(GREEN)
+ % TYPE(TEXT)   INTENS(HIGH) SKIP(ON)    COLOR(WHITE)
+ $ TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(YELLOW)
+ _ TYPE(INPUT)  INTENS(LOW)  JUST(LEFT)  COLOR(TURQ)
+ # TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(TURQ)
+ ~ TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(BLUE)
+ ! TYPE(INPUT)  INTENS(HIGH) JUST(RIGHT)
+ { TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT)
+ } TYPE(OUTPUT) INTENS(LOW)  JUST(RIGHT)
+ ] TYPE(OUTPUT) INTENS(HIGH) JUST(LEFT)
+ [ TYPE(OUTPUT) INTENS(HIGH) JUST(RIGHT)
+)BODY WIDTH(&ZSCREENW) EXPAND(//)
+~-------------------------  ISPF Parameter Options  -----/-/--------------------
++ Option ===>_ZCMD
+%
+% 1 #Terminal  + - Specify terminal characteristics
+$ 2 $Log/List    - Specify ISPF log and list defaults
+% 3 #PF Keys   + - Specify PF keys for 3278 terminal with 24 PFkeys
+$ 4 $Display     - Specify screen display characteristics
+$ 5 $List        - Specify list data set characteristics
+$ 6 $Graphic     - Specify GDDM graphic print parameters
+$ 7 $Environ     - Specify ENVIRON command settings
+$ 8 $Keylist     - Modify key list(s)
+$ 9 $Dialog Test - Specify Dialog Test option
+%
+)INIT
+  .HELP = ISP00000
+  &ZPRIM = NO         /* not A PRIMARY OPTION MENU         */
+  &ZHTOP = ISP00000   /* TUTORIAL TABLE OF CONTENTS        */
+  &ZHINDEX = ISP01000 /* TUTORIAL INDEX - 1ST PAGE isptutor*/
+)PROC
+  &ZSEL = TRANS(TRUNC(&ZCMD,'.')
+                1,'PGM(ISPOPT01)'
+/*              2,'PANEL(ISPOP02)'                */
+                3,'PGM(ISPOPT03)'
+/*              4,'PANEL(ISPOP04)'                */
+/*              5,'PANEL(ISPOP05)'                */
+/*              6,'PANEL(ISPOP06)'                */
+/*              7,'PANEL(ISPOP07)'                */
+/*              8,'PANEL(ISPOP08)'                */
+/*              9,'PANEL(ISPOP09)'                */
+              ' ',' '
+                X,'EXIT'
+                *,'?' )
+  &ZTRAIL = .TRAIL
+)END
+./ ADD NAME=ISP@PRIM
+)ATTR
+ + TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(GREEN)
+ % TYPE(TEXT)   INTENS(HIGH) SKIP(ON)    COLOR(WHITE)
+ _ TYPE(INPUT)  INTENS(LOW)  JUST(LEFT)  COLOR(TURQ)
+ # TYPE(INPUT)  INTENS(LOW)  JUST(ASIS)
+ ~ TYPE(INPUT)  INTENS(HIGH) JUST(LEFT)
+ ! TYPE(INPUT)  INTENS(HIGH) JUST(RIGHT)
+ { TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(TURQ)
+ } TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(BLUE)
+ ] TYPE(OUTPUT) INTENS(HIGH) JUST(LEFT)
+ [ TYPE(OUTPUT) INTENS(HIGH) JUST(RIGHT)
+)BODY WIDTH(&ZSCREENW) EXPAND(//)
+}                     Wally ISPF Primary Option Menu
++
++ Option ===>_ZCMD
++                                                     
+% 0 {Settings   + Specify terminal and user parms    / /+USERID   :{&ZUSER  +
+% 1 {Browse     + Display source data using Review   / /+TIME     :{&ZTIMEL +
+% 2 {Edit       + Change source data using Revedit   / /+TERMINAL :{&ZTERM  +
+% 3 {Utilities  + Perform utility functions          / /+SCREEN   :{&ZSCREEN+
+% 4 {Foreground + Invoke language processors         / /+LANGUAGE :{&ZLANG  +
+% 5 {Batch      + Submit job for language processing / /+PANEL    :{&ZPANELID
+% 6 {Command    + Enter TSO command or CLIST         / /+APPL ID  :{&ZAPPLID+
+% 7 {Dialog Test+ Perform dialog testing             / /+PRIM     :{&ZPRIM  +
+% A {ACETEST    + APF-authorized test facility       / /+PF KEYS  :{&ZKEYS  +
+% C {Changes    + Summary of changes for this release/ /{SYSTEMID : &ZSYSID +
+% T {Tutorial   + Display information about ISPF     / /{PROC     : &ZSYSPROC
+% SD{RevOut     + System display held job output     / /{RELEASE  : &ZVERSION
+% X {EXIT       + Terminate ISPF using log and list defaults 
+% M {More         Additional Products
+% 
++      Enter{X+to terminate ISPF using log and list defaults
+%
+)INIT
+  .HELP = ISP00000
+  &ZPRIM = YES        /* ALWAYS A PRIMARY OPTION MENU      */
+  &ZHTOP = ISP00000   /* TUTORIAL TABLE OF CONTENTS        */
+  &ZHINDEX = ISP91000 /* TUTORIAL INDEX - 1ST PAGE isptutor*/
+)PROC
+  &ZSEL = TRANS(TRUNC(&ZCMD,'.')
+                0,'PANEL(ISPOP0)'
+                1,'PANEL(ISPREVB) NEWAPPL(ISR)'
+                2,'PANEL(ISPREVE) NEWAPPL(ISR)'
+                3,'PANEL(ISPUTILS)'
+                4,'PANEL(ISRFPA)'
+                5,'CMD(%CBGP5 ICMD(&ZCMD)) NEWAPPL(CBGP)'
+                6,'CMD(ISPOPT6)'
+                7,'PANEL(ISPOPT7)'
+                A,'CMD(ACETEST) NEWAPPL(ACE) NOCHECK'
+                C,'PANEL(ISPOPC0)'
+                T,'PGM(ISPTUTOR) PARM(ISP00000)'
+                SD,'CMD(REVOUT *)  NEWAPPL(ISR)'
+                M,'PANEL(ISPMORE)'
+              ' ',' '
+                X,'EXIT'
+                *,'?' )
+  &ZTRAIL = .TRAIL
+)END
+./ ADD NAME=ISPREVB
+)ATTR
+ + TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(GREEN)
+ % TYPE(TEXT)   INTENS(HIGH) SKIP(ON)    COLOR(WHITE)
+ $ TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(YELLOW)
+ _ TYPE(INPUT)  INTENS(LOW)  JUST(LEFT)  COLOR(TURQ)
+ # TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(TURQ)
+ ~ TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(BLUE)
+ ! TYPE(INPUT)  INTENS(HIGH) JUST(RIGHT)
+ { TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT)
+ } TYPE(OUTPUT) INTENS(LOW)  JUST(RIGHT)
+ ] TYPE(OUTPUT) INTENS(HIGH) JUST(LEFT)
+ [ TYPE(OUTPUT) INTENS(HIGH) JUST(RIGHT)
+)BODY WIDTH(&ZSCREENW) EXPAND(//)
+~--------------------------  REVIEW - ENTRY PANEL  ----/-/----------------------
+%Command ===>_ZCMD                                                             +
+%
++
+~ISPF Library:
++
++   Project  . ._revbproj+
++   Group  . . ._revbgrp +
++   Type . . . ._revbtype+
++   Member . . ._revbmem +       (Blank for member selection list)
++
++
+~Other partitioned or sequential dataset:
++
++   Name  . . . . . . ._revbdsn                                     +
++   Volume Serial . . ._z     +   (If not cataloged)
++
++Data set password  . ._revbpswd+(If password protected)
++
++
+)INIT
+.ZVARS = (REVBVOL)
+)REINIT
+ &REVBMEM = ''
+)PROC
+ IF (&REVBDSN NE '')
+   &REVBQUO = TRUNC(&REVBDSN, 1)         /* thank you Jim Ruddy
+   IF (&REVBQUO = '''')
+     &REVBDSN   = .TRAIL
+     &REVBDSN   = TRUNC (&REVBDSN,'''')
+     &REVBDSN   = '''&REVBDSN'''
+   &REVBDSNZ    = &REVBDSN
+   &REVS = &ZSCBR
+   IF (&REVBVOL NE '')
+     &ZSEL      = 'CMD(REVIEW &REVBDSNZ VOL(&REVBVOL))'
+   ELSE
+     &ZSEL      = 'CMD(REVIEW &REVBDSNZ)'
+ ELSE
+   VER (&REVBPROJ,NB)
+   VER (&REVBGRP,NB)
+   VER (&REVBTYPE,NB)
+   IF (&REVBMEM EQ '')
+     &REVBDSNZ   = '''&REVBPROJ..&REVBGRP..&REVBTYPE'''
+     &REVS = &ZSCML
+   ELSE
+     &REVBDSNZ   = '''&REVBPROJ..&REVBGRP..&REVBTYPE(&REVBMEM)'''
+     &REVS = &ZSCBR
+   &ZSEL      = 'CMD(REVIEW &REVBDSNZ)'
+ VPUT (REVBPROJ,REVBGRP,REVBTYPE) PROFILE
+)END
+./ ADD NAME=ISPREVE
+)ATTR
+ + TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(GREEN)
+ % TYPE(TEXT)   INTENS(HIGH) SKIP(ON)    COLOR(WHITE)
+ $ TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(YELLOW)
+ _ TYPE(INPUT)  INTENS(LOW)  JUST(LEFT)  COLOR(TURQ)
+ # TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(TURQ)
+ ~ TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(BLUE)
+ ! TYPE(INPUT)  INTENS(HIGH) JUST(RIGHT)
+ { TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT)
+ } TYPE(OUTPUT) INTENS(LOW)  JUST(RIGHT)
+ ] TYPE(OUTPUT) INTENS(HIGH) JUST(LEFT)
+ [ TYPE(OUTPUT) INTENS(HIGH) JUST(RIGHT)
+)BODY WIDTH(&ZSCREENW) EXPAND(//)
+~--------------------------  REVEDIT- ENTRY PANEL  ---------/-/-----------------
++Command ===>_ZCMD                                                             +
+%
++
+~ISPF Library:
++
++   Project  . ._revbproj+
++   Group  . . ._revbgrp +
++   Type . . . ._revbtype+
++   Member . . ._revbmem +       (Blank for member selection list)
++
++
+~Other partitioned or sequential dataset:
++
++   Name  . . . . . . ._revbdsn                                     +
++   Volume Serial . . ._z     +   (If not cataloged)
++
++Data set password  . ._revbpswd+(If password protected)
++
++
+)INIT
+.ZVARS = (REVEVOL)
+)REINIT
+ &REVEMEM = ''
+)PROC
+ IF (&REVEDSN NE '')
+   &REVEQUO = TRUNC(&REVEDSN, 1)         /* thank you Jim Ruddy
+   IF (&REVEQUO = '''')
+     &REVEDSN   = .TRAIL
+     &REVEDSN   = TRUNC (&REVEDSN,'''')
+     &REVEDSN   = '''&REVEDSN'''
+   &REVEDSNZ    = &REVEDSN
+   &REVS = &ZSCBR
+   IF (&REVEVOL NE '')
+     &ZSEL      = 'CMD(REVED &REVEDSNZ VOL(&REVEVOL))'
+   ELSE
+     &ZSEL      = 'CMD(REVED &REVEDSNZ)'
+ ELSE
+   VER (&REVEPROJ,NB)
+   VER (&REVEGRP,NB)
+   VER (&REVETYPE,NB)
+   IF (&REVEMEM EQ '')
+     &REVEDSNZ   = '''&REVEPROJ..&REVEGRP..&REVETYPE'''
+     &REVS = &ZSCML
+   ELSE
+     &REVEDSNZ   = '''&REVEPROJ..&REVEGRP..&REVETYPE(&REVEMEM)'''
+     &REVS = &ZSCBR
+   &ZSEL      = 'CMD(REVED &REVEDSNZ)'
+ VPUT (REVEPROJ,REVEGRP,REVETYPE) PROFILE
+)END
+./ ADD NAME=ISPUTILS
+)ATTR
+ + TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(GREEN)
+ % TYPE(TEXT)   INTENS(HIGH) SKIP(ON)    COLOR(WHITE)
+ $ TYPE(TEXT)   INTENS(LOW)  SKIP(ON)    COLOR(YELLOW)
+ _ TYPE(INPUT)  INTENS(LOW)  JUST(LEFT)  COLOR(TURQ)
+ # TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(TURQ)
+ ~ TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(BLUE)
+ ! TYPE(INPUT)  INTENS(HIGH) JUST(RIGHT)
+ { TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT)
+ } TYPE(OUTPUT) INTENS(LOW)  JUST(RIGHT)
+ ] TYPE(OUTPUT) INTENS(HIGH) JUST(LEFT)
+ [ TYPE(OUTPUT) INTENS(HIGH) JUST(RIGHT)
+)BODY WIDTH(&ZSCREENW) EXPAND(//)
+~-------------------------  Utility Selection Menu  ------/-/-------------------
++ Option ===>_ZCMD                                                             +
+%
+% 1 #Library   + - Library utility:
++                         Print index listing or entire data set
++                         Print, rename, delete, or browse members
+% 2 #Dataset   + - Data set utility:
++                         Display data set information
++                         Allocate, rename, or delete entire data set
++                         Catalog or uncatalog data set
+% 3 #Move/Copy + - Move, copy, or promote members or data sets
+% 4 #Dslist    + - Data set list:
++                         Print or display (to process) list of data set names
+% 5 #Reset     + - Reset statistics for members of ISPF library
+$ 6 $Hardcopy    - Initiate hardcopy output
+% 7 #VTOC      + - Display DISK Volume Table Of Contents
+% 8 #Outlist   + - Display, delete, or print held (Class Q) JOB output
+% 9 #Commands  + - Create/change an application command table
+% 12#SUPERC    + - Compare datasets                          (Standard Dialog)
+% 13#SUPERCE   + - Compare datasets                          (Extended Dialog)
+% 14#Search-For +- Search datasets for string of data        (Standard Dialog)
+)INIT
+  .HELP = ISR30000
+)PROC
+  &ZSEL = TRANS( TRUNC (&ZCMD,'.')
+                1,'CMD(RFE 3.1;X) NEWAPPL(ISR)'
+                2,'CMD(RFE 3.2;X) NEWAPPL(ISR)'
+                3,'CMD(RFE 3.3;X) NEWAPPL(ISR)'
+                4,'CMD(RFE 3.4;X) NEWAPPL(ISR)'
+                5,'CMD(RFE 3.5;X) NEWAPPL(ISR)'
+/*              6,'PGM(ISRUHC)'                           */
+                7,'CMD(ULXL01)'                           
+                8,'CMD(REVOUT *)  NEWAPPL(ISR)'
+                9,'PANEL(ISPUCMA)'
+                12,'PANEL(COMPR#P)'
+                13,'CMD(C$CCOMPR)' 
+                14,'PANEL(PFINDM) NEWAPPL(FIND)'
+              ' ',' '
+                *,'?' )
+)END
+./ ADD NAME=PDALCDS0
+/********************************************************************/
+/*                                                                  */
+/*    PANEL: PDALCDS0                                               */
+/* Author: Larry Belmontes Jr.                                      */
+/*         https://ShareABitofIT.net/DALCDS-in-MVS38J               */
+/*         Copyright (C) 2020  Larry Belmontes, Jr.                 */
+/*                                                                  */
+/*                                                                  */
+/* Description:                                                     */
+/* ---------------------------------------------------------------  */
+/*                                                                  */
+/* ISPF 2.x PDALCDS0 panel for DALCDS Dialogue Manager              */
+/*                                                                  */
+/*                                                                  */
+/* Disclaimer:                                                      */
+/* ================================================================ */
+/*                                                                  */
+/*    No guarantee; No warranty; Install / Use at your own risk.    */
+/*                                                                  */
+/*    This software is provided "AS IS" and without any expressed   */
+/* or implied warranties, including, without limitation, the        */
+/* implied warranties of merchantability and fitness for a          */
+/* particular purpose.                                              */
+/*                                                                  */
+/*    The author requests keeping authors name intact in any        */
+/* modified versions.                                               */
+/*                                                                  */
+/*    In addition, the author requests readers to submit any        */
+/* code modifications / enhancements and associated comments        */
+/* for consideration into a subsequent release (giving credit       */
+/* to contributor(s)) thus, improving overall functionality         */
+/* and further benefiting the MVS 3.8J hobbyist public domain       */
+/* community.                                                       */
+/*                                                                  */
+/*                                                                  */
+/*                                                                  */
+/*                                                                  */
+/* Change History:                                                  */
+/* ---------------------------------------------------------------  */
+/* MM/DD/CCYY VERSION  NAME / DESCRIPTION                           */
+/* 08/10/2020 1.0.00   Larry Belmontes Jr.                          */
+/*                     Initial version released to MVS 3.8J         */
+/*                     Hobbyist Public Domain                       */
+/*                                                                  */
+/********************************************************************/
+)ATTR DEFAULT(%@_)
+%   TYPE(TEXT)   INTENS(HIGH)
+@   TYPE(TEXT)   INTENS(LOW)
+?   TYPE(TEXT)   INTENS(LOW)  COLOR(BLUE)
+_   TYPE(INPUT)  INTENS(HIGH) CAPS(ON)  JUST(LEFT)
+!   TYPE(OUTPUT) INTENS(LOW)  CAPS(OFF) JUST(ASIS)
+$   TYPE(OUTPUT) INTENS(HIGH) CAPS(OFF) JUST(ASIS) COLOR(RED)
+~   TYPE(OUTPUT) INTENS(HIGH) CAPS(OFF) JUST(ASIS) COLOR(BLUE)
+[   TYPE(OUTPUT) INTENS(HIGH) CAPS(OFF) JUST(ASIS) COLOR(TURQ)
+[   TYPE(OUTPUT) INTENS(HIGH) CAPS(OFF) JUST(ASIS) COLOR(YELLOW)
+{   TYPE(OUTPUT) INTENS(HIGH) CAPS(OFF) JUST(ASIS) COLOR(GREEN)
+}   TYPE(TEXT)   INTENS(HIGH)                      COLOR(YELLOW)
+)BODY WIDTH(&ZSCREENW) EXPAND(//)
+{Z                      %-----? TSO Allocations  %-/-/--------------------------
+%COMMAND ===>_Z                                                %SCROLL ===>_AMT
+%                                                                      
+%Step-[STEPNM  %Proc-[PROCNM  %                        
+%                                                      
+?DD# Volume   Disposition Org DDname Data Set Name     
+)MODEL                                                 
+[Z  [Z       [Z          $Z  [Z     {Z                                        %                 
+)INIT                                                  
+  .HELP = HDALCDS0                                     
+  .ZVARS = '(SCRNCLK ZCMD             
+              ROWNUM VOLSER DISP1 DSORG DDNAME DSNAME)'
+  &AMT = 'CSR'
+  &ZTDMARK = '******************************* BOTTOM OF DATA *+
+*******************+
+*************'
+)PROC
+)END
+@@
+//*

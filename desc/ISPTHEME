@@ -1,0 +1,17 @@
+Package: ISPTHEME
+Version: 1.0
+Maintainer: 
+Depends: ISPF DFSPC DALCDS DUCBD CCOMPR FINDSRCH ISPOPT5
+Homepage: https://github.com/MVS-sysgen/SOFTWARE/tree/main/ISPTHEME
+Description: Wally ISPF Theme 
+ This theme changes the look and feel of Wally ISPF to be a closer
+ inspiration of the original. It also adds multiple tools and options
+ to make ISPF more complete.
+
+ Added:
+ - ISPF option 3.6
+ - ISPF option 5
+ - More panel with multiple tools
+ - 'SD' as a main panel option for REVOUT
+ - COMPARE standard and extended panels in option 3
+ - Search-For in option 3
