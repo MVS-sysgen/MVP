@@ -1,7 +1,7 @@
 Package: ISPTHEME
 Version: 1.0
 Maintainer: 
-Depends: ISPF DFSPC DALCDS DUCBD CCOMPR FINDSRCH ISPOPT5
+Depends: ISPF DFSPC DALCDS DUCBD CCOMPR FINDSRCH ISPOPT5 ULXL01 WRLDWTCH
 Homepage: https://github.com/MVS-sysgen/SOFTWARE/tree/main/ISPTHEME
 Description: Wally ISPF Theme 
  This theme changes the look and feel of Wally ISPF to be a closer
