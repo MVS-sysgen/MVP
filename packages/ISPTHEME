@@ -40,7 +40,7 @@
 )BODY WIDTH(&ZSCREENW) EXPAND(//)
 }                     Additional Products
 +
-+ Option ===>_ZCMD
++ Option ===>_ZCMD                                                     +
 +                                                     
 % R {RAKF       + RAKF Administrator Panels          / /
 % G {Games      + TSO Games                          / /
@@ -58,13 +58,10 @@
 %
 %
 % 
-~  Add more items by editing SYSGEN.ISPF.PLIB(ISPMORE)
+}   Add more items by editing SYSGEN.ISPF.PLIB(ISPMORE)
 %
 )INIT
   .HELP = ISP00000
-  &ZPRIM = YES        /* ALWAYS A PRIMARY OPTION MENU      */
-  &ZHTOP = ISP00000   /* TUTORIAL TABLE OF CONTENTS        */
-  &ZHINDEX = ISP91000 /* TUTORIAL INDEX - 1ST PAGE isptutor*/
 )PROC
   &ZSEL = TRANS(TRUNC(&ZCMD,'.')
                 R,'PANEL(ISPRAKF)'
@@ -78,7 +75,6 @@
               ' ',' '
                 X,'EXIT'
                 *,'?' )
-  &ZTRAIL = .TRAIL
 )END
 ./ ADD NAME=ISPOP01
 )ATTR
