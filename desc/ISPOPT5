@@ -1,0 +1,15 @@
+Package: ISPOPT5
+Version: 0.9
+Maintainer: 
+Depends: MACLIB PUTCARD
+Homepage: https://www.shareabitofit.net/ispopt5-in-mvs38j/
+Description: ISPF Option 5 - Batch language processor
+ Option 5 selections use a CLIST and Panel for each language processor 
+ request to create instream JCL and submit for batch processing very 
+ similar to real-iron ISPF Option 5. CLISTs were selected due to ease of
+ maintenance and realizing results immediately! The ISPF Skeleton 
+ function in not currently supported in the current version of ISPF from
+ Wally Mclaughlin.
+
+ The batch functionality presented here does NOT duplicate original IPSF 
+ functionality, this is intentional.
