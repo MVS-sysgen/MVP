@@ -59,6 +59,14 @@ INSTALL_JOB = '''//MVPINSTL JOB (TSO),
 {mvprexx}
 ><
 /*
+//MVPHELP  EXEC PGM=IEBGENER
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD DUMMY
+//SYSUT2   DD DSN=SYS2.HELP(MVP),DISP=SHR
+//SYSUT1    DD DATA,DLM='><'
+{mvphelp}
+><
+/*
 //MVPPARM  EXEC PGM=IEBGENER
 //SYSPRINT DD SYSOUT=*
 //SYSIN DD DUMMY
@@ -164,6 +172,15 @@ update_JOB = '''//UPDATE JOB (TSO),
 //SYSUT1    DD DATA,DLM='><'
 {mvprexx}
 ><
+/*
+//MVPHELP  EXEC PGM=IEBGENER
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD DUMMY
+//SYSUT2   DD DSN=SYS2.HELP(MVP),DISP=SHR
+//SYSUT1    DD DATA,DLM='><'
+{mvphelp}
+><
+/*
 //DELETE   EXEC PGM=IDCAMS
 //SYSPRINT DD   SYSOUT=*
 //SYSIN    DD   *
@@ -259,9 +276,12 @@ if args.instruction == 'UPDATE':
     with open("MVP.rexx", 'r') as mvp_rexx:
         mvprexx = mvp_rexx.read().rstrip()
 
+    with open("HELP.txt", 'r') as mvp_help:
+        mvphelp = mvp_help.read().rstrip()
+
     jcl = update_JOB.format(user=config['DEFAULT']['user'], 
                             password=config['DEFAULT']['password'],
-                            mvprexx = mvprexx)
+                            mvprexx = mvprexx,mvphelp=mvphelp)
 
     with open(config['DEFAULT']['cache'], 'r') as mvp_db:
         jcl += mvp_db.read().strip() + "\n"
@@ -302,6 +322,9 @@ if args.instruction == 'INSTALL_MVP':
     with open("MVP.rexx", 'r') as mvp_rexx:
         mvprexx = mvp_rexx.read().rstrip()
 
+    with open("HELP.txt", 'r') as mvp_help:
+        mvphelp = mvp_help.read().rstrip()
+
     desc_files = ''
     for filename in os.listdir(config['DEFAULT']['desc']):
         desc_files += "./ ADD NAME={}\n".format(filename)
@@ -313,6 +336,7 @@ if args.instruction == 'INSTALL_MVP':
                             password=args.password,
                             cache=mvp_cache,
                             mvprexx = mvprexx,
+                            mvphelp = mvphelp,
                             descriptions=desc_files,
                             mvpparm = parmlib,
                             mvp_user = config['DEFAULT']['password']

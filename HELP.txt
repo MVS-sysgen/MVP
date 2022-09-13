@@ -1,0 +1,67 @@
+)F FUNCTION -
+ MVS/CE Package Manager - MVP: There is a lot of software available for
+ MVS 3.8j but not everyone needs all of it at the same time. MVP takes
+ care of installing and tracking what software is installed. It manages
+ dependencies for you allowing you to install popular software with
+ ease.
+
+ To make software instalation easier MVP takes its inspiration from the
+ debian tool 'apt'.
+
+ With MVP you can:
+ - List available packages
+ - List installed packages
+ - Install packages
+ - Search packages
+ - Show information about specific packages
+ - Update package listing
+
+
+)X SYNTAX  -
+         RX MVP command [options]
+
+  If run without an argument/command the usage dialog is displayed.
+
+  REQUIRED - NONE
+  DEFAULTS - NONE
+  ALIAS    - NONE
+
+)O COMMANDS -
+  Operands are mutually exclusive. 
+
+))UPDATE   Updates MVP from git and updates the software library. this
+           command must be run by itself.
+
+))LIST     List all available/installable packages. LIST can also take
+           the argument '--installed' to show installed packages.
+
+))SEARCH   Search for a package by name.
+
+))INFO     Shows detailed information about a package. Requires a
+           package name to show information on.
+
+))SHOW     Shows detailed information about a package. Requires a
+           package name to show information on.
+
+))INSTALL  Installs the supplied package. Requires a package name to
+           install.
+
+))--debug  Shows debugging output to TSO and MVS console. Can be
+           shortened to -d. Can be used on any command. 
+
+
+Examples:
+
+- 'RX MVP LIST' - List all available packages
+
+- 'RX MVP LIST --installed' - List all installed packages
+
+- 'RX MVP INFO RPF --debug' - Show information about the RPF package
+                              and enable debugging information
+
+- 'RX MVP UPDATE -d' - Update the package cache and descriptions and
+                       enable debugging
+
+- 'RX MVP INSTALL TSOAUTHC' - Install the TSOAUTHC package
+
+- 'RX MVP SEARCH FTP' - Search for any packages that mention FTP
