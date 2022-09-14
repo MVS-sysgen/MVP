@@ -1,0 +1,22 @@
+Package: EDIT
+Version: 1.0
+Maintainer: robprins2@kpnmail.nl
+Depends: RAKFCL
+Homepage: CBT Tape FILE 68
+Description: TSTVS Console Editor and Dataset Utility
+ TSTVS is a utility program which is run from the
+ Operator Console.  Commands are entered from the
+ console, and replies are sent back to the console.
+
+ TSTVS is a line editor which can be used to fix
+ FB-80 datasets like PARMLIB datasets or started
+ PROCs in SYS1.PROCLIB, before JES2 has come up, 
+ or it can be executed afterwards.
+
+ You can execute S EDIT after JES2 is up.
+
+ Or:  S EDIT,SUB=MSTR   before JES2 is up.
+
+ TSTVS is an excellent recovery tool, for when an
+ MVS system (or OS/390, z/OS etc.) is only partially
+ up, and a dataset or member needs to be fixed.
