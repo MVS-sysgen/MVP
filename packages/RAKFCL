@@ -348,6 +348,7 @@ do while (length(args) > 0)
          exit
        end
      end
+   end  
    else do
      parse var current option "(" selection ")"
      select
