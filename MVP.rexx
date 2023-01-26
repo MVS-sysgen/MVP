@@ -419,7 +419,7 @@ run_install_job: procedure
   if getg("repo") == "local" then do
 
     call debug "run_install_job: Running SH MVP/MVP " task jobname
-    ADDRESS COMMAND 'CP SH MVP/MVP ' task || "'"||jobname||"'"
+    ADDRESS COMMAND 'CP SH MVP/MVP ' task "'"||jobname||"'"
     call debug "run_install_job: Running SH MVP/MVP complete " task jobname
 
     if rc <> 0 then do
