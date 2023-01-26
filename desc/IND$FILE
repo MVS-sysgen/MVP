@@ -1,0 +1,9 @@
+Package: IND$FILE
+Version: 2.0.5
+Maintainer: mikerayborn@comcast.net
+Depends: 
+IND$FILE for MVS3.8j. Allows for file transfers using your 3270 
+emulator.
+
+This release of IND$FILE includes support for DFT/DDM style transfers 
+using WSF data streams.
