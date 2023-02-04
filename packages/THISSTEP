@@ -32,7 +32,7 @@
        01  SEPERATOR-LINE.
            05  STEP-NAME PIC  X(08).
            05  SL-STEP-SPACE PIC XXX VALUE ' =='.
-           05  PROCSTEP-NAME PIC  X(08) VALUE ALL '='
+           05  PROCSTEP-NAME PIC  X(08) VALUE ALL '='.
            05  SL-PROC-SPACE PIC X VALUE '='.
            05  FILLER PIC X(113) VALUE ALL '='.
        01  COLUMNS.
