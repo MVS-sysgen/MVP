@@ -1,0 +1,140 @@
+//THISSTEP JOB (TSO),
+//             'Install THISSTEP',
+//             CLASS=A,
+//             MSGCLASS=A,
+//             MSGLEVEL=(1,1),
+//             USER=IBMUSER,PASSWORD=SYS1
+//*
+//* Requires GETJOBI
+//*
+//* STEP 1: Compile/Link THISSTEP to SYS2.LINKLIB(THISSTEP)
+//*
+//* TEST GETJOBI
+//*
+//*
+//TEST     EXEC COBUCL,                                                    
+//         PARM.COB='FLAGW,LOAD,SUPMAP,SIZE=2048K,BUF=1024K,LIST'
+//COB.SYSPUNCH DD DUMMY                                                     
+//COB.SYSIN    DD *                                                         
+      *THISSTEP
+      *
+      * This program requires GETJOBI to run
+      * When run it will return a seperate line showing the current
+      * STEP and name (if applicable) the PROC STEP name
+      *
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PARM.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  FILLER-LINE PIC X(133) VALUE ALL '='.
+       01  SEPERATOR-LINE.
+           05  STEP-NAME PIC  X(08).
+           05  SL-STEP-SPACE PIC XXX VALUE ' =='.
+           05  PROCSTEP-NAME PIC  X(08) VALUE ALL '='
+           05  SL-PROC-SPACE PIC X VALUE '='.
+           05  FILLER PIC X(113) VALUE ALL '='.
+       01  COLUMNS.
+           05 FILLER PIC X(9) VALUE 'STEP NAME'.
+           05 FILLER PIC XX VALUE '  '.
+           05 PROCSTEP PIC X(9) VALUE SPACES.
+       LINKAGE SECTION.
+       01   PARM-BUFFER.
+            05 PARM-LENGTH   PIC S9(4) COMP.
+            05 PARM-DATA.
+               10 NUMB       PIC X(100).
+       03  WS-GETJOBI-PARM-REC.
+           05  WS-GETJOBI-JOB-NAME
+                                 PIC  X(08).
+           05  WS-GETJOBI-PROCSTEP-NAME
+                                 PIC  X(08).
+           05  WS-GETJOBI-STEP-NAME
+                                 PIC  X(08).
+           05  WS-GETJOBI-JOB-NBR
+                                 PIC  X(08).
+           05  WS-GETJOBI-WORKAREA
+                                 PIC  X(128).
+       PROCEDURE DIVISION USING PARM-BUFFER.
+       MAINLINE SECTION.
+           
+           CALL 'GETJOBI' USING WS-GETJOBI-PARM-REC.
+
+           MOVE WS-GETJOBI-PROCSTEP-NAME TO STEP-NAME.
+           IF WS-GETJOBI-STEP-NAME NOT = SPACES 
+               MOVE WS-GETJOBI-PROCSTEP-NAME TO PROCSTEP-NAME
+               MOVE ' = ' TO SL-STEP-SPACE
+               MOVE ' ' TO SL-PROC-SPACE
+               MOVE WS-GETJOBI-STEP-NAME TO STEP-NAME
+               MOVE 'PROC STEP' TO PROCSTEP.
+
+
+           DISPLAY COLUMNS.
+           DISPLAY SEPERATOR-LINE.
+
+           IF PARM-LENGTH > 0 THEN 
+             DISPLAY PARM-DATA.
+
+       MAINLINE-EXIT.
+                GOBACK.
+/*                                                                          
+//COB.SYSLIB DD DSNAME=SYSC.COBLIB,DISP=SHR
+//LKED.SYSLIB DD DSNAME=SYSC.COBLIB,DISP=SHR
+//            DD DSNAME=SYS2.LINKLIB,DISP=SHR          
+//LKED.SYSLMOD DD DSNAME=SYS2.LINKLIB(THISSTEP),DISP=SHR
+//*
+//* STEP 2: Install Help
+//*
+//STEP1   EXEC PGM=PDSLOAD
+//STEPLIB  DD  DSN=SYSC.LINKLIB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSUT2   DD  DSN=SYS2.HELP,DISP=SHR
+//SYSUT1   DD  DATA,DLM=@@
+./ ADD NAME=THISSTEP
+)F FUNCTION -
+    THISSTEP
+
+    This is a batch program which will tell you the specific STEP
+    in a job (and PROC STEP if applicable) where the program was
+    run from. You can also add a PARM and will will print that
+    as well. 
+
+    Example JCL
+
+    //STEP5 EXEC PGM=THISSTEP
+    //SYSOUT DD SYSOUT=*,DCB=(RECFM=FBA,LRECL=161,BLKSIZE=16100)
+
+    Output:
+
+    STEP NAME
+    STEP5    ========================================================
+
+    Example:
+
+    //STEP6 EXEC PGM=THISSTEP,PARM='TEST PARAMETER'
+    //SYSOUT DD SYSOUT=*,DCB=(RECFM=FBA,LRECL=161,BLKSIZE=16100)
+
+    Output:
+
+    STEP NAME
+    STEP6    ========================================================
+    TEST PARAMETER
+
+    Why?
+
+    When looking at output in RFE or a printed output its sometimes
+    hard to tell where the output from one step ends and the other
+    begins. So this is to help with. 
+
+
+)X SYNTAX   - NONE
+)O OPERANDS - NONE
+@@
+//*
+//* TEST THISSTEP
+//*
+//*
+//STEP5 EXEC PGM=THISSTEP
+//SYSOUT DD SYSOUT=*,DCB=(RECFM=FBA,LRECL=161,BLKSIZE=16100)
+//STEP6 EXEC PGM=THISSTEP,PARM='TEST PARAMETER'
+//SYSOUT DD SYSOUT=*,DCB=(RECFM=FBA,LRECL=161,BLKSIZE=16100)

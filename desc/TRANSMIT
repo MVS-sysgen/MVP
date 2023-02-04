@@ -1,0 +1,13 @@
+Package: TRANSMIT
+Version: 2.3.0
+Maintainer: Bob Polmanter
+Depends:
+Homepage: https://github.com/moshix/nje38mvs
+Description: TRANSMIT and RECEIVE programs for batch and TSO
+
+ This standalone package installs the TANSMIT (XMIT) and RECEIVE (RECV)
+ TSO (and batch) commands for use when recieving or creating XMIT file.
+
+ This program is part of NJE38.
+ 
+ Note: After installation you must re-IPL your environment with CLPA

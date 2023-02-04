@@ -1,0 +1,12 @@
+Package: THISSTEP
+Version: 1.0
+Maintainer: Phil Young
+Depends: GETJOBI
+Homepage: https://github.com/MVS-sysgen/SOFTWARE
+Description: Batch program to show current step seperator
+ This is a batch program which will tell you the specific STEP
+ in a job (and PROC STEP if applicable) where the program was
+ run from. You can also add a PARM and will will print that
+ as well. 
+ 
+ 

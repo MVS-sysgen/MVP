@@ -1,0 +1,13 @@
+Package: GETJOBI
+Version: 1.0
+Maintainer: Bill O'Boyle
+Depends: MACLIB SXMACLIB
+Homepage: https://ibmmainframes.com/viewtopic.php?p=167434&highlight=#167434
+Description: A sub program that returns the JOB NAME, STEP, NUMBER, etc
+ < G E T J O B I >  (GET JOB INFORMATION)
+
+    THIS SUB-PROGRAM IS CALLED TO OBTAIN THE JOB-NAME, PROCSTEP
+    NAME, STEP-NAME AND JOB-NUMBER (IN THIS ORDER). NOTE THE   
+    REQUIRED 128-BYTE WORKAREA (FOR REENTRANCY PURPOSES).
+
+    It is installed to SYS2.LINKLIB View HELP GETJOBI for more info.
