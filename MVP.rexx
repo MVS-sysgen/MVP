@@ -1,833 +1,833 @@
-   /* MVP: MVS/CE Package Manager */
-parse arg action package arguments
+   /* MVP: MVS/CE PACKAGE MANAGER */
+PARSE ARG ACTION PACKAGE ARGUMENTS
 
    /*                 */
-  /* Parse arguments */
+  /* PARSE ARGUMENTS */
  /*                 */
 
-call setg('debug_on',0)
-call setg('repo', 'local')
+CALL SETG('DEBUG_ON',0)
+CALL SETG('REPO', 'LOCAL')
 
-if (upper(action) = '-H' | upper(package) = '-H') then call usage
-if pos('-H',upper(arguments)) > 0 then call usage
+IF (UPPER(ACTION) = '-H' | UPPER(PACKAGE) = '-H') THEN CALL USAGE
+IF POS('-H',UPPER(ARGUMENTS)) > 0 THEN CALL USAGE
 
-if (upper(action) = '-D' | upper(action) = '--DEBUG') then do
-  call usage
-  exit 1
-end
+IF (UPPER(ACTION) = '-D' | UPPER(ACTION) = '--DEBUG') THEN DO
+  CALL USAGE
+  EXIT 1
+END
 
-if length(action) = 0 then do
-  call usage
-  exit 1
-end
+IF LENGTH(ACTION) = 0 THEN DO
+  CALL USAGE
+  EXIT 1
+END
 
-if (upper(package) = '-D' | upper(package) = '--DEBUG') then do
-  call setg('debug_on',1)
-  call debug "Debugging enabled"
-  package = ''
-end
+IF (UPPER(PACKAGE) = '-D' | UPPER(PACKAGE) = '--DEBUG') THEN DO
+  CALL SETG('DEBUG_ON',1)
+  CALL DEBUG "DEBUGGING ENABLED"
+  PACKAGE = ''
+END
 
-args = arguments
+ARGS = ARGUMENTS
 
-do while length(arguments) > 0
-  parse upper var arguments p arguments
-  if (p = "-D" | or  p = '--DEBUG') then do
-    call setg('debug_on',1)
-    call debug "Debugging enabled"
-  end
-end
+DO WHILE LENGTH(ARGUMENTS) > 0
+  PARSE UPPER VAR ARGUMENTS P ARGUMENTS
+  IF (P = "-D" | OR  P = '--DEBUG') THEN DO
+    CALL SETG('DEBUG_ON',1)
+    CALL DEBUG "DEBUGGING ENABLED"
+  END
+END
 
-call debug "MVP Started with the following:"
-call debug "Action:" action
-call debug "Package:" package
-call debug "Arguments:" args
+CALL DEBUG "MVP STARTED WITH THE FOLLOWING:"
+CALL DEBUG "ACTION:" ACTION
+CALL DEBUG "PACKAGE:" PACKAGE
+CALL DEBUG "ARGUMENTS:" ARGS
 
    /*                                        */
-  /* Read the parmlib SYS2.PARMLIB(MVP0001) */
+  /* READ THE PARMLIB SYS2.PARMLIB(MVP0001) */
  /*                                        */
-call debug "Reading config SYS2.PARMLIB(MVP0001)"
+CALL DEBUG "READING CONFIG SYS2.PARMLIB(MVP0001)"
 "ALLOC FI(PARMS) DA('SYS2.PARMLIB(MVP0001)') SHR "  
 "EXECIO * DISKR PARMS (FINIS STEM PARMS."
-if rc > 0 then do
-    call error "Error reading SYS2.PARMLIB(MVP0001):" rc
+IF RC > 0 THEN DO
+    CALL ERROR "ERROR READING SYS2.PARMLIB(MVP0001):" RC
     "FREE F(PARMS)"
-    exit 8
-end
+    EXIT 8
+END
 "FREE F(PARMS)"
 
-call debug "SYS2.PARMLIB(MVP0001) contains" parms.0 "lines"
+CALL DEBUG "SYS2.PARMLIB(MVP0001) CONTAINS" PARMS.0 "LINES"
 
-do i=1 to parms.0
-    /* Skip comments */
-    call debug "Config line" i||":" parms.i
-    if pos("#",parms.i) = 1 then iterate
-    /* Get the timeout variable */
-    if pos("timeout",parms.i) then do
-        parse var parms.i . "=" t
-        call setg('timeout', t)
-        call debug "Timeout set to:" getg('timeout')
-    end
-    /* Get the repo location */
-    if pos("repo",parms.i) then do
-        parse var parms.i . "=" r
-        call setg('repo', r)
-        call debug "Repo set to:" getg('repo')
-    end
-end
-call debug "Done reading config SYS2.PARMLIB(MVP0001)"
+DO I=1 TO PARMS.0
+    /* SKIP COMMENTS */
+    CALL DEBUG "CONFIG LINE" I||":" PARMS.I
+    IF POS("#",PARMS.I) = 1 THEN ITERATE
+    /* GET THE TIMEOUT VARIABLE */
+    IF POS("TIMEOUT",PARMS.I) THEN DO
+        PARSE VAR PARMS.I . "=" T
+        CALL SETG('TIMEOUT', T)
+        CALL DEBUG "TIMEOUT SET TO:" GETG('TIMEOUT')
+    END
+    /* GET THE REPO LOCATION */
+    IF POS("REPO",PARMS.I) THEN DO
+        PARSE VAR PARMS.I . "=" R
+        CALL SETG('REPO', R)
+        CALL DEBUG "REPO SET TO:" GETG('REPO')
+    END
+END
+CALL DEBUG "DONE READING CONFIG SYS2.PARMLIB(MVP0001)"
 
    /*                                         */
-  /* Read packages and installed packaged db */
+  /* READ PACKAGES AND INSTALLED PACKAGED DB */
  /*                                         */
 
-call debug "Opening MVP.PACKAGES(CACHE)"
+CALL DEBUG "OPENING MVP.PACKAGES(CACHE)"
 "ALLOC FI(CACHE) DA('MVP.PACKAGES(CACHE)') SHR "
 "EXECIO * DISKR CACHE (FINIS STEM CACHE."
-if rc > 0 then do
-    call error "Error reading MVP.PACKAGES(CACHE):" rc
-    exit 8
-end
+IF RC > 0 THEN DO
+    CALL ERROR "ERROR READING MVP.PACKAGES(CACHE):" RC
+    EXIT 8
+END
 "FREE F(CACHE)"
-call debug "Read" cache.0 "lines"
-call debug "MVP.PACKAGES(CACHE) Closed"
+CALL DEBUG "READ" CACHE.0 "LINES"
+CALL DEBUG "MVP.PACKAGES(CACHE) CLOSED"
 
-call debug "Opening MVP.MVPDB"
+CALL DEBUG "OPENING MVP.MVPDB"
 "ALLOC FI(MVPDB) DA('MVP.MVPDB') SHR "
 "EXECIO * DISKR MVPDB (FINIS STEM MVPDB."
 
-if rc > 0 then do
-    call error "Error reading MVP.PACKAGES(MVPDB):" rc
+IF RC > 0 THEN DO
+    CALL ERROR "ERROR READING MVP.PACKAGES(MVPDB):" RC
     "FREE F(MVPDB)"
-    exit 8
-end
+    EXIT 8
+END
 "FREE F(MVPDB)"
-call debug "Read" mvpdb.0 "lines"
-call debug "MVP.MVPDB Closed"
+CALL DEBUG "READ" MVPDB.0 "LINES"
+CALL DEBUG "MVP.MVPDB CLOSED"
 
    /*                         */
-  /* Which step are we doing */
+  /* WHICH STEP ARE WE DOING */
  /*                         */
 
 SELECT
-  WHEN upper(action) == "INSTALL" THEN
+  WHEN UPPER(ACTION) == "INSTALL" THEN
     DO
-      call install package
+      CALL INSTALL PACKAGE
     END
-  WHEN upper(action) == "LIST" THEN
+  WHEN UPPER(ACTION) == "LIST" THEN
     DO
-      if upper(package) = '--INSTALLED' then do
-        say "Listing Installed Packages:"
-        say ""
-        do i=1 to mvpdb.0
-          say "" mvpdb.i
-        end
-      end
-      else if length(package) > 0 then do
-        say "Package" package "passed with LIST did you mean INFO?"
-        return
-      end
-      else do
+      IF UPPER(PACKAGE) = '--INSTALLED' THEN DO
+        SAY "LISTING INSTALLED PACKAGES:"
+        SAY ""
+        DO I=1 TO MVPDB.0
+          SAY "" MVPDB.I
+        END
+      END
+      ELSE IF LENGTH(PACKAGE) > 0 THEN DO
+        SAY "PACKAGE" PACKAGE "PASSED WITH LIST DID YOU MEAN INFO?"
+        RETURN
+      END
+      ELSE DO
         
-        do i=1 to cache.0
-          sortin.i = cache.i
-        end
+        DO I=1 TO CACHE.0
+          SORTIN.I = CACHE.I
+        END
 
-        sortin.0 = cache.0
+        SORTIN.0 = CACHE.0
 
-        call debug "Sorting CACHE before printing"
-        call rxsort
+        CALL DEBUG "SORTING CACHE BEFORE PRINTING"
+        CALL RXSORT
 
-        say "Listing Available Packages:"
-        say ""
-        do i=1 to sortin.0
-          parse var sortin.i prog . ver
-          say " " prog ver
-        end
+        SAY "LISTING AVAILABLE PACKAGES:"
+        SAY ""
+        DO I=1 TO SORTIN.0
+          PARSE VAR SORTIN.I PROG . VER
+          SAY " " PROG VER
+        END
 
-      end
-      say ""
-      say "Listing Done"
+      END
+      SAY ""
+      SAY "LISTING DONE"
     END
-  WHEN (upper(action) == "INFO" | upper(action) == "SHOW") THEN
+  WHEN (UPPER(ACTION) == "INFO" | UPPER(ACTION) == "SHOW") THEN
     DO
-      call info package
+      CALL INFO PACKAGE
     END
-  WHEN upper(action) == "UPDATE" THEN
+  WHEN UPPER(ACTION) == "UPDATE" THEN
     DO
-      say "Updating..."
-      call run_install_job UPDATE
-      if rc > 0 then say "Error with update"
-      else say "Update Done"
+      SAY "UPDATING..."
+      CALL RUN_INSTALL_JOB UPDATE
+      IF RC > 0 THEN SAY "ERROR WITH UPDATE"
+      ELSE SAY "UPDATE DONE"
     END
-  WHEN upper(action) == "SEARCH" THEN
+  WHEN UPPER(ACTION) == "SEARCH" THEN
     DO
-      say "Searching..."
-      say ""
-      call search package
+      SAY "SEARCHING..."
+      SAY ""
+      CALL SEARCH PACKAGE
     END
-end
+END
 
-return
+RETURN
 
    /*                                        */
-  /* The end of MVP below are the functions */
+  /* THE END OF MVP BELOW ARE THE FUNCTIONS */
  /*                                        */
 
-search:
-  /* Search the packages db and the package
-     descriptions for the passed word */
-  parse arg searchterm
-  if length(searchterm) = 0 then return
-  call debug "search: searching for:" searchterm
+SEARCH:
+  /* SEARCH THE PACKAGES DB AND THE PACKAGE
+     DESCRIPTIONS FOR THE PASSED WORD */
+  PARSE ARG SEARCHTERM
+  IF LENGTH(SEARCHTERM) = 0 THEN RETURN
+  CALL DEBUG "SEARCH: SEARCHING FOR:" SEARCHTERM
 
-  do i=1 to cache.0
-    short_desc = ""
-    found = 0
-    parse var cache.i progname . .
-    if pos(upper(searchterm),progname) > 0 then do
-        found = 1
-    end
-    call debug "search: searching description" progname
-    /* Get the description */
-    "ALLOC FI(DESCS) DA('MVP.PACKAGES("progname")') SHR "
+  DO I=1 TO CACHE.0
+    SHORT_DESC = ""
+    FOUND = 0
+    PARSE VAR CACHE.I PROGNAME . .
+    IF POS(UPPER(SEARCHTERM),PROGNAME) > 0 THEN DO
+        FOUND = 1
+    END
+    CALL DEBUG "SEARCH: SEARCHING DESCRIPTION" PROGNAME
+    /* GET THE DESCRIPTION */
+    "ALLOC FI(DESCS) DA('MVP.PACKAGES("PROGNAME")') SHR "
     "EXECIO * DISKR DESCS (FINIS STEM DESCSEARCH."
-    if rc > 0 then do
-        call error "Error reading MVP.PACKAGES("progname"):" rc
+    IF RC > 0 THEN DO
+        CALL ERROR "ERROR READING MVP.PACKAGES("PROGNAME"):" RC
         "FREE F(DESCS)"
-        exit 8
-    end
+        EXIT 8
+    END
     "FREE F(DESCS)"
-    do j=1 to descsearch.0
+    DO J=1 TO DESCSEARCH.0
 
-      if pos("Description:", descsearch.j) == 1 then do
-        parse var descsearch.j . short_desc
-        call debug 'short desc' short_desc
-      end
+      IF POS("DESCRIPTION:", DESCSEARCH.J) == 1 THEN DO
+        PARSE VAR DESCSEARCH.J . SHORT_DESC
+        CALL DEBUG 'SHORT DESC' SHORT_DESC
+      END
 
-      if pos("PACKAGE:",upper(descsearch.j)) == 1 then iterate
-      if pos("VERSION:",upper(descsearch.j)) == 1 then iterate
-      if pos("DEPENDS:",upper(descsearch.j)) == 1 then iterate
-      if pos("HOMEPAGE:",upper(descsearch.j)) == 1 then iterate
+      IF POS("PACKAGE:",UPPER(DESCSEARCH.J)) == 1 THEN ITERATE
+      IF POS("VERSION:",UPPER(DESCSEARCH.J)) == 1 THEN ITERATE
+      IF POS("DEPENDS:",UPPER(DESCSEARCH.J)) == 1 THEN ITERATE
+      IF POS("HOMEPAGE:",UPPER(DESCSEARCH.J)) == 1 THEN ITERATE
 
-      if pos(upper(searchterm),upper(descsearch.j)) > 0 then do
-        found = 1
-      end
+      IF POS(UPPER(SEARCHTERM),UPPER(DESCSEARCH.J)) > 0 THEN DO
+        FOUND = 1
+      END
 
-    end
+    END
 
-    if found then do
-      parse var cache.i p . v
-      say p v
-      say " " short_desc
-      say ""
-    end /* descsearch. loop */
-  end /* cache. loop */
+    IF FOUND THEN DO
+      PARSE VAR CACHE.I P . V
+      SAY P V
+      SAY " " SHORT_DESC
+      SAY ""
+    END /* DESCSEARCH. LOOP */
+  END /* CACHE. LOOP */
 
-  return
+  RETURN
 
-install:
-  /* install the specific package */
-  parse upper arg package
+INSTALL:
+  /* INSTALL THE SPECIFIC PACKAGE */
+  PARSE UPPER ARG PACKAGE
 
-  if length(package) < 1 then do
-    call error "INSTALL without package"
-    call usage
-    return
-  end
+  IF LENGTH(PACKAGE) < 1 THEN DO
+    CALL ERROR "INSTALL WITHOUT PACKAGE"
+    CALL USAGE
+    RETURN
+  END
 
-  doesnt_exist = check_exists(package)
+  DOESNT_EXIST = CHECK_EXISTS(PACKAGE)
 
-  if doesnt_exist then do
-    say "Unable to locate package" package
-    return
-  end
+  IF DOESNT_EXIST THEN DO
+    SAY "UNABLE TO LOCATE PACKAGE" PACKAGE
+    RETURN
+  END
 
-  already_installed = check_installed(package)
+  ALREADY_INSTALLED = CHECK_INSTALLED(PACKAGE)
 
-  if already_installed then do
-    say package "is already installed"
-    return
-  end
+  IF ALREADY_INSTALLED THEN DO
+    SAY PACKAGE "IS ALREADY INSTALLED"
+    RETURN
+  END
 
-  call debug "install: Checking for dependencies"
+  CALL DEBUG "INSTALL: CHECKING FOR DEPENDENCIES"
 
-  dependents = check_depends(package)
-  call debug "install:" package "requires" dependents "(unsorted)"
-  /* First we need to reverse the order */
-  revdep = package
-  do while dependents \= ''
-    parse var dependents idep dependents
-    revdep = idep revdep
-  end
+  DEPENDENTS = CHECK_DEPENDS(PACKAGE)
+  CALL DEBUG "INSTALL:" PACKAGE "REQUIRES" DEPENDENTS "(UNSORTED)"
+  /* FIRST WE NEED TO REVERSE THE ORDER */
+  REVDEP = PACKAGE
+  DO WHILE DEPENDENTS \= ''
+    PARSE VAR DEPENDENTS IDEP DEPENDENTS
+    REVDEP = IDEP REVDEP
+  END
 
-  call debug "install:" package "requires" revdep "(sorted)"
+  CALL DEBUG "INSTALL:" PACKAGE "REQUIRES" REVDEP "(SORTED)"
 
-  total = 0
-  nodupes = ''
-  do while revdep \= ''
-    parse var revdep idep revdep
-    if wordpos(idep, nodupes) > 0 then iterate
-    if check_installed(idep) then iterate
-    total = total + 1
-    depstem.total = idep
-    nodupes = nodupes idep
-  end
+  TOTAL = 0
+  NODUPES = ''
+  DO WHILE REVDEP \= ''
+    PARSE VAR REVDEP IDEP REVDEP
+    IF WORDPOS(IDEP, NODUPES) > 0 THEN ITERATE
+    IF CHECK_INSTALLED(IDEP) THEN ITERATE
+    TOTAL = TOTAL + 1
+    DEPSTEM.TOTAL = IDEP
+    NODUPES = NODUPES IDEP
+  END
 
-  call debug "install: Total packages to install:" total
+  CALL DEBUG "INSTALL: TOTAL PACKAGES TO INSTALL:" TOTAL
 
-  depstem.0 = total
+  DEPSTEM.0 = TOTAL
 
-  say "The following NEW packages will be installed: "
-  do i=1 to depstem.0
-    say "  " depstem.i
-  end
-  say total "packages to install"
+  SAY "THE FOLLOWING NEW PACKAGES WILL BE INSTALLED: "
+  DO I=1 TO DEPSTEM.0
+    SAY "  " DEPSTEM.I
+  END
+  SAY TOTAL "PACKAGES TO INSTALL"
 
-  do i=1 to depstem.0
-    do j=1 to cache.0
-      if wordpos(depstem.i,cache.j) > 0 then do
-        parse var cache.j . type vers
-        version.i = vers
-        type.i = type
-        leave
-      end
-    end
-  end
+  DO I=1 TO DEPSTEM.0
+    DO J=1 TO CACHE.0
+      IF WORDPOS(DEPSTEM.I,CACHE.J) > 0 THEN DO
+        PARSE VAR CACHE.J . TYPE VERS
+        VERSION.I = VERS
+        TYPE.I = TYPE
+        LEAVE
+      END
+    END
+  END
 
-  do i=1 to depstem.0
-    pname = depstem.i
-    vers = version.i
-    type = type.i
-    say "  Installing..." pname vers
-    call run_install_job "INSTALL" pname type
-    call mark_installed pname vers
-    call wait(500)
-  end
+  DO I=1 TO DEPSTEM.0
+    PNAME = DEPSTEM.I
+    VERS = VERSION.I
+    TYPE = TYPE.I
+    SAY "  INSTALLING..." PNAME VERS
+    CALL RUN_INSTALL_JOB "INSTALL" PNAME TYPE
+    CALL MARK_INSTALLED PNAME VERS
+    CALL WAIT(500)
+  END
 
-  say "Done"
+  SAY "DONE"
 
-  return
+  RETURN
 
-check_exists:
-  /* check if a package exists */
-  parse upper arg existing
-  call debug "check_exists: checking for" package
+CHECK_EXISTS:
+  /* CHECK IF A PACKAGE EXISTS */
+  PARSE UPPER ARG EXISTING
+  CALL DEBUG "CHECK_EXISTS: CHECKING FOR" PACKAGE
 
-  do i=1 to cache.0
-    if wordpos(existing, cache.i) > 0 then do
-      return 0
-    end
-  end
-  return 1
+  DO I=1 TO CACHE.0
+    IF WORDPOS(EXISTING, CACHE.I) > 0 THEN DO
+      RETURN 0
+    END
+  END
+  RETURN 1
 
-check_installed:
-  /* check if the package is already installed */
-  parse upper arg installed
+CHECK_INSTALLED:
+  /* CHECK IF THE PACKAGE IS ALREADY INSTALLED */
+  PARSE UPPER ARG INSTALLED
 
-  call debug "check_installed: Checking if" installed "is already installed"
+  CALL DEBUG "CHECK_INSTALLED: CHECKING IF" INSTALLED "IS ALREADY INSTALLED"
 
-  do i=1 to mvpdb.0
-    /* call debug "check_installed:" wordpos(installed, mvpdb.i) */
-    if wordpos(installed, mvpdb.i) > 0 then return 1
-  end
-  call debug "check_installed:" installed "is not installed"
+  DO I=1 TO MVPDB.0
+    /* CALL DEBUG "CHECK_INSTALLED:" WORDPOS(INSTALLED, MVPDB.I) */
+    IF WORDPOS(INSTALLED, MVPDB.I) > 0 THEN RETURN 1
+  END
+  CALL DEBUG "CHECK_INSTALLED:" INSTALLED "IS NOT INSTALLED"
 
-  return 0
+  RETURN 0
 
-mark_installed:
-  /* mark a package as installed in the db */
-  parse upper arg M_installed M_version
+MARK_INSTALLED:
+  /* MARK A PACKAGE AS INSTALLED IN THE DB */
+  PARSE UPPER ARG M_INSTALLED M_VERSION
 
 
-  call debug "mark_installed: Marking " M_installed M_version "as installed"
+  CALL DEBUG "MARK_INSTALLED: MARKING " M_INSTALLED M_VERSION "AS INSTALLED"
 
-  mvpdba.0 = 1
-  mvpdba.1 = M_installed M_version
+  MVPDBA.0 = 1
+  MVPDBA.1 = M_INSTALLED M_VERSION
 
-  call debug "mark_installed:  allocating MVP.MVPDB to MVPDBA"
+  CALL DEBUG "MARK_INSTALLED:  ALLOCATING MVP.MVPDB TO MVPDBA"
   "ALLOC FI(MVPDBA) DA('MVP.MVPDB') SHR REUSE"
 
-  call debug "mark_installed: Appending" mvpdba.1 "to MVP.MVPDB"
+  CALL DEBUG "MARK_INSTALLED: APPENDING" MVPDBA.1 "TO MVP.MVPDB"
   "EXECIO * DISKA MVPDBA (FINIS STEM MVPDBA."
 
-  if rc > 0 then do
-      call error "Error appending to MVP.MVPDB:" rc
+  IF RC > 0 THEN DO
+      CALL ERROR "ERROR APPENDING TO MVP.MVPDB:" RC
       "FREE F(MVPDBA)"
-      exit 8
-  end
+      EXIT 8
+  END
   "FREE F(MVPDBA)"
 
-  return
+  RETURN
 
 
-info:
-  /* prints the package description file */
-  parse upper arg package
-  call debug "info: getting information for" package
+INFO:
+  /* PRINTS THE PACKAGE DESCRIPTION FILE */
+  PARSE UPPER ARG PACKAGE
+  CALL DEBUG "INFO: GETTING INFORMATION FOR" PACKAGE
 
-  if length(package) < 1 then do
-    call error "INFO without package"
-    call usage
-    return
-  end
+  IF LENGTH(PACKAGE) < 1 THEN DO
+    CALL ERROR "INFO WITHOUT PACKAGE"
+    CALL USAGE
+    RETURN
+  END
 
-  rc = check_exists(package)
-  if rc > 0 then do
-    call error "Package " package "does not exist"
-  end
+  RC = CHECK_EXISTS(PACKAGE)
+  IF RC > 0 THEN DO
+    CALL ERROR "PACKAGE " PACKAGE "DOES NOT EXIST"
+  END
 
-  call desc package
+  CALL DESC PACKAGE
 
-  do i = 1 to desc.0
-    say desc.i
-  end
-  return
+  DO I = 1 TO DESC.0
+    SAY DESC.I
+  END
+  RETURN
 
-desc:
-  /* reads the member from MVP.PACKAGES and stores it in
-     the stem desc. */
-  parse upper arg member
-  call debug "desc: getting description for" package
+DESC:
+  /* READS THE MEMBER FROM MVP.PACKAGES AND STORES IT IN
+     THE STEM DESC. */
+  PARSE UPPER ARG MEMBER
+  CALL DEBUG "DESC: GETTING DESCRIPTION FOR" PACKAGE
 
-  "ALLOC FI(DESC) DA('MVP.PACKAGES("member")') SHR "
+  "ALLOC FI(DESC) DA('MVP.PACKAGES("MEMBER")') SHR "
   "EXECIO * DISKR DESC (FINIS STEM DESC."
-  if rc > 0 then do
-      call error "Error reading MVP.PACKAGES("member"):" rc
+  IF RC > 0 THEN DO
+      CALL ERROR "ERROR READING MVP.PACKAGES("MEMBER"):" RC
       "FREE F(DESC)"
-      exit 8
-  end
+      EXIT 8
+  END
   "FREE F(DESC)"
-  return
+  RETURN
 
-run_install_job: procedure
-  /* Submits a job and waits for the results on MTT */
-  parse arg task jobname type
-  call debug "run_install_job: starting" jobname type
-  /* If this is an update taks the jobname is update */
+RUN_INSTALL_JOB: PROCEDURE
+  /* SUBMITS A JOB AND WAITS FOR THE RESULTS ON MTT */
+  PARSE ARG TASK JOBNAME TYPE
+  CALL DEBUG "RUN_INSTALL_JOB: STARTING" JOBNAME TYPE
+  /* IF THIS IS AN UPDATE TAKS THE JOBNAME IS UPDATE */
 
-  highest_jobnum = call get_jobnum
+  HIGHEST_JOBNUM = CALL GET_JOBNUM
 
-  if highest_jobnum == -1 then return
+  IF HIGHEST_JOBNUM == -1 THEN RETURN
 
-  if length(jobname) = 0 then jobname = task
+  IF LENGTH(JOBNAME) = 0 THEN JOBNAME = TASK
 
-  call debug "run_install_job: Jobname:" jobname "stepcc:" stepcc
-  if stepcc = 'STEPCC' then stepcc = ''
+  CALL DEBUG "RUN_INSTALL_JOB: JOBNAME:" JOBNAME "STEPCC:" STEPCC
+  IF STEPCC = 'STEPCC' THEN STEPCC = ''
 
   
 
-  if getg("repo") == "local" then do
+  IF GETG("REPO") == "LOCAL" THEN DO
 
-    call debug "run_install_job: Running SH MVP/MVP " task jobname
-    ADDRESS COMMAND 'CP SH MVP/MVP ' task "'"||jobname||"'"
-    call debug "run_install_job: Running SH MVP/MVP complete " task jobname
+    CALL DEBUG "RUN_INSTALL_JOB: RUNNING SH MVP/MVP " TASK JOBNAME
+    ADDRESS COMMAND 'CP SH MVP/MVP ' TASK "'"||JOBNAME||"'"
+    CALL DEBUG "RUN_INSTALL_JOB: RUNNING SH MVP/MVP COMPLETE " TASK JOBNAME
 
-    if rc <> 0 then do
-        call error "Error running ADDRESS COMMANND CP SH ./MVP/MVP" task jobname
-        return
-    end
-  end
-  else if getg("repo") \= "local" then do
-    /* for future expansion of remote repos */
-    call error "Remote MVP repos not supported in V1"
-    exit 1
-  end
+    IF RC <> 0 THEN DO
+        CALL ERROR "ERROR RUNNING ADDRESS COMMANND CP SH ./MVP/MVP" TASK JOBNAME
+        RETURN
+    END
+  END
+  ELSE IF GETG("REPO") \= "LOCAL" THEN DO
+    /* FOR FUTURE EXPANSION OF REMOTE REPOS */
+    CALL ERROR "REMOTE MVP REPOS NOT SUPPORTED IN V1"
+    EXIT 1
+  END
 
-  call check_job jobname highest_jobnum
+  CALL CHECK_JOB JOBNAME HIGHEST_JOBNUM
 
-  if type = "JCL" then do
-    call wto "MVP001I" jobname "install done"
-    return
-  end
+  IF TYPE = "JCL" THEN DO
+    CALL WTO "MVP001I" JOBNAME "INSTALL DONE"
+    RETURN
+  END
 
-  if type = "XMI" then call process_XMI jobname
+  IF TYPE = "XMI" THEN CALL PROCESS_XMI JOBNAME
 
-return
+RETURN
 
-get_jobnum: procedure
-  /* Reads the MTT and returns the highest jobnum */
-  call debug "get_jobnum: Collecting MTT"
+GET_JOBNUM: PROCEDURE
+  /* READS THE MTT AND RETURNS THE HIGHEST JOBNUM */
+  CALL DEBUG "GET_JOBNUM: COLLECTING MTT"
 
-  rc = mtt()
-  if rc > 0 then do
-    do i=_line.0 to 1 by -1
-      parse var _line.i . . jobm highest_jobnum .
-      if jobm = "JOB" then do
-        leave
-      end
-    end
-  end
-  else do
-    call error "Cannot check job log"
-    return -1
-  end
+  RC = MTT()
+  IF RC > 0 THEN DO
+    DO I=_LINE.0 TO 1 BY -1
+      PARSE VAR _LINE.I . . JOBM HIGHEST_JOBNUM .
+      IF JOBM = "JOB" THEN DO
+        LEAVE
+      END
+    END
+  END
+  ELSE DO
+    CALL ERROR "CANNOT CHECK JOB LOG"
+    RETURN -1
+  END
 
-  call debug "get_jobnum: Highest Jobnum:" highest_jobnum
+  CALL DEBUG "GET_JOBNUM: HIGHEST JOBNUM:" HIGHEST_JOBNUM
 
-  return highest_jobnum
+  RETURN HIGHEST_JOBNUM
 
-check_job: procedure
-  /* Reads the MTT backwards from bottom up and compares
-     the found job number with a given job number
-     if the job number is higher that the provided job number
-     it will then check for IEF records and the provided jobname
+CHECK_JOB: PROCEDURE
+  /* READS THE MTT BACKWARDS FROM BOTTOM UP AND COMPARES
+     THE FOUND JOB NUMBER WITH A GIVEN JOB NUMBER
+     IF THE JOB NUMBER IS HIGHER THAT THE PROVIDED JOB NUMBER
+     IT WILL THEN CHECK FOR IEF RECORDS AND THE PROVIDED JOBNAME
 
-     Once it knows the job has ended it checks the condition code for
-     each step to confirm it is 0000
+     ONCE IT KNOWS THE JOB HAS ENDED IT CHECKS THE CONDITION CODE FOR
+     EACH STEP TO CONFIRM IT IS 0000
   */
-  parse arg jobname prev_jobnum
+  PARSE ARG JOBNAME PREV_JOBNUM
 
-  ended = "IEF404I "||jobname||" - ENDED"
-  started = "IEF403I "||jobname||" - STARTED"
-  failed = "IEF453I "||jobname||" - JOB FAILED"
+  ENDED = "IEF404I "||JOBNAME||" - ENDED"
+  STARTED = "IEF403I "||JOBNAME||" - STARTED"
+  FAILED = "IEF453I "||JOBNAME||" - JOB FAILED"
 
-  notfound = 1
-  attempts = 0
-  do while notfound
-    call wait(1000)
+  NOTFOUND = 1
+  ATTEMPTS = 0
+  DO WHILE NOTFOUND
+    CALL WAIT(1000)
 
-    /* dont loop forever */
-    if attempts >= getg(timeout) then leave
-    attempts = attempts + 1
+    /* DONT LOOP FOREVER */
+    IF ATTEMPTS >= GETG(TIMEOUT) THEN LEAVE
+    ATTEMPTS = ATTEMPTS + 1
 
-    rc = mtt()
-    if rc < 0 then iterate
+    RC = MTT()
+    IF RC < 0 THEN ITERATE
 
-    call debug "check_job: Searching MTT for job output for" task jobname
-    call debug "check_job: Searching for successfull job completion (IEF404I)"
-    do i=_line.0 to 1 by -1
-      parse var _line.i . . jobm cur_jobnum .
-      if jobm = "JOB" then do
-        /* call debug "check_job:" cur_jobnum "<=" prev_jobnum */
-        if cur_jobnum <= prev_jobnum then leave
-        else if pos(ended,_line.i) > 0 then do
-          call debug "check_job:" jobname "found in MTT"
-          jobend = i
-          notfound = 0
-          leave
-        end
-        else if pos(failed, _line.i) > 0 then do
-          call error jobname "failed to install"
-          jobend = i
-          notfound = 0
-          leave
-        end                                   
-        /* else call debug "check_job:" _line.i */
-      end
-    end
-  end
+    CALL DEBUG "CHECK_JOB: SEARCHING MTT FOR JOB OUTPUT FOR" TASK JOBNAME
+    CALL DEBUG "CHECK_JOB: SEARCHING FOR SUCCESSFULL JOB COMPLETION (IEF404I)"
+    DO I=_LINE.0 TO 1 BY -1
+      PARSE VAR _LINE.I . . JOBM CUR_JOBNUM .
+      IF JOBM = "JOB" THEN DO
+        /* CALL DEBUG "CHECK_JOB:" CUR_JOBNUM "<=" PREV_JOBNUM */
+        IF CUR_JOBNUM <= PREV_JOBNUM THEN LEAVE
+        ELSE IF POS(ENDED,_LINE.I) > 0 THEN DO
+          CALL DEBUG "CHECK_JOB:" JOBNAME "FOUND IN MTT"
+          JOBEND = I
+          NOTFOUND = 0
+          LEAVE
+        END
+        ELSE IF POS(FAILED, _LINE.I) > 0 THEN DO
+          CALL ERROR JOBNAME "FAILED TO INSTALL"
+          JOBEND = I
+          NOTFOUND = 0
+          LEAVE
+        END                                   
+        /* ELSE CALL DEBUG "CHECK_JOB:" _LINE.I */
+      END
+    END
+  END
 
-  if attempts >= getg(timeout) then do
-    call error "Unable to find" jobname "in MTT after" getg(timeout) seconds
-    call error "Install aborting"
-    exit -1
-    return
-  end
+  IF ATTEMPTS >= GETG(TIMEOUT) THEN DO
+    CALL ERROR "UNABLE TO FIND" JOBNAME "IN MTT AFTER" GETG(TIMEOUT) SECONDS
+    CALL ERROR "INSTALL ABORTING"
+    EXIT -1
+    RETURN
+  END
 
-  call debug "check_job: searching for IEF403I in MTT"
-  do j=jobend to 1 by -1
-    call debug "run_install_job:" _line.j
-    if pos(started,_line.j) > 0 then leave
-  end
+  CALL DEBUG "CHECK_JOB: SEARCHING FOR IEF403I IN MTT"
+  DO J=JOBEND TO 1 BY -1
+    CALL DEBUG "RUN_INSTALL_JOB:" _LINE.J
+    IF POS(STARTED,_LINE.J) > 0 THEN LEAVE
+  END
 
-  jobstart = j
+  JOBSTART = J
 
-  do i=jobstart to jobend
-    parse var _line.i . . jobm jobnum type det
-    /* skip entries that aren't jobs or have the wrong jobnumber */
-    if jobm \= 'JOB' | jobnum \= cur_jobnum then iterate
-    if type = "IEFACTRT" then do
-      parse var det name '/' prog '/' . '/' . '/' cc '/' jobname
-      if cc \= 0000 then do
-        call error "Job JOB"||right(jobnum,5,'0') "FAILED"
-        call error "Jobname:" jobname "Step:" name "Program:" prog
-        call error "MAXCC:" cc
-        exit -1
-      end
-    end
-  end
+  DO I=JOBSTART TO JOBEND
+    PARSE VAR _LINE.I . . JOBM JOBNUM TYPE DET
+    /* SKIP ENTRIES THAT AREN'T JOBS OR HAVE THE WRONG JOBNUMBER */
+    IF JOBM \= 'JOB' | JOBNUM \= CUR_JOBNUM THEN ITERATE
+    IF TYPE = "IEFACTRT" THEN DO
+      PARSE VAR DET NAME '/' PROG '/' . '/' . '/' CC '/' JOBNAME
+      IF CC \= 0000 THEN DO
+        CALL ERROR "JOB JOB"||RIGHT(JOBNUM,5,'0') "FAILED"
+        CALL ERROR "JOBNAME:" JOBNAME "STEP:" NAME "PROGRAM:" PROG
+        CALL ERROR "MAXCC:" CC
+        EXIT -1
+      END
+    END
+  END
 
-  return
+  RETURN
 
-process_XMI:
-  /* if the package was an XMI this function processes
-     the XMI file by searching for #nnnJCL/#nnnREX members
-     in MVP.WORK and running them in order
+PROCESS_XMI:
+  /* IF THE PACKAGE WAS AN XMI THIS FUNCTION PROCESSES
+     THE XMI FILE BY SEARCHING FOR #NNNJCL/#NNNREX MEMBERS
+     IN MVP.WORK AND RUNNING THEM IN ORDER
   */
 
-  call wait(1000)
-  parse arg appname
+  CALL WAIT(1000)
+  PARSE ARG APPNAME
 
-  call debug "process_XMI: Checking if MVP.WORK exists"
+  CALL DEBUG "PROCESS_XMI: CHECKING IF MVP.WORK EXISTS"
 
-  dsn_ok = SYSDSN("'MVP.WORK'")
+  DSN_OK = SYSDSN("'MVP.WORK'")
 
-  if dsn_ok = 'OK' then i=1
-  else do
-    call error "Attempt to process" appname "MVP.WORK not found"
-    exit -1
-  end
+  IF DSN_OK = 'OK' THEN I=1
+  ELSE DO
+    CALL ERROR "ATTEMPT TO PROCESS" APPNAME "MVP.WORK NOT FOUND"
+    EXIT -1
+  END
 
-  call debug "process_XMI: MVP.WORK exists"
+  CALL DEBUG "PROCESS_XMI: MVP.WORK EXISTS"
 
-  none_found = 1
-  total_xmi_tasks = 0
+  NONE_FOUND = 1
+  TOTAL_XMI_TASKS = 0
 
 
   /*
 
-  This currently breaks EXECIO instead we brute force entries
+  THIS CURRENTLY BREAKS EXECIO INSTEAD WE BRUTE FORCE ENTRIES
 
-  x = DIR("'MVP.WORK'")
+  X = DIR("'MVP.WORK'")
 
-  call debug "process_XMI: listing MVP.WORK members"
-  do i=1 to DIRENTRY.0
-    call debug "process_XMI:" i DIRENTRY.i.name
-  end
+  CALL DEBUG "PROCESS_XMI: LISTING MVP.WORK MEMBERS"
+  DO I=1 TO DIRENTRY.0
+    CALL DEBUG "PROCESS_XMI:" I DIRENTRY.I.NAME
+  END
 
-  call debug "process_XMI: locating install JCL/REXX tasks"
+  CALL DEBUG "PROCESS_XMI: LOCATING INSTALL JCL/REXX TASKS"
 
-  do i=1 to DIRENTRY.0
-    if pos("#",DIRENTRY.i.name) = 1 then do
-      xmi_num = strip(substr(DIRENTRY.i.name,2,3),,'0')
-      xmi_type = substr(DIRENTRY.i.name,5)
-      xmi_taskname = DIRENTRY.i.name
-      ds = "process_XMI: File" xmi_num "found type" xmi_type "("xmi_taskname")"
-      call debug ds
-      none_found = 0
-      total_xmi_tasks = total_xmi_tasks + 1
-      sortin.total_xmi_tasks = xmi_num xmi_type xmi_taskname
-    end
-  end
+  DO I=1 TO DIRENTRY.0
+    IF POS("#",DIRENTRY.I.NAME) = 1 THEN DO
+      XMI_NUM = STRIP(SUBSTR(DIRENTRY.I.NAME,2,3),,'0')
+      XMI_TYPE = SUBSTR(DIRENTRY.I.NAME,5)
+      XMI_TASKNAME = DIRENTRY.I.NAME
+      DS = "PROCESS_XMI: FILE" XMI_NUM "FOUND TYPE" XMI_TYPE "("XMI_TASKNAME")"
+      CALL DEBUG DS
+      NONE_FOUND = 0
+      TOTAL_XMI_TASKS = TOTAL_XMI_TASKS + 1
+      SORTIN.TOTAL_XMI_TASKS = XMI_NUM XMI_TYPE XMI_TASKNAME
+    END
+  END
 
   */
 
   /* *********************************************** */
-  /* dirty hack without DIR until V2R5M1 is released */
+  /* DIRTY HACK WITHOUT DIR UNTIL V2R5M1 IS RELEASED */
   /* *********************************************** */
-  do i=1 to 10
+  DO I=1 TO 10
 
-    dsn_ok = SYSDSN("'MVP.WORK(#"right(i,3,0)"JCL)'")
-    if dsn_ok = 'OK' then do
-      total_xmi_tasks = total_xmi_tasks + 1
-      sortin.total_xmi_tasks = i "JCL" "#"right(i,3,0)"JCL"
-      none_found = 0
-    end
+    DSN_OK = SYSDSN("'MVP.WORK(#"RIGHT(I,3,0)"JCL)'")
+    IF DSN_OK = 'OK' THEN DO
+      TOTAL_XMI_TASKS = TOTAL_XMI_TASKS + 1
+      SORTIN.TOTAL_XMI_TASKS = I "JCL" "#"RIGHT(I,3,0)"JCL"
+      NONE_FOUND = 0
+    END
 
-    dsn_ok = SYSDSN("'MVP.WORK(#"right(i,3,0)"REX)'")
-    if dsn_ok = 'OK' then do
-      total_xmi_tasks = total_xmi_tasks + 1
-      sortin.total_xmi_tasks = i "REX" "#"right(i,3,0)"REX"
-      none_found = 0
-    end
+    DSN_OK = SYSDSN("'MVP.WORK(#"RIGHT(I,3,0)"REX)'")
+    IF DSN_OK = 'OK' THEN DO
+      TOTAL_XMI_TASKS = TOTAL_XMI_TASKS + 1
+      SORTIN.TOTAL_XMI_TASKS = I "REX" "#"RIGHT(I,3,0)"REX"
+      NONE_FOUND = 0
+    END
 
-  end
+  END
   /* *********************************************** */
-  /* end dirty hack until V2R5M1 is released         */
+  /* END DIRTY HACK UNTIL V2R5M1 IS RELEASED         */
   /* *********************************************** */
 
-  call debug "process_XMI: found" total_xmi_tasks "install tasks"
+  CALL DEBUG "PROCESS_XMI: FOUND" TOTAL_XMI_TASKS "INSTALL TASKS"
 
-  if none_found then do
-    call error "Missing preinstall file #001JCL or #001REX for" appname
-    exit 8
-  end
+  IF NONE_FOUND THEN DO
+    CALL ERROR "MISSING PREINSTALL FILE #001JCL OR #001REX FOR" APPNAME
+    EXIT 8
+  END
 
 
-  sortin.0 = total_xmi_tasks
-  call RXSORT
+  SORTIN.0 = TOTAL_XMI_TASKS
+  CALL RXSORT
 
-   do i=1 to sortin.0
-      parse var sortin.i xmi_num xmi_type xmi_taskname
-      call debug "process_XMI: task" xmi_num "type" xmi_type
-      if xmi_type == "JCL" then do
-        call debug "process_XMI:" appname "Submitting" xmi_taskname
-        call submit_XMI_jcl "'MVP.WORK("|| xmi_taskname ||")'" 
-      end
-  end
+   DO I=1 TO SORTIN.0
+      PARSE VAR SORTIN.I XMI_NUM XMI_TYPE XMI_TASKNAME
+      CALL DEBUG "PROCESS_XMI: TASK" XMI_NUM "TYPE" XMI_TYPE
+      IF XMI_TYPE == "JCL" THEN DO
+        CALL DEBUG "PROCESS_XMI:" APPNAME "SUBMITTING" XMI_TASKNAME
+        CALL SUBMIT_XMI_JCL "'MVP.WORK("|| XMI_TASKNAME ||")'" 
+      END
+  END
 
-  return
+  RETURN
 
-submit_XMI_jcl: 
-/* Inserts the MVP username and password to the XMI JCL */
-/* returns nothing */
+SUBMIT_XMI_JCL: 
+/* INSERTS THE MVP USERNAME AND PASSWORD TO THE XMI JCL */
+/* RETURNS NOTHING */
 
-  parse arg jcl_location
-  hj = get_jobnum()
-  call debug "submit_XMI_jcl: Processing" jcl_location
+  PARSE ARG JCL_LOCATION
+  HJ = GET_JOBNUM()
+  CALL DEBUG "SUBMIT_XMI_JCL: PROCESSING" JCL_LOCATION
 
-  "ALLOC FI(XMIJCL) DA("||jcl_location||") SHR "
+  "ALLOC FI(XMIJCL) DA("||JCL_LOCATION||") SHR "
   "EXECIO * DISKR XMIJCL (FINIS STEM XMIJCL."
-  if rc > 0 then do
-      call error "Error reading "||jcl_location||":" rc
+  IF RC > 0 THEN DO
+      CALL ERROR "ERROR READING "||JCL_LOCATION||":" RC
       "FREE F(XMIJCL)"
-      exit 8
-  end
+      EXIT 8
+  END
   "FREE F(XMIJCL)"
 
-  if find(XMIJCL.1,'JOB') < 1 then do
-    call error jcl_location ||"is not a valid JOB"
-    exit 8
-  end
+  IF FIND(XMIJCL.1,'JOB') < 1 THEN DO
+    CALL ERROR JCL_LOCATION ||"IS NOT A VALID JOB"
+    EXIT 8
+  END
 
-  /* first make sure the queue is empty */
-  do queued()
-    pull element
-    call debug 'submit_XMI_jcl: previous queue item' element
-  end
+  /* FIRST MAKE SURE THE QUEUE IS EMPTY */
+  DO QUEUED()
+    PULL ELEMENT
+    CALL DEBUG 'SUBMIT_XMI_JCL: PREVIOUS QUEUE ITEM' ELEMENT
+  END
 
-  do j=1 to XMIJCL.0
+  DO J=1 TO XMIJCL.0
     
-    x=0
-    do while (right(XMIJCL.J,x) == left(" ",x))
-      /* if we have spaces find the first non space character */
-      x = x + 1
-      iterate
-    end
+    X=0
+    DO WHILE (RIGHT(XMIJCL.J,X) == LEFT(" ",X))
+      /* IF WE HAVE SPACES FIND THE FIRST NON SPACE CHARACTER */
+      X = X + 1
+      ITERATE
+    END
     
-    if right(XMIJCL.J,1) == "," then do
-      /* if the first line has a continuation, keep going */
-      queue XMIJCL.J
-      iterate
-    end
+    IF RIGHT(XMIJCL.J,1) == "," THEN DO
+      /* IF THE FIRST LINE HAS A CONTINUATION, KEEP GOING */
+      QUEUE XMIJCL.J
+      ITERATE
+    END
 
 
-    jcl = LEFT(XMIJCL.J, LENGTH(XMIJCL.J) - (x - 1))||","
-    call debug "submit_XMI_jcl: Changing line" J "to:" jcl
-    queue jcl
+    JCL = LEFT(XMIJCL.J, LENGTH(XMIJCL.J) - (X - 1))||","
+    CALL DEBUG "SUBMIT_XMI_JCL: CHANGING LINE" J "TO:" JCL
+    QUEUE JCL
 
-    call debug "submit_XMI_jcl: adding to MVP USER to job"
-    queue "//    USER=MVP,PASSWORD="||get_pw()
+    CALL DEBUG "SUBMIT_XMI_JCL: ADDING TO MVP USER TO JOB"
+    QUEUE "//    USER=MVP,PASSWORD="||GET_PW()
 
-    leave    
-  end
+    LEAVE    
+  END
 
-  if j = XMIJCL.0 then do
-    call error "Unable to PARSE XMI JCL File " jcl_location
-    exit 8
-  end
+  IF J = XMIJCL.0 THEN DO
+    CALL ERROR "UNABLE TO PARSE XMI JCL FILE " JCL_LOCATION
+    EXIT 8
+  END
 
-  do j = (j+1) to XMIJCL.0
-    queue XMIJCL.j
-  end
+  DO J = (J+1) TO XMIJCL.0
+    QUEUE XMIJCL.J
+  END
 
-  total = queued()
+  TOTAL = QUEUED()
 
-  do x=1 to queued()                                
-    pull element                                    
-    jclstem.x = element                             
-  end                                               
-  jclstem.0 = total                                     
+  DO X=1 TO QUEUED()                                
+    PULL ELEMENT                                    
+    JCLSTEM.X = ELEMENT                             
+  END                                               
+  JCLSTEM.0 = TOTAL                                     
                                                     
-  call debug "submit_XMI_jcl: submitting" jclstem.0 "lines" 
-  call submit('jclstem.')                           
-  call check_job xmi_taskname hj
+  CALL DEBUG "SUBMIT_XMI_JCL: SUBMITTING" JCLSTEM.0 "LINES" 
+  CALL SUBMIT('JCLSTEM.')                           
+  CALL CHECK_JOB XMI_TASKNAME HJ
 
-  return
+  RETURN
 
-get_pw: 
-/* Returns a string with the MVP user password from RAKF */
-  call debug "get_pw: Opening 'SYS1.SECURE.CNTL(USERS)'"
+GET_PW: 
+/* RETURNS A STRING WITH THE MVP USER PASSWORD FROM RAKF */
+  CALL DEBUG "GET_PW: OPENING 'SYS1.SECURE.CNTL(USERS)'"
   "ALLOC FI(USERS) DA('SYS1.SECURE.CNTL(USERS)') SHR "
   "EXECIO * DISKR USERS (FINIS STEM USERS."
-  if rc > 0 then do
-      call error "Error reading SYS1.SECURE.CNTL(USERS):" rc
+  IF RC > 0 THEN DO
+      CALL ERROR "ERROR READING SYS1.SECURE.CNTL(USERS):" RC
       "FREE F(USERS)"
-      exit 8
-  end
+      EXIT 8
+  END
   "FREE F(USERS)"
 
   PW = ""
 
-  call debug "get_pw: Searching for MVP user"
-  do k=1 to USERS.0
-    if left(users.k, 4) == "MVP " then do
-      call debug "get_pw: MVP User found returning"
-      /* returns the password for the MVP user */
-      PW = substr(USERS.k,19,8)
-      leave
-    end
-  end
+  CALL DEBUG "GET_PW: SEARCHING FOR MVP USER"
+  DO K=1 TO USERS.0
+    IF LEFT(USERS.K, 4) == "MVP " THEN DO
+      CALL DEBUG "GET_PW: MVP USER FOUND RETURNING"
+      /* RETURNS THE PASSWORD FOR THE MVP USER */
+      PW = SUBSTR(USERS.K,19,8)
+      LEAVE
+    END
+  END
 
-  if PW="" then do
-    call debug "get_pw: MVP User not found!"
-  end
+  IF PW="" THEN DO
+    CALL DEBUG "GET_PW: MVP USER NOT FOUND!"
+  END
 
-  return PW
+  RETURN PW
 
-debug: procedure
-  /* Prints a debug message to TSO and console if debugging is enabled
-     with the argument -d/--debug
+DEBUG: PROCEDURE
+  /* PRINTS A DEBUG MESSAGE TO TSO AND CONSOLE IF DEBUGGING IS ENABLED
+     WITH THE ARGUMENT -D/--DEBUG
   */
-  parse arg string
-  if getg(debug_on) then do
-    say "MVP000I - DEBUG -" string
-    call wto "MVP000I - DEBUG -" string
-  end
-  return
+  PARSE ARG STRING
+  IF GETG(DEBUG_ON) THEN DO
+    SAY "MVP000I - DEBUG -" STRING
+    CALL WTO "MVP000I - DEBUG -" STRING
+  END
+  RETURN
 
-error:
-  /* prints MVP error message to TSO and mvs console */
-  parse arg string
-  say "MVP999E - ERROR -" string
-  call wto "MVP999E - ERROR -" string
-  return
+ERROR:
+  /* PRINTS MVP ERROR MESSAGE TO TSO AND MVS CONSOLE */
+  PARSE ARG STRING
+  SAY "MVP999E - ERROR -" STRING
+  CALL WTO "MVP999E - ERROR -" STRING
+  RETURN
 
-usage:
-  /* prints MVP usage */
-  say "MVS/CE Package manager (MVP)"
-  say "Usage:"
-  say "  RX MVP command [options]"
-  say "Example:"
-  say "  RX MVP LIST"
-  say "  RX MVP INFO PACKAGE --debug"
-  say "  RX MVP UPDATE -d"
-  say "  RX MVP INSTALL PACKAGE"
-  say ""
-  say "Where command is one of:"
-  say "  list      - list packages based on package names"
-  say "  search    - search in package descriptions"
-  say "  show/info - show package details"
-  say "  install   - install packages"
-  say "  update    - update list of available packages"
-  say ""
-  say "Options:"
-  say "  -d/--debug - Show debugging output to TSO and MVS console"
-  say "  --installed - When using list show only installed packages"
-  return
+USAGE:
+  /* PRINTS MVP USAGE */
+  SAY "MVS/CE PACKAGE MANAGER (MVP)"
+  SAY "USAGE:"
+  SAY "  RX MVP COMMAND [OPTIONS]"
+  SAY "EXAMPLE:"
+  SAY "  RX MVP LIST"
+  SAY "  RX MVP INFO PACKAGE --DEBUG"
+  SAY "  RX MVP UPDATE -D"
+  SAY "  RX MVP INSTALL PACKAGE"
+  SAY ""
+  SAY "WHERE COMMAND IS ONE OF:"
+  SAY "  LIST      - LIST PACKAGES BASED ON PACKAGE NAMES"
+  SAY "  SEARCH    - SEARCH IN PACKAGE DESCRIPTIONS"
+  SAY "  SHOW/INFO - SHOW PACKAGE DETAILS"
+  SAY "  INSTALL   - INSTALL PACKAGES"
+  SAY "  UPDATE    - UPDATE LIST OF AVAILABLE PACKAGES"
+  SAY ""
+  SAY "OPTIONS:"
+  SAY "  -D/--DEBUG - SHOW DEBUGGING OUTPUT TO TSO AND MVS CONSOLE"
+  SAY "  --INSTALLED - WHEN USING LIST SHOW ONLY INSTALLED PACKAGES"
+  RETURN
 
-check_depends: procedure
-  /* recursive function to get package dependencies */
-  parse arg depends_check
-  depend_text = ''
+CHECK_DEPENDS: PROCEDURE
+  /* RECURSIVE FUNCTION TO GET PACKAGE DEPENDENCIES */
+  PARSE ARG DEPENDS_CHECK
+  DEPEND_TEXT = ''
 
-  /* say "checking dependencies for" depends_check */
+  /* SAY "CHECKING DEPENDENCIES FOR" DEPENDS_CHECK */
 
-  "ALLOC FI(DESC) DA('MVP.PACKAGES("depends_check")') SHR "
+  "ALLOC FI(DESC) DA('MVP.PACKAGES("DEPENDS_CHECK")') SHR "
   "EXECIO * DISKR DESC (FINIS STEM DESC."
 
-  if rc > 0 then do
-      call error "Error reading MVP.PACKAGES("depends_check"):" rc
+  IF RC > 0 THEN DO
+      CALL ERROR "ERROR READING MVP.PACKAGES("DEPENDS_CHECK"):" RC
       "FREE F(DESC)"
-      exit 8
-  end
+      EXIT 8
+  END
   "FREE F(DESC)"
 
-  do i=1 to desc.0
-    if pos("Depends:", desc.i) > 0 then do
-      parse var desc.i . Depends
-      /* say "dependencies for" depends_check ":" Depends */
-      leave
-    end
-  end
+  DO I=1 TO DESC.0
+    IF POS("DEPENDS:", DESC.I) > 0 THEN DO
+      PARSE VAR DESC.I . DEPENDS
+      /* SAY "DEPENDENCIES FOR" DEPENDS_CHECK ":" DEPENDS */
+      LEAVE
+    END
+  END
 
-  call debug "check_depends: all dependents" Depends
+  CALL DEBUG "CHECK_DEPENDS: ALL DEPENDENTS" DEPENDS
 
-  depend_text = Depends
+  DEPEND_TEXT = DEPENDS
 
-  do while length(Depends) > 0
-    parse var Depends dependent Depends
-    /* say "Current dependency" dependent */
-    depend_text = depend_text check_depends(dependent)
-  end
-  return depend_text
+  DO WHILE LENGTH(DEPENDS) > 0
+    PARSE VAR DEPENDS DEPENDENT DEPENDS
+    /* SAY "CURRENT DEPENDENCY" DEPENDENT */
+    DEPEND_TEXT = DEPEND_TEXT CHECK_DEPENDS(DEPENDENT)
+  END
+  RETURN DEPEND_TEXT
