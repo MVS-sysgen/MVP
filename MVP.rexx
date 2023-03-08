@@ -47,7 +47,7 @@ call debug "Arguments:" args
  /*                                        */
 call debug "Reading config SYS2.PARMLIB(MVP0001)"
 "ALLOC FI(PARMS) DA('SYS2.PARMLIB(MVP0001)') SHR "  
-"EXECIO * DISKR PARMS (FINIS STEM parms."
+"EXECIO * DISKR PARMS (FINIS STEM PARMS."
 if rc > 0 then do
     call error "Error reading SYS2.PARMLIB(MVP0001):" rc
     "FREE F(PARMS)"
@@ -82,7 +82,7 @@ call debug "Done reading config SYS2.PARMLIB(MVP0001)"
 
 call debug "Opening MVP.PACKAGES(CACHE)"
 "ALLOC FI(CACHE) DA('MVP.PACKAGES(CACHE)') SHR "
-"EXECIO * DISKR CACHE (FINIS STEM cache."
+"EXECIO * DISKR CACHE (FINIS STEM CACHE."
 if rc > 0 then do
     call error "Error reading MVP.PACKAGES(CACHE):" rc
     exit 8
@@ -93,7 +93,7 @@ call debug "MVP.PACKAGES(CACHE) Closed"
 
 call debug "Opening MVP.MVPDB"
 "ALLOC FI(MVPDB) DA('MVP.MVPDB') SHR "
-"EXECIO * DISKR MVPDB (FINIS STEM mvpdb."
+"EXECIO * DISKR MVPDB (FINIS STEM MVPDB."
 
 if rc > 0 then do
     call error "Error reading MVP.PACKAGES(MVPDB):" rc
@@ -190,7 +190,7 @@ search:
     call debug "search: searching description" progname
     /* Get the description */
     "ALLOC FI(DESCS) DA('MVP.PACKAGES("progname")') SHR "
-    "EXECIO * DISKR DESCS (FINIS STEM descsearch."
+    "EXECIO * DISKR DESCS (FINIS STEM DESCSEARCH."
     if rc > 0 then do
         call error "Error reading MVP.PACKAGES("progname"):" rc
         "FREE F(DESCS)"
@@ -348,7 +348,7 @@ mark_installed:
   "ALLOC FI(MVPDBA) DA('MVP.MVPDB') SHR REUSE"
 
   call debug "mark_installed: Appending" mvpdba.1 "to MVP.MVPDB"
-  "EXECIO * DISKA MVPDBA (FINIS STEM mvpdba."
+  "EXECIO * DISKA MVPDBA (FINIS STEM MVPDBA."
 
   if rc > 0 then do
       call error "Error appending to MVP.MVPDB:" rc
@@ -390,7 +390,7 @@ desc:
   call debug "desc: getting description for" package
 
   "ALLOC FI(DESC) DA('MVP.PACKAGES("member")') SHR "
-  "EXECIO * DISKR DESC (FINIS STEM desc."
+  "EXECIO * DISKR DESC (FINIS STEM DESC."
   if rc > 0 then do
       call error "Error reading MVP.PACKAGES("member"):" rc
       "FREE F(DESC)"
@@ -729,7 +729,7 @@ get_pw:
 /* Returns a string with the MVP user password from RAKF */
   call debug "get_pw: Opening 'SYS1.SECURE.CNTL(USERS)'"
   "ALLOC FI(USERS) DA('SYS1.SECURE.CNTL(USERS)') SHR "
-  "EXECIO * DISKR USERS (FINIS STEM users."
+  "EXECIO * DISKR USERS (FINIS STEM USERS."
   if rc > 0 then do
       call error "Error reading SYS1.SECURE.CNTL(USERS):" rc
       "FREE F(USERS)"
@@ -804,7 +804,7 @@ check_depends: procedure
   /* say "checking dependencies for" depends_check */
 
   "ALLOC FI(DESC) DA('MVP.PACKAGES("depends_check")') SHR "
-  "EXECIO * DISKR DESC (FINIS STEM desc."
+  "EXECIO * DISKR DESC (FINIS STEM DESC."
 
   if rc > 0 then do
       call error "Error reading MVP.PACKAGES("depends_check"):" rc
