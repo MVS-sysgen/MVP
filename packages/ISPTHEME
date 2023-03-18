@@ -42,9 +42,6 @@
 +
 + Option ===>_ZCMD                                                     +
 +                                                     
-% R {RAKF       + RAKF Administrator Panels          / /
-% G {Games      + TSO Games                          / /
-% C {Calendar   + A calendar for ISPF                / /
 % F {DFSPCE     + DASD Freespace                     / /
 % A {DALCDS     + ISRDDN Like TSO Allocations listing / /
 % D {DUCBD      + Display UCB information            / / 
@@ -370,18 +367,18 @@ $ 9 $Dialog Test - Specify Dialog Test option
 +
 ~ISPF Library:
 +
-+   Project  . ._reveproj+
-+   Group  . . ._revegrp +
-+   Type . . . ._revetype+
-+   Member . . ._revemem +       (Blank for member selection list)
++   Project  . ._revbproj+
++   Group  . . ._revbgrp +
++   Type . . . ._revbtype+
++   Member . . ._revbmem +       (Blank for member selection list)
 +
 +
 ~Other partitioned or sequential dataset:
 +
-+   Name  . . . . . . ._revedsn                                     +
++   Name  . . . . . . ._revbdsn                                     +
 +   Volume Serial . . ._z     +   (If not cataloged)
 +
-+Data set password  . ._revepswd+(If password protected)
++Data set password  . ._revbpswd+(If password protected)
 +
 +
 )INIT
