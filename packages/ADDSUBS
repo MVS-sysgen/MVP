@@ -1,10 +1,10 @@
-//RANDOMPW JOB (TSO),
-//             'Install LISTPDS',
+//ADDSUBS JOB (TSO),
+//             'Install ADDSUBS',
 //             CLASS=A,
 //             MSGCLASS=A,
 //             MSGLEVEL=(1,1),
 //             USER=IBMUSER,PASSWORD=SYS1
-//* Installs REXX RANDOMPW to RXLIB
+//* Installs REXX ADDSUBS to RXLIB
 //ADDRAND  EXEC PGM=IEBGENER
 //SYSPRINT DD SYSOUT=*
 //SYSIN DD DUMMY
