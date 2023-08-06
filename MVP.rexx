@@ -116,10 +116,20 @@ SELECT
   WHEN UPPER(ACTION) == "LIST" THEN
     DO
       IF UPPER(PACKAGE) = '--INSTALLED' THEN DO
+ 
+        DO I=1 TO MVPDB.0
+          SORTIN.I = MVPDB.I
+        END 
+        
+        SORTIN.0 = MVPDB.0
+
+        CALL DEBUG "SORTING CACHE BEFORE PRINTING"
+        CALL RXSORT
+ 
         SAY "LISTING INSTALLED PACKAGES:"
         SAY ""
-        DO I=1 TO MVPDB.0
-          SAY "" MVPDB.I
+        DO I=1 TO SORTIN.0
+          SAY "" SORTIN.I
         END
       END
       ELSE IF LENGTH(PACKAGE) > 0 THEN DO
