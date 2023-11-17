@@ -21,279 +21,279 @@
 ./ ADD NAME=ADDGROUP
 /* RAKF ADD GROUP BREXX SCRIPT */
 /* GET ARGUMENTS */
-parse arg args
-/* -------- Default -------- */
-GROUPOWNER = userid()
+PARSE ARG ARGS
+/* -------- DEFAULT -------- */
+GROUPOWNER = USERID()
 
 /* --------  DONE  -------- */
-if length(args) = 0 then do
-  say "RAKF01I Insufficient arguments"
-  say ""
-  say "ADDGROUP GROUPNAME"
-  say " [OWNER(USERID)] Default: " || userid()
-  say "GROUPNAME IS REQUIRED"
-  exit
-end
-parse upper var args groupname args
-if pos("(",userid) > 0 then do
-    say "RAKF01E First argument must be group name"
-    exit
-end
-call check_length groupname 'group' 8
-/* -------- Parse Arguments -------- */
-do while (length(args) > 0)
-   parse var args t .
-      if pos("(",t) = 0 then do
-         say 'RAKF01E Argument' t 'not recognized'
-         exit
-      end
-      else do
-        parse var args o "(" s ")" args
-        current = o||"("||s||")"
-      end
-/* parse var args current args */
-     parse var current option "(" selection ")"
-     select
-       when (upper(option) = 'OWNER') then do
-         GROUPOWNER = selection
-         call check_length GROUPOWNER 'groupowner' 7
-       end
-       otherwise do
-         say 'RAKF01E Argument' current 'not recognized'
-         exit
-       end
-     end
+IF LENGTH(ARGS) = 0 THEN DO
+  SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+  SAY ""
+  SAY "ADDGROUP GROUPNAME"
+  SAY " [OWNER(USERID)] DEFAULT: " || USERID()
+  SAY "GROUPNAME IS REQUIRED"
+  EXIT
+END
+PARSE UPPER VAR ARGS GROUPNAME ARGS
+IF POS("(",USERID) > 0 THEN DO
+    SAY "RAKF01E FIRST ARGUMENT MUST BE GROUP NAME"
+    EXIT
+END
+CALL CHECK_LENGTH GROUPNAME 'GROUP' 8
+/* -------- PARSE ARGUMENTS -------- */
+DO WHILE (LENGTH(ARGS) > 0)
+   PARSE VAR ARGS T .
+      IF POS("(",T) = 0 THEN DO
+         SAY 'RAKF01E ARGUMENT' T 'NOT RECOGNIZED'
+         EXIT
+      END
+      ELSE DO
+        PARSE VAR ARGS O "(" S ")" ARGS
+        CURRENT = O||"("||S||")"
+      END
+/* PARSE VAR ARGS CURRENT ARGS */
+     PARSE VAR CURRENT OPTION "(" SELECTION ")"
+     SELECT
+       WHEN (UPPER(OPTION) = 'OWNER') THEN DO
+         GROUPOWNER = SELECTION
+         CALL CHECK_LENGTH GROUPOWNER 'GROUPOWNER' 7
+       END
+       OTHERWISE DO
+         SAY 'RAKF01E ARGUMENT' CURRENT 'NOT RECOGNIZED'
+         EXIT
+       END
+     END
    
-end
+END
 
-/* ----- Open RAKF User file ----- */
+/* ----- OPEN RAKF USER FILE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-notfound = 1
-do i=1 to sortin.0
-  PARSE VAR sortin.i 1 ruser 10 GROUP 18 DFLT 19 PASSWORD_ADMIN_COMMENT
+NOTFOUND = 1
+DO I=1 TO SORTIN.0
+  PARSE VAR SORTIN.I 1 RUSER 10 GROUP 18 DFLT 19 PASSWORD_ADMIN_COMMENT
 
-  if strip(ruser) = upper(GROUPOWNER) then do
-    notfound = 0
-    owner_pass = PASSWORD_ADMIN_COMMENT
-  end
-  if strip(ruser) = upper(GROUPOWNER) & strip(group) = groupname then do
-    say "RAKF02E Group" groupname "already exists."
-    say "        Use RX CONNECT '"||GROUPOWNER||" GROUP("||groupname||")'"
-    exit
-  end
-  if strip(group) = groupname then do
-    say "RAKF02E Group" groupname "already exists"
-    exit
-  end
-end
+  IF STRIP(RUSER) = UPPER(GROUPOWNER) THEN DO
+    NOTFOUND = 0
+    OWNER_PASS = PASSWORD_ADMIN_COMMENT
+  END
+  IF STRIP(RUSER) = UPPER(GROUPOWNER) & STRIP(GROUP) = GROUPNAME THEN DO
+    SAY "RAKF02E GROUP" GROUPNAME "ALREADY EXISTS."
+    SAY "        USE RX CONNECT '"||GROUPOWNER||" GROUP("||GROUPNAME||")'"
+    EXIT
+  END
+  IF STRIP(GROUP) = GROUPNAME THEN DO
+    SAY "RAKF02E GROUP" GROUPNAME "ALREADY EXISTS"
+    EXIT
+  END
+END
 
-if notfound then do
-    say "RAKF02E Owner" GROUPOWNER "not found in user database."
-    say "        User must already exist before assigning group to it."
-    say "        Use RX ADDUSER " GROUPOWNER "to add the user."
-    exit
-end
+IF NOTFOUND THEN DO
+    SAY "RAKF02E OWNER" GROUPOWNER "NOT FOUND IN USER DATABASE."
+    SAY "        USER MUST ALREADY EXIST BEFORE ASSIGNING GROUP TO IT."
+    SAY "        USE RX ADDUSER " GROUPOWNER "TO ADD THE USER."
+    EXIT
+END
 
-rakf = LEFT(GROUPOWNER,8)||" "||LEFT(groupname,8)||" "||owner_pass
+RAKF = LEFT(GROUPOWNER,8)||" "||LEFT(GROUPNAME,8)||" "||OWNER_PASS
 
 /* --------  DONE  -------- */
 
-/* ----- Adding Group */
-sortin.0 = sortin.0 + 1
-x = sortin.0
-sortin.x = rakf
+/* ----- ADDING GROUP */
+SORTIN.0 = SORTIN.0 + 1
+X = SORTIN.0
+SORTIN.X = RAKF
 
-call rxsort
+CALL RXSORT
 
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKW RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKW RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-/* Done */
-/* ----- Update RAKF ----- */
-call console("s rakfuser")
+/* DONE */
+/* ----- UPDATE RAKF ----- */
+CALL CONSOLE("S RAKFUSER")
 /* ----- DONE        ----- */
-exit
+EXIT
 
-check_length:
-  parse arg x y z
-  if length(x) > z then do
-    say 'RAKF02I' y 'must be' z 'characters or shorter'
-    exit
-  end
-return
+CHECK_LENGTH:
+  PARSE ARG X Y Z
+  IF LENGTH(X) > Z THEN DO
+    SAY 'RAKF02I' Y 'MUST BE' Z 'CHARACTERS OR SHORTER'
+    EXIT
+  END
+RETURN
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF user database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF USER DATABASE'
+    EXIT
+  END
+RETURN
 
 ./ ADD NAME=ADDSD
 /* RAKF ADDSD: ADD DATASET PROFILE BREXX SCRIPT */
 /* THIS IS ALSO THE ALIAS FOR ALTDSD */
 /* GET ARGUMENTS */
-parse arg args
-/* -------- Default -------- */
+PARSE ARG ARGS
+/* -------- DEFAULT -------- */
 DFLTUACC = 'NONE'
 UACC = ''
 DFLTCLASS = 'DATASET'
 /* --------  DONE  -------- */
-if length(args) = 0 then do
-  say "RAKF01I Insufficient arguments"
-  say ""
-  say "ADDSD PROFILE-NAME"
-  say " [UACC(READ)] Default: NONE"
-  say "DATASET PROFILE IS REQUIRED"
-  say "EXAMPLE: RX ADDSD 'SYSGEN.ISPF.* UACC(READ)'"
-  say "EXAMPLE: RX ADDSD '(SYS3.**,SYS4.MACLIB) UACC(NONE)'"
-  exit
-end
-parse upper var args rules args
-if pos("UACC",rules) > 0 then do
-    say "RAKF01E First argument must be dataset profile(s) e.g. 'SYS2.*'"
-    exit
-end
+IF LENGTH(ARGS) = 0 THEN DO
+  SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+  SAY ""
+  SAY "ADDSD PROFILE-NAME"
+  SAY " [UACC(READ)] DEFAULT: NONE"
+  SAY "DATASET PROFILE IS REQUIRED"
+  SAY "EXAMPLE: RX ADDSD 'SYSGEN.ISPF.* UACC(READ)'"
+  SAY "EXAMPLE: RX ADDSD '(SYS3.**,SYS4.MACLIB) UACC(NONE)'"
+  EXIT
+END
+PARSE UPPER VAR ARGS RULES ARGS
+IF POS("UACC",RULES) > 0 THEN DO
+    SAY "RAKF01E FIRST ARGUMENT MUST BE DATASET PROFILE(S) E.G. 'SYS2.*'"
+    EXIT
+END
 
-/* -------- Parse profiles -------- */
-if pos("(", rules) > 0 then do
-    if pos(")", rules) = 0 then do
-        say "RAKF02E No spaces allows in profiles:" rules
-        exit
-    end
-    parse var rules "(" rule ")"
-    count = 0
-    do while (length(rule) > 0)
-        parse var rule r "," rule
-        count = count + 1
-        profiles.count = r
-    end
-    profiles.0 = count
-end
-else do
-    profiles.0 = 1
-    profiles.1 = rules 
-end
+/* -------- PARSE PROFILES -------- */
+IF POS("(", RULES) > 0 THEN DO
+    IF POS(")", RULES) = 0 THEN DO
+        SAY "RAKF02E NO SPACES ALLOWS IN PROFILES:" RULES
+        EXIT
+    END
+    PARSE VAR RULES "(" RULE ")"
+    COUNT = 0
+    DO WHILE (LENGTH(RULE) > 0)
+        PARSE VAR RULE R "," RULE
+        COUNT = COUNT + 1
+        PROFILES.COUNT = R
+    END
+    PROFILES.0 = COUNT
+END
+ELSE DO
+    PROFILES.0 = 1
+    PROFILES.1 = RULES 
+END
 
-do i=1 to profiles.0
-    call check_length profiles.i DATASET 44
-end
+DO I=1 TO PROFILES.0
+    CALL CHECK_LENGTH PROFILES.I DATASET 44
+END
 
 
-/* -------- Parse Arguments -------- */
-if length(args) > 0 then do
-    parse upper var args arguacc args
-    if pos("UACC",arguacc) > 0 then do
-        parse var arguacc . "(" UACC ")" .
-        if UACC = '' then do
-            say "RAKF03E Invalid UACC syntax:" arguacc
-            exit
-        end
-    end
-end
+/* -------- PARSE ARGUMENTS -------- */
+IF LENGTH(ARGS) > 0 THEN DO
+    PARSE UPPER VAR ARGS ARGUACC ARGS
+    IF POS("UACC",ARGUACC) > 0 THEN DO
+        PARSE VAR ARGUACC . "(" UACC ")" .
+        IF UACC = '' THEN DO
+            SAY "RAKF03E INVALID UACC SYNTAX:" ARGUACC
+            EXIT
+        END
+    END
+END
 
-if length(args) > 0 then do
-    say "RAKF05E Invalid argument:" args
-    exit
-end
+IF LENGTH(ARGS) > 0 THEN DO
+    SAY "RAKF05E INVALID ARGUMENT:" ARGS
+    EXIT
+END
 
-if UACC = '' then UACC = DFLTUACC
+IF UACC = '' THEN UACC = DFLTUACC
 
-/* ----- Open RAKF profile file ----- */
+/* ----- OPEN RAKF PROFILE FILE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
 
-/* ----- Does the rule already exist? ----- */
-do i=1 to sortin.0
-  parse var sortin.i class resource PUACC NOTUACC
-  if class = 'DATASET' & length(NOTUACC) = 0 then do
-    do j = 1 to profiles.0
-        if profiles.j = resource & UACC = PUACC then do
-            /* this means the rule exists with the same UACC */
-            say 'RAKF04I RAKF Dataset profile' profiles.j "already exists"
-            exit 
-        end
-    end
-  end
-end
-/* -------- Generate profile line -------- */
-/* Are we just changing the UACC? Yes we allow that, unlike other corps */
-count = 0
-do i=1 to sortin.0
-    parse var sortin.i class resource PUACC NOTUACC
-    if class = 'DATASET' & length(NOTUACC) = 0 then do
-        do j = 1 to profiles.0
-            if profiles.j = resource then do
-                PROF = LEFT(DFLTCLASS,8) || LEFT(profiles.j,52)||LEFT(UACC,6)
-                sortin.i = PROF
-            end
-            else do
-                notfound = 1
-                do x = 1 to newprof.0
-                    if newprof.x = profiles.j then do
-                        notfound = 0
-                    end
-                end
-                if notfound then do
-                    count = count + 1
-                    newprof.count = profiles.j
-                end
-            end
-        end
-        newprof.0 = count
-    end
-end
+/* ----- DOES THE RULE ALREADY EXIST? ----- */
+DO I=1 TO SORTIN.0
+  PARSE VAR SORTIN.I CLASS RESOURCE PUACC NOTUACC
+  IF CLASS = 'DATASET' & LENGTH(NOTUACC) = 0 THEN DO
+    DO J = 1 TO PROFILES.0
+        IF PROFILES.J = RESOURCE & UACC = PUACC THEN DO
+            /* THIS MEANS THE RULE EXISTS WITH THE SAME UACC */
+            SAY 'RAKF04I RAKF DATASET PROFILE' PROFILES.J "ALREADY EXISTS"
+            EXIT 
+        END
+    END
+  END
+END
+/* -------- GENERATE PROFILE LINE -------- */
+/* ARE WE JUST CHANGING THE UACC? YES WE ALLOW THAT, UNLIKE OTHER CORPS */
+COUNT = 0
+DO I=1 TO SORTIN.0
+    PARSE VAR SORTIN.I CLASS RESOURCE PUACC NOTUACC
+    IF CLASS = 'DATASET' & LENGTH(NOTUACC) = 0 THEN DO
+        DO J = 1 TO PROFILES.0
+            IF PROFILES.J = RESOURCE THEN DO
+                PROF = LEFT(DFLTCLASS,8) || LEFT(PROFILES.J,52)||LEFT(UACC,6)
+                SORTIN.I = PROF
+            END
+            ELSE DO
+                NOTFOUND = 1
+                DO X = 1 TO NEWPROF.0
+                    IF NEWPROF.X = PROFILES.J THEN DO
+                        NOTFOUND = 0
+                    END
+                END
+                IF NOTFOUND THEN DO
+                    COUNT = COUNT + 1
+                    NEWPROF.COUNT = PROFILES.J
+                END
+            END
+        END
+        NEWPROF.0 = COUNT
+    END
+END
 
 
-/* ----- Adding profiles */
-start = sortin.0
-do i = 1 to newprof.0
-    start = start + 1
-    PROF = LEFT(DFLTCLASS,8) || LEFT(newprof.i,52)||LEFT(UACC,6)
-    sortin.start = PROF
-end
+/* ----- ADDING PROFILES */
+START = SORTIN.0
+DO I = 1 TO NEWPROF.0
+    START = START + 1
+    PROF = LEFT(DFLTCLASS,8) || LEFT(NEWPROF.I,52)||LEFT(UACC,6)
+    SORTIN.START = PROF
+END
 
-sortin.0 = sortin.0 + newprof.0
+SORTIN.0 = SORTIN.0 + NEWPROF.0
 
-call rxsort
+CALL RXSORT
 
-/* Add changes to PROFILES */
+/* ADD CHANGES TO PROFILES */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKW RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKW RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-/* Done */
-/* ----- Update RAKF ----- */
-call console("s rakfprof")
+/* DONE */
+/* ----- UPDATE RAKF ----- */
+CALL CONSOLE("S RAKFPROF")
 /* ----- DONE  ----- */
-exit
+EXIT
 
-check_length:
-  parse arg x y z
-  if length(x) > z then do
-    say 'RAKF02I' y 'must be' z 'characters or shorter'
-    exit
-  end
-return
+CHECK_LENGTH:
+  PARSE ARG X Y Z
+  IF LENGTH(X) > Z THEN DO
+    SAY 'RAKF02I' Y 'MUST BE' Z 'CHARACTERS OR SHORTER'
+    EXIT
+  END
+RETURN
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF profile database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF PROFILE DATABASE'
+    EXIT
+  END
+RETURN
 
 ./ ADD NAME=ADDUSER
 /* RAKF ADD USER BREXX SCRIPT */
@@ -457,8 +457,8 @@ RETURN
 ./ ADD NAME=ALTUSER
 /* RAKF ALTER USER BREXX SCRIPT */
 /* GET ARGUMENTS */
-parse arg args
-/* -------- Default -------- */
+PARSE ARG ARGS
+/* -------- DEFAULT -------- */
 OPER=0
 NOOPER=0
 SPECIAL=0
@@ -466,739 +466,739 @@ NAME=''
 NEWPASS=''
 USERID=''
 NOSPECIAL=0
-notalreadyspecial = 1
+NOTALREADYSPECIAL = 1
 /* --------  DONE  -------- */
-if length(args) = 0 then do
-  say "RAKF01I Insufficient arguments"
-  say ""
-  say "ALTUSER USERID"
-  say " [PASSWORD(PASSWORD)]"
-  say " [OPERATIONS|OPER]"
-  say " [NOOPERATIONS|NOOPER]"
-  say " [SPECIAL]"
-  say " [NOSPECIAL]"
-  say " [NAME()|COMMENT()]"
-  say ""
-  say "USERID IS REQUIRED"
-  exit
-end
-parse upper var args userid args
-if pos("(",userid) > 0 then do
-    say "RAKF01I First argument must be userid"
-    exit
-end
+IF LENGTH(ARGS) = 0 THEN DO
+  SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+  SAY ""
+  SAY "ALTUSER USERID"
+  SAY " [PASSWORD(PASSWORD)]"
+  SAY " [OPERATIONS|OPER]"
+  SAY " [NOOPERATIONS|NOOPER]"
+  SAY " [SPECIAL]"
+  SAY " [NOSPECIAL]"
+  SAY " [NAME()|COMMENT()]"
+  SAY ""
+  SAY "USERID IS REQUIRED"
+  EXIT
+END
+PARSE UPPER VAR ARGS USERID ARGS
+IF POS("(",USERID) > 0 THEN DO
+    SAY "RAKF01I FIRST ARGUMENT MUST BE USERID"
+    EXIT
+END
 
-if length(args) <= 0 THEN EXIT
-call check_length userid 'USERID' 7
+IF LENGTH(ARGS) <= 0 THEN EXIT
+CALL CHECK_LENGTH USERID 'USERID' 7
 
-/* -------- Parse Arguments -------- */
-do while (length(args) > 0)
-   parse var args t .
-   if pos("(",t) = 0 then
-     parse var args current args
-   else do
-     parse var args o "(" s ")" args
-     current = o||"("||s||")"
-   end
-/* parse var args current args */
-   if pos("(",current) = 0 then do
-     select
-       when upper(current) = 'OPER' then
+/* -------- PARSE ARGUMENTS -------- */
+DO WHILE (LENGTH(ARGS) > 0)
+   PARSE VAR ARGS T .
+   IF POS("(",T) = 0 THEN
+     PARSE VAR ARGS CURRENT ARGS
+   ELSE DO
+     PARSE VAR ARGS O "(" S ")" ARGS
+     CURRENT = O||"("||S||")"
+   END
+/* PARSE VAR ARGS CURRENT ARGS */
+   IF POS("(",CURRENT) = 0 THEN DO
+     SELECT
+       WHEN UPPER(CURRENT) = 'OPER' THEN
          OPER = 1
-       when upper(current) = 'OPERATIONS' then
+       WHEN UPPER(CURRENT) = 'OPERATIONS' THEN
          OPER = 1
-       when upper(current) = 'SPECIAL' then
+       WHEN UPPER(CURRENT) = 'SPECIAL' THEN
          SPECIAL = 1
-       when upper(current) = 'NOOPER' then
+       WHEN UPPER(CURRENT) = 'NOOPER' THEN
          NOOPER = 1
-       when upper(current) = 'NOOPERATIONS' then
+       WHEN UPPER(CURRENT) = 'NOOPERATIONS' THEN
          NOOPER = 1
-       when upper(current) = 'NOSPECIAL' then
+       WHEN UPPER(CURRENT) = 'NOSPECIAL' THEN
          NOSPECIAL = 1
-       otherwise do
-         say 'RAKF01I Argument' current 'not recognized'
-         exit
-       end
-     end
-   else do
-     parse var current option "(" selection ")"
-     select
-       when (upper(option) = 'PASSWORD') then do
-         NEWPASS = selection
-         call check_length NEWPASS 'PASSWORD' 8
-       end
-       when (upper(option) = 'NAME') then
-         NAME = selection
-       when (upper(option) = 'COMMENT') then
-         NAME = selection
-       otherwise do
-         say 'RAKF01I Argument' current 'not recognized'
-         exit
-       end
-     end
-   end
-end
+       OTHERWISE DO
+         SAY 'RAKF01I ARGUMENT' CURRENT 'NOT RECOGNIZED'
+         EXIT
+       END
+     END
+   ELSE DO
+     PARSE VAR CURRENT OPTION "(" SELECTION ")"
+     SELECT
+       WHEN (UPPER(OPTION) = 'PASSWORD') THEN DO
+         NEWPASS = SELECTION
+         CALL CHECK_LENGTH NEWPASS 'PASSWORD' 8
+       END
+       WHEN (UPPER(OPTION) = 'NAME') THEN
+         NAME = SELECTION
+       WHEN (UPPER(OPTION) = 'COMMENT') THEN
+         NAME = SELECTION
+       OTHERWISE DO
+         SAY 'RAKF01I ARGUMENT' CURRENT 'NOT RECOGNIZED'
+         EXIT
+       END
+     END
+   END
+END
 
 IF NOSPECIAL THEN SPECIAL = 0
 IF NOOPER THEN OPER=0
-/* ----- Open RAKF User file ----- */
+/* ----- OPEN RAKF USER FILE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM userdb. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM USERDB. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
 
-do i=1 to userdb.0
-  parse var userdb.i current_user .
-  if current_user = upper(USERID) then do
-     leave
-  end
-end
+DO I=1 TO USERDB.0
+  PARSE VAR USERDB.I CURRENT_USER .
+  IF CURRENT_USER = UPPER(USERID) THEN DO
+     LEAVE
+  END
+END
 
-if i > userdb.0 then do
-  say "RAKF02I Userid" USERID "does not exist"
-  exit
-end
+IF I > USERDB.0 THEN DO
+  SAY "RAKF02I USERID" USERID "DOES NOT EXIST"
+  EXIT
+END
 
-newuserdb.0 = 0
-j = 0
-olduser.0 = 0
-k = 0
-do i=1 to userdb.0
-  parse var userdb.i current_user .
-  if current_user \= upper(USERID) then do
-    j = j + 1
-    newuserdb.j = userdb.i
-  end
-  else do
-    k = k + 1
-    olduser.k = userdb.i
-  end
-end
-newuserdb.0 = j
-olduser.0 = k
+NEWUSERDB.0 = 0
+J = 0
+OLDUSER.0 = 0
+K = 0
+DO I=1 TO USERDB.0
+  PARSE VAR USERDB.I CURRENT_USER .
+  IF CURRENT_USER \= UPPER(USERID) THEN DO
+    J = J + 1
+    NEWUSERDB.J = USERDB.I
+  END
+  ELSE DO
+    K = K + 1
+    OLDUSER.K = USERDB.I
+  END
+END
+NEWUSERDB.0 = J
+OLDUSER.0 = K
 /* --------  DONE  -------- */
-/* -------- Make needed changes ----- */
-changeuser.0 = 0
-c = 0
-do i=1 to olduser.0
-  GROUP = strip(substr(olduser.i,10,8))
-  PASSWORD = strip(substr(olduser.i,19,8))
-  COMMENT = strip(substr(olduser.i,31,20))
-  OPS = strip(substr(olduser.i,28,1))
+/* -------- MAKE NEEDED CHANGES ----- */
+CHANGEUSER.0 = 0
+C = 0
+DO I=1 TO OLDUSER.0
+  GROUP = STRIP(SUBSTR(OLDUSER.I,10,8))
+  PASSWORD = STRIP(SUBSTR(OLDUSER.I,19,8))
+  COMMENT = STRIP(SUBSTR(OLDUSER.I,31,20))
+  OPS = STRIP(SUBSTR(OLDUSER.I,28,1))
 
   IF GROUP = 'RAKFADM' & NOSPECIAL THEN ITERATE
-  IF GROUP = 'RAKFADM' THEN notalreadyspecial = 0
+  IF GROUP = 'RAKFADM' THEN NOTALREADYSPECIAL = 0
   IF LENGTH(NEWPASS) > 0 THEN PASSWORD = NEWPASS
   IF LENGTH(NAME) > 0 THEN COMMENT = NAME
   IF OPER THEN OPS = 'Y'
   IF NOOPER THEN OPS = 'N'
 
-  rakf = LEFT(USERID,8)||" "||LEFT(GROUP,8)||"*"||LEFT(PASSWORD,8)||,
+  RAKF = LEFT(USERID,8)||" "||LEFT(GROUP,8)||"*"||LEFT(PASSWORD,8)||,
          " "||OPS||"  "||LEFT(COMMENT,20)
-  c = c + 1
-  changeuser.c = rakf
-end
+  C = C + 1
+  CHANGEUSER.C = RAKF
+END
 
-changeuser.0 = c
+CHANGEUSER.0 = C
 
-if SPECIAL & notalreadyspecial then do
-  c = c + 1
-  rakf = LEFT(USERID,8)||" RAKFADM *"||LEFT(PASSWORD,8)||,
+IF SPECIAL & NOTALREADYSPECIAL THEN DO
+  C = C + 1
+  RAKF = LEFT(USERID,8)||" RAKFADM *"||LEFT(PASSWORD,8)||,
          " "||OPS||"  "||LEFT(COMMENT,20)
-  changeuser.c = rakf
-  changeuser.0 = c
-end
+  CHANGEUSER.C = RAKF
+  CHANGEUSER.0 = C
+END
 
-sortin.0=0
-j=0
-do i=1 to newuserdb.0
- j = j + 1
- sortin.j = newuserdb.i
-end
-do i=1 to changeuser.0
- j = j + 1
- sortin.j = changeuser.i
-end
-sortin.0=j
+SORTIN.0=0
+J=0
+DO I=1 TO NEWUSERDB.0
+ J = J + 1
+ SORTIN.J = NEWUSERDB.I
+END
+DO I=1 TO CHANGEUSER.0
+ J = J + 1
+ SORTIN.J = CHANGEUSER.I
+END
+SORTIN.0=J
 
-call rxsort
+CALL RXSORT
 /* ----- DONE ----- */
-/* ----- Update the RAKF database ----- */
+/* ----- UPDATE THE RAKF DATABASE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKW RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKW RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
 /* ----- DONE ----- */
-/* ----- Update RAKF ----- */
-call console("s rakfuser")
+/* ----- UPDATE RAKF ----- */
+CALL CONSOLE("S RAKFUSER")
 /* ----- DONE        ----- */
-exit
+EXIT
 
-check_length:
-  parse arg x y z
-  if length(x) > z then do
-    say 'RAKF02I' y 'must be' z 'characters or shorter'
-    exit
-  end
-return
+CHECK_LENGTH:
+  PARSE ARG X Y Z
+  IF LENGTH(X) > Z THEN DO
+    SAY 'RAKF02I' Y 'MUST BE' Z 'CHARACTERS OR SHORTER'
+    EXIT
+  END
+RETURN
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF user database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF USER DATABASE'
+    EXIT
+  END
+RETURN
 ./ ADD NAME=CONNECT
 /* RAKF CONNECT USER TO GROUP BREXX SCRIPT */
 /* GET ARGUMENTS */
-parse arg args
+PARSE ARG ARGS
 /* --------  DONE  -------- */
-if length(args) = 0 then do
-  say "RAKF01I Insufficient arguments"
-  say ""
-  say "CONNECT USERNAME GROUP(GROUPNAME)"
-  say "USERNAME AND GROUP IS REQUIRED"
-  exit
-end
-parse upper var args USERNAME args
-if pos("(",userid) > 0 then do
-    say "RAKF01E First argument must be user name"
-    exit
-end
-call check_length USERNAME 'username' 7
-/* -------- Parse Arguments -------- */
-do while (length(args) > 0)
-   parse var args t .
-      if pos("(",t) = 0 then do
-         say 'RAKF01E Argument' t 'not recognized'
-         exit
-      end
-      else do
-        parse var args o "(" s ")" args
-        current = o||"("||s||")"
-      end
-     parse var current option "(" selection ")"
-     select
-       when (upper(option) = 'GROUP') then do
-         GROUPNAME = selection
-         call check_length GROUPNAME 'GROUP' 8
-       end
-       otherwise do
-         say 'RAKF01E Argument' current 'not recognized'
-         exit
-       end
-     end
-end
+IF LENGTH(ARGS) = 0 THEN DO
+  SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+  SAY ""
+  SAY "CONNECT USERNAME GROUP(GROUPNAME)"
+  SAY "USERNAME AND GROUP IS REQUIRED"
+  EXIT
+END
+PARSE UPPER VAR ARGS USERNAME ARGS
+IF POS("(",USERID) > 0 THEN DO
+    SAY "RAKF01E FIRST ARGUMENT MUST BE USER NAME"
+    EXIT
+END
+CALL CHECK_LENGTH USERNAME 'USERNAME' 7
+/* -------- PARSE ARGUMENTS -------- */
+DO WHILE (LENGTH(ARGS) > 0)
+   PARSE VAR ARGS T .
+      IF POS("(",T) = 0 THEN DO
+         SAY 'RAKF01E ARGUMENT' T 'NOT RECOGNIZED'
+         EXIT
+      END
+      ELSE DO
+        PARSE VAR ARGS O "(" S ")" ARGS
+        CURRENT = O||"("||S||")"
+      END
+     PARSE VAR CURRENT OPTION "(" SELECTION ")"
+     SELECT
+       WHEN (UPPER(OPTION) = 'GROUP') THEN DO
+         GROUPNAME = SELECTION
+         CALL CHECK_LENGTH GROUPNAME 'GROUP' 8
+       END
+       OTHERWISE DO
+         SAY 'RAKF01E ARGUMENT' CURRENT 'NOT RECOGNIZED'
+         EXIT
+       END
+     END
+END
 
-/* ----- Open RAKF User file ----- */
+/* ----- OPEN RAKF USER FILE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
 
-notfound_user = 1
-notfound_group = 1
-do i=1 to sortin.0
-  PARSE VAR sortin.i 1 ruser 10 GROUP 18 DFLT 19 PASSWORD_ADMIN_COMMENT
+NOTFOUND_USER = 1
+NOTFOUND_GROUP = 1
+DO I=1 TO SORTIN.0
+  PARSE VAR SORTIN.I 1 RUSER 10 GROUP 18 DFLT 19 PASSWORD_ADMIN_COMMENT
 
-  if strip(group) = GROUPNAME then do
-    notfound_group = 0
-  end
+  IF STRIP(GROUP) = GROUPNAME THEN DO
+    NOTFOUND_GROUP = 0
+  END
 
-  if strip(ruser) = upper(USERNAME) then do
-    notfound_user = 0
-    owner_pass = PASSWORD_ADMIN_COMMENT
-  end
-  if strip(ruser) = upper(USERNAME) & strip(group) = GROUPNAME then do
-    say "RAKF02E Group" groupname "already exists for" USERNAME
-    exit
-  end
-end
+  IF STRIP(RUSER) = UPPER(USERNAME) THEN DO
+    NOTFOUND_USER = 0
+    OWNER_PASS = PASSWORD_ADMIN_COMMENT
+  END
+  IF STRIP(RUSER) = UPPER(USERNAME) & STRIP(GROUP) = GROUPNAME THEN DO
+    SAY "RAKF02E GROUP" GROUPNAME "ALREADY EXISTS FOR" USERNAME
+    EXIT
+  END
+END
 
-if notfound_user then do
-    say "RAKF02E User" USERNAME "not found in user database."
-    say "        User must already exist before assigning group to it."
-    say "        Use RX ADDUSER " USERNAME "to add the user."
-    exit
-end
+IF NOTFOUND_USER THEN DO
+    SAY "RAKF02E USER" USERNAME "NOT FOUND IN USER DATABASE."
+    SAY "        USER MUST ALREADY EXIST BEFORE ASSIGNING GROUP TO IT."
+    SAY "        USE RX ADDUSER " USERNAME "TO ADD THE USER."
+    EXIT
+END
 
-if notfound_group then do
-    say "RAKF02E Group" GROUPNAME "not found in user database."
-    say "        Group must already exist before connecting a user to it."
-    say "        Use RX ADDGROUP '"||GROUPNAME||"'to add the group."
-    exit
-end
+IF NOTFOUND_GROUP THEN DO
+    SAY "RAKF02E GROUP" GROUPNAME "NOT FOUND IN USER DATABASE."
+    SAY "        GROUP MUST ALREADY EXIST BEFORE CONNECTING A USER TO IT."
+    SAY "        USE RX ADDGROUP '"||GROUPNAME||"'TO ADD THE GROUP."
+    EXIT
+END
 
-rakf = LEFT(USERNAME,8)||" "||LEFT(GROUPNAME,8)||" "||owner_pass
+RAKF = LEFT(USERNAME,8)||" "||LEFT(GROUPNAME,8)||" "||OWNER_PASS
 
 /* --------  DONE  -------- */
 
-/* ----- Adding Group */
-sortin.0 = sortin.0 + 1
-x = sortin.0
-sortin.x = rakf
+/* ----- ADDING GROUP */
+SORTIN.0 = SORTIN.0 + 1
+X = SORTIN.0
+SORTIN.X = RAKF
 
-call rxsort
+CALL RXSORT
 
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKW RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKW RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-/* Done */
-/* ----- Update RAKF ----- */
-call console("s rakfuser")
+/* DONE */
+/* ----- UPDATE RAKF ----- */
+CALL CONSOLE("S RAKFUSER")
 /* ----- DONE        ----- */
-exit
+EXIT
 
-check_length:
-  parse arg x y z
-  if length(x) > z then do
-    say 'RAKF02I' y 'must be' z 'characters or shorter'
-    exit
-  end
-return
+CHECK_LENGTH:
+  PARSE ARG X Y Z
+  IF LENGTH(X) > Z THEN DO
+    SAY 'RAKF02I' Y 'MUST BE' Z 'CHARACTERS OR SHORTER'
+    EXIT
+  END
+RETURN
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF user database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF USER DATABASE'
+    EXIT
+  END
+RETURN
 
 ./ ADD NAME=DELDSD
 /* RAKF DELDSD: DELETE DATASET PROFILE BREXX SCRIPT */
 /* THIS IS ALSO THE ALIAS FOR ALTDSD */
 /* GET ARGUMENTS */
-parse arg profile .
+PARSE ARG PROFILE .
 
-if length(profile) = 0 then do
-  say 'RAKF01I Missing dataset profile to remove'
-  exit
-end
+IF LENGTH(PROFILE) = 0 THEN DO
+  SAY 'RAKF01I MISSING DATASET PROFILE TO REMOVE'
+  EXIT
+END
 
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM classes. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM CLASSES. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
 
 
-newprofile.0 = 0
-c = 0
-found = 0
-DO i=1 to classes.0
- parse var classes.i FACILITY prof .
- if upper(prof) = upper(profile) then do
-    found = 1
-    iterate
- end
- c = c + 1
- newprofile.c = classes.i
-end
-newprofile.0 = c
+NEWPROFILE.0 = 0
+C = 0
+FOUND = 0
+DO I=1 TO CLASSES.0
+ PARSE VAR CLASSES.I FACILITY PROF .
+ IF UPPER(PROF) = UPPER(PROFILE) THEN DO
+    FOUND = 1
+    ITERATE
+ END
+ C = C + 1
+ NEWPROFILE.C = CLASSES.I
+END
+NEWPROFILE.0 = C
 
-if found = 0 then do
-    say "RAKF01I Dataset Profile" upper(profile) "not found"
-    exit
-end
+IF FOUND = 0 THEN DO
+    SAY "RAKF01I DATASET PROFILE" UPPER(PROFILE) "NOT FOUND"
+    EXIT
+END
 
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKW RAKF (STEM newprofile. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKW RAKF (STEM NEWPROFILE. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-exit
+EXIT
 
-/* ----- Update RAKF ----- */
-call console("s rakfprof")
+/* ----- UPDATE RAKF ----- */
+CALL CONSOLE("S RAKFPROF")
 /* ----- DONE        ----- */
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF profile database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF PROFILE DATABASE'
+    EXIT
+  END
+RETURN
 ./ ADD NAME=DELGROUP
 /* DELETE A RAKF GROUP */
-/* Open the RAKF db */
-parse arg group .
+/* OPEN THE RAKF DB */
+PARSE ARG GROUP .
 
-if length(group) = 0 then do
-  say "RAKF01I Insufficient arguments"
-  say ""
-  say "DELGROUP GROUPNAME"
-  say "GROUPNAME IS REQUIRED"
-  exit
-end
-
-ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM userdb. OPEN FINIS"
-call check_rc rc
-ADDRESS TSO "FREE FI(RAKF)"
-
-newuserdb.0 = 0
-c = 0
-found = 0
-DO i=1 to userdb.0
- PARSE VAR userdb.i 1 rUSER 10 rGROUP 18 .
- if strip(rGROUP) = upper(group) then do
-    /* Make sure this isn't the only group */
-    user_count = 0
-    do j = 1 to userdb.0
-      parse var userdb.j user .
-      if strip(rUSER) = strip(user) then do
-        user_count = user_count + 1
-      end 
-    end
-
-    if user_count = 1 then do
-        say "RAKF02E Cannot remove group "group" from user" rUSER
-        say "        This user only exists in this one group."
-        say "        Either DELUSER or CONNECT to another group"
-        say "        before deleting this group"
-        exit
-    end
-    found = 1
-    iterate
- end
- c = c + 1
- newuserdb.c = userdb.i
-end
-newuserdb.0 = c
-
-if found = 0 then do
-    say "RAKF01I Group" upper(group) "not found"
-    exit
-end
-
+IF LENGTH(GROUP) = 0 THEN DO
+  SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+  SAY ""
+  SAY "DELGROUP GROUPNAME"
+  SAY "GROUPNAME IS REQUIRED"
+  EXIT
+END
 
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKW RAKF (STEM newuserdb. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM USERDB. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-exit
 
-/* ----- Update RAKF ----- */
-call console("s rakfuser")
+NEWUSERDB.0 = 0
+C = 0
+FOUND = 0
+DO I=1 TO USERDB.0
+ PARSE VAR USERDB.I 1 RUSER 10 RGROUP 18 .
+ IF STRIP(RGROUP) = UPPER(GROUP) THEN DO
+    /* MAKE SURE THIS ISN'T THE ONLY GROUP */
+    USER_COUNT = 0
+    DO J = 1 TO USERDB.0
+      PARSE VAR USERDB.J USER .
+      IF STRIP(RUSER) = STRIP(USER) THEN DO
+        USER_COUNT = USER_COUNT + 1
+      END 
+    END
+
+    IF USER_COUNT = 1 THEN DO
+        SAY "RAKF02E CANNOT REMOVE GROUP "GROUP" FROM USER" RUSER
+        SAY "        THIS USER ONLY EXISTS IN THIS ONE GROUP."
+        SAY "        EITHER DELUSER OR CONNECT TO ANOTHER GROUP"
+        SAY "        BEFORE DELETING THIS GROUP"
+        EXIT
+    END
+    FOUND = 1
+    ITERATE
+ END
+ C = C + 1
+ NEWUSERDB.C = USERDB.I
+END
+NEWUSERDB.0 = C
+
+IF FOUND = 0 THEN DO
+    SAY "RAKF01I GROUP" UPPER(GROUP) "NOT FOUND"
+    EXIT
+END
+
+
+ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKW RAKF (STEM NEWUSERDB. OPEN FINIS"
+CALL CHECK_RC RC
+ADDRESS TSO "FREE FI(RAKF)"
+EXIT
+
+/* ----- UPDATE RAKF ----- */
+CALL CONSOLE("S RAKFUSER")
 /* ----- DONE        ----- */
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF user database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF USER DATABASE'
+    EXIT
+  END
+RETURN
 ./ ADD NAME=DELUSER
 /* DELETE A RAKF USER */
-/* Open the RAKF db */
-parse arg userid .
+/* OPEN THE RAKF DB */
+PARSE ARG USERID .
 
-if length(userid) = 0 then do
-  say 'RAKF01I Missing userid'
-  exit
-end
-
-ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM userdb. OPEN FINIS"
-call check_rc rc
-ADDRESS TSO "FREE FI(RAKF)"
-newuserdb.0 = 0
-c = 0
-found = 0
-DO i=1 to userdb.0
- parse var userdb.i user .
- if upper(user) = upper(userid) then do
-    found = 1
-    iterate
- end
- c = c + 1
- newuserdb.c = userdb.i
-end
-newuserdb.0 = c
-
-if found = 0 then do
-    say "RAKF01I Userid" upper(userid) "not found"
-    exit
-end
+IF LENGTH(USERID) = 0 THEN DO
+  SAY 'RAKF01I MISSING USERID'
+  EXIT
+END
 
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKW RAKF (STEM newuserdb. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM USERDB. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-exit
+NEWUSERDB.0 = 0
+C = 0
+FOUND = 0
+DO I=1 TO USERDB.0
+ PARSE VAR USERDB.I USER .
+ IF UPPER(USER) = UPPER(USERID) THEN DO
+    FOUND = 1
+    ITERATE
+ END
+ C = C + 1
+ NEWUSERDB.C = USERDB.I
+END
+NEWUSERDB.0 = C
 
-/* ----- Update RAKF ----- */
-call console("s rakfuser")
+IF FOUND = 0 THEN DO
+    SAY "RAKF01I USERID" UPPER(USERID) "NOT FOUND"
+    EXIT
+END
+
+ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKW RAKF (STEM NEWUSERDB. OPEN FINIS"
+CALL CHECK_RC RC
+ADDRESS TSO "FREE FI(RAKF)"
+EXIT
+
+/* ----- UPDATE RAKF ----- */
+CALL CONSOLE("S RAKFUSER")
 /* ----- DONE        ----- */
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF user database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF USER DATABASE'
+    EXIT
+  END
+RETURN
 ./ ADD NAME=LISTDSD
 /* RAKF LISTDSD: LIST DATASET PROFILE BREXX SCRIPT */
 /* THIS IS ALSO THE ALIAS FOR ALTDSD */
 /* GET ARGUMENTS */
-parse arg args
-/* -------- Default -------- */
+PARSE ARG ARGS
+/* -------- DEFAULT -------- */
 DFLTUACC = 'NONE'
 UACC = ''
 FACILITY = 'DATASET'
 /* --------  DONE  -------- */
-/* -------- Parse Arguments -------- */
-do while (length(args) > 0)
-   parse var args t .
-      if pos("(",t) = 0 then do
-         say 'RAKF01E Argument' t 'not recognized'
-         exit
-      end
-      else do
-        parse var args o "(" s ")" args
-        current = o||"("||s||")"
-      end
-     parse var current option "(" selection ")"
-     select
-       when (upper(option) = 'DATASET') then do
-         DATASET = selection
-       end
-       otherwise do
-         say 'RAKF01E Argument' current 'not recognized'
-         exit
-       end
-     end
-end
+/* -------- PARSE ARGUMENTS -------- */
+DO WHILE (LENGTH(ARGS) > 0)
+   PARSE VAR ARGS T .
+      IF POS("(",T) = 0 THEN DO
+         SAY 'RAKF01E ARGUMENT' T 'NOT RECOGNIZED'
+         EXIT
+      END
+      ELSE DO
+        PARSE VAR ARGS O "(" S ")" ARGS
+        CURRENT = O||"("||S||")"
+      END
+     PARSE VAR CURRENT OPTION "(" SELECTION ")"
+     SELECT
+       WHEN (UPPER(OPTION) = 'DATASET') THEN DO
+         DATASET = SELECTION
+       END
+       OTHERWISE DO
+         SAY 'RAKF01E ARGUMENT' CURRENT 'NOT RECOGNIZED'
+         EXIT
+       END
+     END
+END
 
 
-/* ----- Open RAKF profile file ----- */
+/* ----- OPEN RAKF PROFILE FILE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-call rxsort
+CALL RXSORT
 
-/* ----- Show the rules ----- */
-do i=1 to sortin.0
-  parse var sortin.i 1 class 9 resource 53 group 61 access
-  if strip(class) = 'DATASET' & length(strip(group)) = 0 then do
-    call print_access
-  end
-end
+/* ----- SHOW THE RULES ----- */
+DO I=1 TO SORTIN.0
+  PARSE VAR SORTIN.I 1 CLASS 9 RESOURCE 53 GROUP 61 ACCESS
+  IF STRIP(CLASS) = 'DATASET' & LENGTH(STRIP(GROUP)) = 0 THEN DO
+    CALL PRINT_ACCESS
+  END
+END
 
-exit
+EXIT
 
-print_access:
-  say "INFORMATION FOR DATASET" strip(resource)
-  groups_count = 0
-  do j=1 to sortin.0
-      parse var sortin.j 1 gclass 9 gresource 53 ggroup 61 gaccess
-      if (strip(gclass) = 'DATASET') & (gresource = resource) &,
-      (length(strip(ggroup)) > 0) then do
-          say "  GROUP:" left(ggroup,8) "ACCESS: " gaccess
-      end
-  end
-  say "  UNIVERSAL ACCESS:" access
-  say ""
-return
+PRINT_ACCESS:
+  SAY "INFORMATION FOR DATASET" STRIP(RESOURCE)
+  GROUPS_COUNT = 0
+  DO J=1 TO SORTIN.0
+      PARSE VAR SORTIN.J 1 GCLASS 9 GRESOURCE 53 GGROUP 61 GACCESS
+      IF (STRIP(GCLASS) = 'DATASET') & (GRESOURCE = RESOURCE) &,
+      (LENGTH(STRIP(GGROUP)) > 0) THEN DO
+          SAY "  GROUP:" LEFT(GGROUP,8) "ACCESS: " GACCESS
+      END
+  END
+  SAY "  UNIVERSAL ACCESS:" ACCESS
+  SAY ""
+RETURN
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF profile database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF PROFILE DATABASE'
+    EXIT
+  END
+RETURN
 ./ ADD NAME=LISTGRP
 /* RAKF LIST GROUP(S) BREXX SCRIPT */
 /* GET ARGUMENTS */
-parse arg groupname .
-/* Open the RAKF db */
+PARSE ARG GROUPNAME .
+/* OPEN THE RAKF DB */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM userdb. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM USERDB. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-groups.0 = 0
-gc = 0
+GROUPS.0 = 0
+GC = 0
 
-call get_groups
+CALL GET_GROUPS
 
-if length(groupname) = 0 then do
-    do i = 1 to groups.0   
-        say "INFORMATION FOR GROUP" groups.i
-        call print_users groups.i
-    end
-end
-else do
-    group_exists = 0
-    do i = 1 to groups.0 
-        if groups.i = groupname then group_exists = 1
-    end
-    if group_exists then do
-      say "INFORMATION FOR GROUP" groupname
-      call print_users groupname
-    end
-    else do
-        say "RAKF02E Group" groupname "does not exist"
-        exit
-    end
-end
+IF LENGTH(GROUPNAME) = 0 THEN DO
+    DO I = 1 TO GROUPS.0   
+        SAY "INFORMATION FOR GROUP" GROUPS.I
+        CALL PRINT_USERS GROUPS.I
+    END
+END
+ELSE DO
+    GROUP_EXISTS = 0
+    DO I = 1 TO GROUPS.0 
+        IF GROUPS.I = GROUPNAME THEN GROUP_EXISTS = 1
+    END
+    IF GROUP_EXISTS THEN DO
+      SAY "INFORMATION FOR GROUP" GROUPNAME
+      CALL PRINT_USERS GROUPNAME
+    END
+    ELSE DO
+        SAY "RAKF02E GROUP" GROUPNAME "DOES NOT EXIST"
+        EXIT
+    END
+END
 EXIT
 
-get_groups:
-  do i = 1 to userdb.0
-    PARSE VAR userdb.i 1 . 10 gGROUP 18 .
-    /* is this group already in our stem? */
-    notfound = 1
-    do j = 1 to groups.0 
-        if strip(groups.j) = strip(gGROUP) then do
-            notfound = 0
-        end
-    end
-    if notfound then do
-        groups.0 = groups.0 + 1
-        c = groups.0
-        groups.c = strip(gGROUP)
-    end
-  end
-return
+GET_GROUPS:
+  DO I = 1 TO USERDB.0
+    PARSE VAR USERDB.I 1 . 10 GGROUP 18 .
+    /* IS THIS GROUP ALREADY IN OUR STEM? */
+    NOTFOUND = 1
+    DO J = 1 TO GROUPS.0 
+        IF STRIP(GROUPS.J) = STRIP(GGROUP) THEN DO
+            NOTFOUND = 0
+        END
+    END
+    IF NOTFOUND THEN DO
+        GROUPS.0 = GROUPS.0 + 1
+        C = GROUPS.0
+        GROUPS.C = STRIP(GGROUP)
+    END
+  END
+RETURN
 
-print_users:
-    parse arg group
-    say " USER(S)="
-    do x = 1 to userdb.0
-        PARSE VAR userdb.x 1 user 10 pGROUP 18 .
-        if strip(pGROUP) = strip(group) then do
-            say " " user
-        end
-    end
-    say ""
-return
+PRINT_USERS:
+    PARSE ARG GROUP
+    SAY " USER(S)="
+    DO X = 1 TO USERDB.0
+        PARSE VAR USERDB.X 1 USER 10 PGROUP 18 .
+        IF STRIP(PGROUP) = STRIP(GROUP) THEN DO
+            SAY " " USER
+        END
+    END
+    SAY ""
+RETURN
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF user database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF USER DATABASE'
+    EXIT
+  END
+RETURN
 
 ./ ADD NAME=LISTUSER
 /* RAKF LIST USER BREXX SCRIPT */
 /* GET ARGUMENTS */
-parse arg userid .
-/* Default to current user */
-if length(userid) = 0 then userid = userid()
+PARSE ARG USERID .
+/* DEFAULT TO CURRENT USER */
+IF LENGTH(USERID) = 0 THEN USERID = USERID()
 
-/* Open the RAKF db */
+/* OPEN THE RAKF DB */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM userdb. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM USERDB. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
 
-/* If this is a single user */
-if userid \= "*" then do
- oper=0
- rakfadm = 0
- line1 = ""
- line1 = line1 || "USER="||LEFT(upper(userid),8)|| " "
- grp = "GROUPS="
- cmnts = "COMMENTS="
- DO i=1 to userdb.0
-  USER = strip(substr(userdb.i,1,8))
-  GROUP = strip(substr(userdb.i,10,8))
-  COMMENT = strip(substr(userdb.i,31,20))
-  OPS = strip(substr(userdb.i,28,1))
-  if upper(user) = upper(userid) then do
-    if group = 'RAKFADM' then rakfadm = 1
-    grp = grp|| GROUP||" "
-    if OPS="Y" then oper=1
-    cmnts=COMMENT
-  end
- end
-  attr = "ATTRIBUTES="
-  if OPER THEN attr = attr||"OPERATIONS "
-  if rakfadm then attr = attr||"SPECIAL"
-  say line1
-  say grp
-  say attr
-  say "COMMENTS="||cmnts
-  say ""
-end
-else do
-  current_user = ""
-  grp = ''
-  attr= ''
-  cmnts=''
+/* IF THIS IS A SINGLE USER */
+IF USERID \= "*" THEN DO
+ OPER=0
+ RAKFADM = 0
+ LINE1 = ""
+ LINE1 = LINE1 || "USER="||LEFT(UPPER(USERID),8)|| " "
+ GRP = "GROUPS="
+ CMNTS = "COMMENTS="
+ DO I=1 TO USERDB.0
+  USER = STRIP(SUBSTR(USERDB.I,1,8))
+  GROUP = STRIP(SUBSTR(USERDB.I,10,8))
+  COMMENT = STRIP(SUBSTR(USERDB.I,31,20))
+  OPS = STRIP(SUBSTR(USERDB.I,28,1))
+  IF UPPER(USER) = UPPER(USERID) THEN DO
+    IF GROUP = 'RAKFADM' THEN RAKFADM = 1
+    GRP = GRP|| GROUP||" "
+    IF OPS="Y" THEN OPER=1
+    CMNTS=COMMENT
+  END
+ END
+  ATTR = "ATTRIBUTES="
+  IF OPER THEN ATTR = ATTR||"OPERATIONS "
+  IF RAKFADM THEN ATTR = ATTR||"SPECIAL"
+  SAY LINE1
+  SAY GRP
+  SAY ATTR
+  SAY "COMMENTS="||CMNTS
+  SAY ""
+END
+ELSE DO
+  CURRENT_USER = ""
+  GRP = ''
+  ATTR= ''
+  CMNTS=''
   OPER=0
-  rakfadm=0
-  do i=1 to userdb.0
-    USER = strip(substr(userdb.i,1,8))
-    GROUP = strip(substr(userdb.i,10,8))
-    COMMENT = strip(substr(userdb.i,31,20))
-    OPS = strip(substr(userdb.i,28,1))
-    if length(current_user) = 0 then current_user = USER
-    if current_user \= user then do
-     say 'USER='||current_user
-     say "GROUPS="||grp
-     if OPER THEN attr = attr||"OPERATIONS "
-     if rakfadm then attr = attr||"SPECIAL"
-     say "ATTRIBUTES="||attr
-     say "COMMENTS="||cmnts
-     current_user = user
-     grp = ''
-     attr= ''
-     cmnts=''
+  RAKFADM=0
+  DO I=1 TO USERDB.0
+    USER = STRIP(SUBSTR(USERDB.I,1,8))
+    GROUP = STRIP(SUBSTR(USERDB.I,10,8))
+    COMMENT = STRIP(SUBSTR(USERDB.I,31,20))
+    OPS = STRIP(SUBSTR(USERDB.I,28,1))
+    IF LENGTH(CURRENT_USER) = 0 THEN CURRENT_USER = USER
+    IF CURRENT_USER \= USER THEN DO
+     SAY 'USER='||CURRENT_USER
+     SAY "GROUPS="||GRP
+     IF OPER THEN ATTR = ATTR||"OPERATIONS "
+     IF RAKFADM THEN ATTR = ATTR||"SPECIAL"
+     SAY "ATTRIBUTES="||ATTR
+     SAY "COMMENTS="||CMNTS
+     CURRENT_USER = USER
+     GRP = ''
+     ATTR= ''
+     CMNTS=''
      OPER=0
-     rakfadm=0
-     say ''
-    end
-    grp=grp||GROUP||" "
-    cmnts=COMMENT
-    if group = 'RAKFADM' then rakfadm = 1
-    if OPS="Y" then oper=1
-  end
-  /* catch the bottom user */
-  say 'USER= '||user
-  say "GROUPS= "||grp
-  if OPER THEN attr = attr||"OPERATIONS "
-  if rakfadm then attr = attr||"SPECIAL"
-  say "ATTRIBUTES= "||attr
-  say "COMMENTS= "||cmnts
-  say ''
-end
+     RAKFADM=0
+     SAY ''
+    END
+    GRP=GRP||GROUP||" "
+    CMNTS=COMMENT
+    IF GROUP = 'RAKFADM' THEN RAKFADM = 1
+    IF OPS="Y" THEN OPER=1
+  END
+  /* CATCH THE BOTTOM USER */
+  SAY 'USER= '||USER
+  SAY "GROUPS= "||GRP
+  IF OPER THEN ATTR = ATTR||"OPERATIONS "
+  IF RAKFADM THEN ATTR = ATTR||"SPECIAL"
+  SAY "ATTRIBUTES= "||ATTR
+  SAY "COMMENTS= "||CMNTS
+  SAY ''
+END
 EXIT
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF user database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF USER DATABASE'
+    EXIT
+  END
+RETURN
 
 ./ ADD NAME=PERMIT
 /* RAKF PERMIT BREXX SCRIPT */
 /* GET ARGUMENTS */
-parse arg args
-/* -------- Default -------- */
+PARSE ARG ARGS
+/* -------- DEFAULT -------- */
 DFLTUACC = 'NONE'
 UACC = ''
 CLASS = 'DATASET'
@@ -1208,779 +1208,779 @@ DELETE = 0
 ACCESS = 0
 ACCESSR = "NONE READ UPDATE ALTER"
 /* --------  DONE  -------- */
-if length(args) = 0 then do
-  say "RAKF01I Insufficient arguments"
-  say ""
-  say "PERMIT PROFILE-NAME"
-  say " ID(USERNAME) Supports multiple users/groups"
-  say " [CLASS(FACILITY)] Default: DATASET"
-  say " [ACCESS(UPDATE)] Default: READ"
-  say "DATASET PROFILE IS REQUIRED"
-  say "EXAMPLE: RX PERMIT 'SYSGEN.ISPF.* ID(PHIL,ADMIN) ACCESS(ALTER)'"
-  say "EXAMPLE: RX PERMIT 'ISPF.* ID(PHIL)'"
-  say "EXAMPLE: RX PERMIT 'DIAG8CMD CLASS(FACILITY)"||,
+IF LENGTH(ARGS) = 0 THEN DO
+  SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+  SAY ""
+  SAY "PERMIT PROFILE-NAME"
+  SAY " ID(USERNAME) SUPPORTS MULTIPLE USERS/GROUPS"
+  SAY " [CLASS(FACILITY)] DEFAULT: DATASET"
+  SAY " [ACCESS(UPDATE)] DEFAULT: READ"
+  SAY "DATASET PROFILE IS REQUIRED"
+  SAY "EXAMPLE: RX PERMIT 'SYSGEN.ISPF.* ID(PHIL,ADMIN) ACCESS(ALTER)'"
+  SAY "EXAMPLE: RX PERMIT 'ISPF.* ID(PHIL)'"
+  SAY "EXAMPLE: RX PERMIT 'DIAG8CMD CLASS(FACILITY)"||,
       " ID(ADMIN,STCGROUP) ACCESS(READ)'"
-  exit
-end
+  EXIT
+END
 
-parse upper var args profile args
-if pos("(",userid) > 0 then do
-    say "RAKF01I First argument must be profile-name"
-    exit
-end
+PARSE UPPER VAR ARGS PROFILE ARGS
+IF POS("(",USERID) > 0 THEN DO
+    SAY "RAKF01I FIRST ARGUMENT MUST BE PROFILE-NAME"
+    EXIT
+END
 
-/* -------- Parse Arguments -------- */
-do while (length(args) > 0)
-   parse var args t .
-      if pos("(",t) = 0 then
-        parse var args current args
-      else do
-        parse var args o "(" s ")" args
-        current = o||"("||s||")"
-      end
-   if pos("(",current) = 0 then do    
-    select
-      when current = 'DELETE' then do
+/* -------- PARSE ARGUMENTS -------- */
+DO WHILE (LENGTH(ARGS) > 0)
+   PARSE VAR ARGS T .
+      IF POS("(",T) = 0 THEN
+        PARSE VAR ARGS CURRENT ARGS
+      ELSE DO
+        PARSE VAR ARGS O "(" S ")" ARGS
+        CURRENT = O||"("||S||")"
+      END
+   IF POS("(",CURRENT) = 0 THEN DO    
+    SELECT
+      WHEN CURRENT = 'DELETE' THEN DO
           DELETE = 1
-      end
-      otherwise do 
-        say "RAKF01E Argument not understood:" current
-        exit 
-      end
-    end
-   end
-   else do
-     parse var current option "(" selection ")"
-     select
-       when (upper(option) = 'CLASS') then CLASS = selection
-       when (upper(option) = 'ID') then do
-         do while length(selection) > 0
-           parse var selection id "," selection
-           ids.0 = ids.0 + 1
-           c = ids.0
-           ids.c = id
-         end
-       end
-       when (upper(option) = 'ACCESS') then do
-        ACCESS = selection
-        if wordpos(ACCESS, ACCESSR) = 0 then do
-            say "RAKF03E Access right" ACCESS "not recognized"
-            say "        Must be one of: NONE, READ, UPDATE, ALTER"
-            exit
-        end
-       end
-       otherwise do
-         say 'RAKF01I Argument' current 'not recognized'
-         exit
-       end
-     end
-   end
-end
+      END
+      OTHERWISE DO 
+        SAY "RAKF01E ARGUMENT NOT UNDERSTOOD:" CURRENT
+        EXIT 
+      END
+    END
+   END
+   ELSE DO
+     PARSE VAR CURRENT OPTION "(" SELECTION ")"
+     SELECT
+       WHEN (UPPER(OPTION) = 'CLASS') THEN CLASS = SELECTION
+       WHEN (UPPER(OPTION) = 'ID') THEN DO
+         DO WHILE LENGTH(SELECTION) > 0
+           PARSE VAR SELECTION ID "," SELECTION
+           IDS.0 = IDS.0 + 1
+           C = IDS.0
+           IDS.C = ID
+         END
+       END
+       WHEN (UPPER(OPTION) = 'ACCESS') THEN DO
+        ACCESS = SELECTION
+        IF WORDPOS(ACCESS, ACCESSR) = 0 THEN DO
+            SAY "RAKF03E ACCESS RIGHT" ACCESS "NOT RECOGNIZED"
+            SAY "        MUST BE ONE OF: NONE, READ, UPDATE, ALTER"
+            EXIT
+        END
+       END
+       OTHERWISE DO
+         SAY 'RAKF01I ARGUMENT' CURRENT 'NOT RECOGNIZED'
+         EXIT
+       END
+     END
+   END
+END
 
-if ACCESS \= 0 & DELETE then do
-    say "RAKF02E Arguments ACCESS and DELETE cannot be specified"
-    say "        on same command"
-    exit
-end
+IF ACCESS \= 0 & DELETE THEN DO
+    SAY "RAKF02E ARGUMENTS ACCESS AND DELETE CANNOT BE SPECIFIED"
+    SAY "        ON SAME COMMAND"
+    EXIT
+END
 
-if ids.0 = 0 then do
-  say 'RAFK02E ID() argument is required'
-  exit
-end
+IF IDS.0 = 0 THEN DO
+  SAY 'RAFK02E ID() ARGUMENT IS REQUIRED'
+  EXIT
+END
 
-/* ----- Done parsing options ----- */
+/* ----- DONE PARSING OPTIONS ----- */
 
-if ACCESS = 0 then ACCESS = DFLTACCESS
-if DELETE then ACCESS = 'DELETE'
+IF ACCESS = 0 THEN ACCESS = DFLTACCESS
+IF DELETE THEN ACCESS = 'DELETE'
 
 
-/* ----- Open RAKF profile file ----- */
+/* ----- OPEN RAKF PROFILE FILE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
 
 
-/* ----- Check to make sure the class and other stuff is good */
-notfound_class = 1
-notfound_resource = 1
-changed = ''
-do i = 1 to sortin.0
-  parse var sortin.i 1 rclass 9 rresource 53 rgroup 61 raccess
-  /* if the class doesnt exist we need to exit */
-  if strip(rclass) = class then do
-    notfound_class = 0
-    if strip(rresource) = profile then do
-      notfound_resource = 0
-      do c = 1 to ids.0
-        if strip(rgroup) = ids.c then do
-        /* If the exact rule already exists error out */
-          if strip(raccess) = access then do
-            say "RAKF04E Access right already exists"
-            say "          Class:" class
-            say "        Profile:" profile
-            say "             ID:" ids.c
-            say "         Access:" access
-            exit
-          end
-          else do
-            /* We change the rule */
-            rule = LEFT(class,8) || LEFT(profile,44)||LEFT(ids.c,8)||access
-            sortin.i = rule
-            changed = changed || " " ids.c
-          end
-        end
-      end
-    end
-  end
-end
+/* ----- CHECK TO MAKE SURE THE CLASS AND OTHER STUFF IS GOOD */
+NOTFOUND_CLASS = 1
+NOTFOUND_RESOURCE = 1
+CHANGED = ''
+DO I = 1 TO SORTIN.0
+  PARSE VAR SORTIN.I 1 RCLASS 9 RRESOURCE 53 RGROUP 61 RACCESS
+  /* IF THE CLASS DOESNT EXIST WE NEED TO EXIT */
+  IF STRIP(RCLASS) = CLASS THEN DO
+    NOTFOUND_CLASS = 0
+    IF STRIP(RRESOURCE) = PROFILE THEN DO
+      NOTFOUND_RESOURCE = 0
+      DO C = 1 TO IDS.0
+        IF STRIP(RGROUP) = IDS.C THEN DO
+        /* IF THE EXACT RULE ALREADY EXISTS ERROR OUT */
+          IF STRIP(RACCESS) = ACCESS THEN DO
+            SAY "RAKF04E ACCESS RIGHT ALREADY EXISTS"
+            SAY "          CLASS:" CLASS
+            SAY "        PROFILE:" PROFILE
+            SAY "             ID:" IDS.C
+            SAY "         ACCESS:" ACCESS
+            EXIT
+          END
+          ELSE DO
+            /* WE CHANGE THE RULE */
+            RULE = LEFT(CLASS,8) || LEFT(PROFILE,44)||LEFT(IDS.C,8)||ACCESS
+            SORTIN.I = RULE
+            CHANGED = CHANGED || " " IDS.C
+          END
+        END
+      END
+    END
+  END
+END
 
-if notfound_class then do
-  say 'RAKF03E Class' CLASS 'does not exist use RDEFINE to add a new class'
-  exit
-end
+IF NOTFOUND_CLASS THEN DO
+  SAY 'RAKF03E CLASS' CLASS 'DOES NOT EXIST USE RDEFINE TO ADD A NEW CLASS'
+  EXIT
+END
 
-if notfound_resource then do
-  say 'RAKF03E Resource' profile 'does not exist in the' class 'class'
-  say '        use RDEFINE to add it'
-  exit
-end
+IF NOTFOUND_RESOURCE THEN DO
+  SAY 'RAKF03E RESOURCE' PROFILE 'DOES NOT EXIST IN THE' CLASS 'CLASS'
+  SAY '        USE RDEFINE TO ADD IT'
+  EXIT
+END
 
-/* ----- Deleting or Adding profiles */
+/* ----- DELETING OR ADDING PROFILES */
 
-if DELETE then do
-  newprofile.0 = 0
-  c = 0
-  do i = 1 to sortin.0
-    parse var sortin.i 1 rclass 9 rresource 53 rgroup 61 raccess
-    if (strip(rclass) = class) & (strip(rresource) = profile) then do
-      id = 0
-      do j = 1 to ids.0
-        if strip(rgroup) = ids.j then id = 1
-      end
-      if id then ITERATE
-    end
-    c = c + 1
-    newprofile.c = sortin.i
-  end
-  newprofile.0 = c
-  do i = 1 to c
-    sortin.i = newprofile.i
-  end
-  sortin.0 = newprofile.0
+IF DELETE THEN DO
+  NEWPROFILE.0 = 0
+  C = 0
+  DO I = 1 TO SORTIN.0
+    PARSE VAR SORTIN.I 1 RCLASS 9 RRESOURCE 53 RGROUP 61 RACCESS
+    IF (STRIP(RCLASS) = CLASS) & (STRIP(RRESOURCE) = PROFILE) THEN DO
+      ID = 0
+      DO J = 1 TO IDS.0
+        IF STRIP(RGROUP) = IDS.J THEN ID = 1
+      END
+      IF ID THEN ITERATE
+    END
+    C = C + 1
+    NEWPROFILE.C = SORTIN.I
+  END
+  NEWPROFILE.0 = C
+  DO I = 1 TO C
+    SORTIN.I = NEWPROFILE.I
+  END
+  SORTIN.0 = NEWPROFILE.0
 
-end
-else do
-  start = sortin.0
-  do i = 1 to ids.0
-    /* If this a new rule, not a rule change then make the new rule */
-    if wordpos(ids.i,changed) = 0 then do
-      start = start + 1
-      PROF = LEFT(class,8) || LEFT(profile,44)||LEFT(ids.i,8)||access
-      sortin.start = PROF
-    end
-  end
-  sortin.0 = start
-end
+END
+ELSE DO
+  START = SORTIN.0
+  DO I = 1 TO IDS.0
+    /* IF THIS A NEW RULE, NOT A RULE CHANGE THEN MAKE THE NEW RULE */
+    IF WORDPOS(IDS.I,CHANGED) = 0 THEN DO
+      START = START + 1
+      PROF = LEFT(CLASS,8) || LEFT(PROFILE,44)||LEFT(IDS.I,8)||ACCESS
+      SORTIN.START = PROF
+    END
+  END
+  SORTIN.0 = START
+END
 
 
-call rxsort
+CALL RXSORT
 
-/* Add changes to PROFILES */
+/* ADD CHANGES TO PROFILES */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKW RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKW RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-/* Done */
-/* ----- Update RAKF ----- */
-call console("s rakfprof")
+/* DONE */
+/* ----- UPDATE RAKF ----- */
+CALL CONSOLE("S RAKFPROF")
 /* ----- DONE  ----- */
-exit
+EXIT
 
-check_length:
-  parse arg x y z
-  if length(x) > z then do
-    say 'RAKF02I' y 'must be' z 'characters or shorter'
-    exit
-  end
-return
+CHECK_LENGTH:
+  PARSE ARG X Y Z
+  IF LENGTH(X) > Z THEN DO
+    SAY 'RAKF02I' Y 'MUST BE' Z 'CHARACTERS OR SHORTER'
+    EXIT
+  END
+RETURN
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF profile database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF PROFILE DATABASE'
+    EXIT
+  END
+RETURN
 
 ./ ADD NAME=RDEFINE
 /* RAKF RDEFINE: ADD CLASS AND PROFILE BREXX SCRIPT */
 /* THIS IS ALSO THE ALIAS FOR RALTER */
 /* GET ARGUMENTS */
-parse arg args
-/* -------- Default -------- */
+PARSE ARG ARGS
+/* -------- DEFAULT -------- */
 DFLTUACC = 'NONE'
 UACC = ''
 ACCESS = "NONE READ UPDATE ALTER"
 /* --------  DONE  -------- */
 
-if length(args) = 0 then do
-    say "RAKF01I Insufficient arguments"
-    call usage
-end
+IF LENGTH(ARGS) = 0 THEN DO
+    SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+    CALL USAGE
+END
 
 
-parse upper var args class args
-if pos("UACC",rules) > 0 then do
-    say "RAKF01E First argument must be a class"
-    call usage
-    exit
-end
+PARSE UPPER VAR ARGS CLASS ARGS
+IF POS("UACC",RULES) > 0 THEN DO
+    SAY "RAKF01E FIRST ARGUMENT MUST BE A CLASS"
+    CALL USAGE
+    EXIT
+END
 
-parse upper var args profile args
-if pos("UACC",rules) > 0 then do
-    say "RAKF01E Second argument must be a profile name"
-    call usage
-    exit
-end
+PARSE UPPER VAR ARGS PROFILE ARGS
+IF POS("UACC",RULES) > 0 THEN DO
+    SAY "RAKF01E SECOND ARGUMENT MUST BE A PROFILE NAME"
+    CALL USAGE
+    EXIT
+END
 
-if length(profile) = 0 then do
-    say "RAKF01I Insufficient arguments"
-    call usage
-end
+IF LENGTH(PROFILE) = 0 THEN DO
+    SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+    CALL USAGE
+END
 
-/* -------- Parse Arguments -------- */
-if length(args) > 0 then do
-    parse var args arguacc args
-    if pos("UACC",arguacc) > 0 then do
-        parse var arguacc . "(" UACC ")" .
-        if UACC = '' then do
-            say "RAKF03E Invalid UACC syntax:" arguacc
-            exit
-        end
-        if wordpos(UACC,ACCESS) = 0 then do
-            say "RAKF03E Invalid UACC access type. Must be one of"
-            say "        NONE READ UPDATE ALTER"
-            say "        Type provided:" UACC
-            exit
-        end
-    end
-    else do
-     say "RAFK05E Invalid argument" arguacc
-     exit
-    end
-end
+/* -------- PARSE ARGUMENTS -------- */
+IF LENGTH(ARGS) > 0 THEN DO
+    PARSE VAR ARGS ARGUACC ARGS
+    IF POS("UACC",ARGUACC) > 0 THEN DO
+        PARSE VAR ARGUACC . "(" UACC ")" .
+        IF UACC = '' THEN DO
+            SAY "RAKF03E INVALID UACC SYNTAX:" ARGUACC
+            EXIT
+        END
+        IF WORDPOS(UACC,ACCESS) = 0 THEN DO
+            SAY "RAKF03E INVALID UACC ACCESS TYPE. MUST BE ONE OF"
+            SAY "        NONE READ UPDATE ALTER"
+            SAY "        TYPE PROVIDED:" UACC
+            EXIT
+        END
+    END
+    ELSE DO
+     SAY "RAFK05E INVALID ARGUMENT" ARGUACC
+     EXIT
+    END
+END
 
-if length(args) > 0 then do
-    say "RAKF05E Invalid argument:" args
-    exit
-end
+IF LENGTH(ARGS) > 0 THEN DO
+    SAY "RAKF05E INVALID ARGUMENT:" ARGS
+    EXIT
+END
 
-if UACC = '' then UACC = DFLTUACC
+IF UACC = '' THEN UACC = DFLTUACC
 
-/* ----- Open RAKF profile file ----- */
+/* ----- OPEN RAKF PROFILE FILE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
 
-/* ----- Does the rule already exist? ----- */
-unchanged = 1
-do i=1 to sortin.0
-  parse var sortin.i 1 rclass 9 rprofile 53 rgroup 61 rUACC
-  if (strip(rclass) = class) &,
-     (length(strip(rgroup)) = 0) &,
-     (strip(rprofile) = profile) then do
-    if (strip(rUACC) = UACC) then do
-        say 'RAKF04E RAKF' class 'profile' profile "already exists"
-        exit 
-    end
-    else do
-/* Are we just changing the UACC? Yes we allow that, unlike other corps */
-        sortin.i = LEFT(class,8) || LEFT(profile,52)||LEFT(UACC,6)
-        unchanged = 0
-    end
-  end
-end
-/* -------- Generate profile line -------- */
+/* ----- DOES THE RULE ALREADY EXIST? ----- */
+UNCHANGED = 1
+DO I=1 TO SORTIN.0
+  PARSE VAR SORTIN.I 1 RCLASS 9 RPROFILE 53 RGROUP 61 RUACC
+  IF (STRIP(RCLASS) = CLASS) &,
+     (LENGTH(STRIP(RGROUP)) = 0) &,
+     (STRIP(RPROFILE) = PROFILE) THEN DO
+    IF (STRIP(RUACC) = UACC) THEN DO
+        SAY 'RAKF04E RAKF' CLASS 'PROFILE' PROFILE "ALREADY EXISTS"
+        EXIT 
+    END
+    ELSE DO
+/* ARE WE JUST CHANGING THE UACC? YES WE ALLOW THAT, UNLIKE OTHER CORPS */
+        SORTIN.I = LEFT(CLASS,8) || LEFT(PROFILE,52)||LEFT(UACC,6)
+        UNCHANGED = 0
+    END
+  END
+END
+/* -------- GENERATE PROFILE LINE -------- */
 
 
-/* ----- Adding profiles */
-if unchanged then do 
-    c = sortin.0 + 1
-    sortin.c = LEFT(class,8) || LEFT(profile,52)||LEFT(UACC,6)  
-    sortin.0 = c
-end
+/* ----- ADDING PROFILES */
+IF UNCHANGED THEN DO 
+    C = SORTIN.0 + 1
+    SORTIN.C = LEFT(CLASS,8) || LEFT(PROFILE,52)||LEFT(UACC,6)  
+    SORTIN.0 = C
+END
 
-call rxsort
+CALL RXSORT
 
-/* Add changes to PROFILES */
+/* ADD CHANGES TO PROFILES */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKW RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKW RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-/* Done */
-/* ----- Update RAKF ----- */
-call console("s rakfprof")
+/* DONE */
+/* ----- UPDATE RAKF ----- */
+CALL CONSOLE("S RAKFPROF")
 /* ----- DONE  ----- */
-exit
+EXIT
 
-check_length:
-  parse arg x y z
-  if length(x) > z then do
-    say 'RAKF02I' y 'must be' z 'characters or shorter'
-    exit
-  end
-return
+CHECK_LENGTH:
+  PARSE ARG X Y Z
+  IF LENGTH(X) > Z THEN DO
+    SAY 'RAKF02I' Y 'MUST BE' Z 'CHARACTERS OR SHORTER'
+    EXIT
+  END
+RETURN
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF profile database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF PROFILE DATABASE'
+    EXIT
+  END
+RETURN
 
-usage:
-  say ""
-  say "RDEFINE CLASS PROFILE-NAME"
-  say " [UACC(READ)] Default: NONE"
-  say "CLASS AND PROFILE IS REQUIRED"
-  say "EXAMPLE: RX RDEFINE 'FACILITY SVC244'"
-  say "EXAMPLE: RX RDEFINE 'FACILITY NONQAUTH UACC(READ)'"
-  exit
-return
+USAGE:
+  SAY ""
+  SAY "RDEFINE CLASS PROFILE-NAME"
+  SAY " [UACC(READ)] DEFAULT: NONE"
+  SAY "CLASS AND PROFILE IS REQUIRED"
+  SAY "EXAMPLE: RX RDEFINE 'FACILITY SVC244'"
+  SAY "EXAMPLE: RX RDEFINE 'FACILITY NONQAUTH UACC(READ)'"
+  EXIT
+RETURN
 ./ ADD NAME=RDELETE
 /* RAKF RDELETE: DELETE A RAKF PROFILE BREXX SCRIPT */
 /* GET ARGUMENTS */
-parse arg args
+PARSE ARG ARGS
 
 
-if length(args) = 0 then do
-    say "RAKF01I Insufficient arguments"
-    call usage
-end
+IF LENGTH(ARGS) = 0 THEN DO
+    SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+    CALL USAGE
+END
 
-parse upper var args class profile args
+PARSE UPPER VAR ARGS CLASS PROFILE ARGS
 
-if length(profile) = 0 then do
-    say "RAKF01I Insufficient arguments"
-    call usage
-end
+IF LENGTH(PROFILE) = 0 THEN DO
+    SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+    CALL USAGE
+END
 
-if length(args) > 0 then do
-    say "RAKF05E Invalid argument:" args
-    exit
-end
+IF LENGTH(ARGS) > 0 THEN DO
+    SAY "RAKF05E INVALID ARGUMENT:" ARGS
+    EXIT
+END
 
-/* ----- Open RAKF profile file ----- */
+/* ----- OPEN RAKF PROFILE FILE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
 
-newprofile.0 = 0
-c = 0
-notfound = 1
-do i = 1 to sortin.0
-  parse var sortin.i 1 rclass 9 rprofile 53 rgroup 61 raccess
-  if (strip(rclass) = class) & (strip(rprofile) = profile) then do
-    notfound = 0
+NEWPROFILE.0 = 0
+C = 0
+NOTFOUND = 1
+DO I = 1 TO SORTIN.0
+  PARSE VAR SORTIN.I 1 RCLASS 9 RPROFILE 53 RGROUP 61 RACCESS
+  IF (STRIP(RCLASS) = CLASS) & (STRIP(RPROFILE) = PROFILE) THEN DO
+    NOTFOUND = 0
     ITERATE
-  end
-  c = c + 1
-  newprofile.c = sortin.i
-end
+  END
+  C = C + 1
+  NEWPROFILE.C = SORTIN.I
+END
 
-if notfound then do
-  say 'RAKF04E Class' class 'and profile' profile 'not found'
-  exit
-end
+IF NOTFOUND THEN DO
+  SAY 'RAKF04E CLASS' CLASS 'AND PROFILE' PROFILE 'NOT FOUND'
+  EXIT
+END
 
-newprofile.0 = c
+NEWPROFILE.0 = C
 
-do i = 1 to c
-  sortin.i = newprofile.i
-end
+DO I = 1 TO C
+  SORTIN.I = NEWPROFILE.I
+END
 
-sortin.0 = newprofile.0
+SORTIN.0 = NEWPROFILE.0
 
-call rxsort
+CALL RXSORT
 
-/* Add changes to PROFILES */
+/* ADD CHANGES TO PROFILES */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKW RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKW RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-/* Done */
-/* ----- Update RAKF ----- */
-call console("s rakfprof")
+/* DONE */
+/* ----- UPDATE RAKF ----- */
+CALL CONSOLE("S RAKFPROF")
 /* ----- DONE  ----- */
-exit
+EXIT
 
-check_length:
-  parse arg x y z
-  if length(x) > z then do
-    say 'RAKF02I' y 'must be' z 'characters or shorter'
-    exit
-  end
-return
+CHECK_LENGTH:
+  PARSE ARG X Y Z
+  IF LENGTH(X) > Z THEN DO
+    SAY 'RAKF02I' Y 'MUST BE' Z 'CHARACTERS OR SHORTER'
+    EXIT
+  END
+RETURN
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF profile database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF PROFILE DATABASE'
+    EXIT
+  END
+RETURN
 
-usage:
-  say ""
-  say "RDELETE CLASS PROFILE-NAME"
-  say "CLASS AND PROFILE IS REQUIRED"
-  say "EXAMPLE: RX RDELETE 'FACILITY SVC244'"
-  exit
-return
+USAGE:
+  SAY ""
+  SAY "RDELETE CLASS PROFILE-NAME"
+  SAY "CLASS AND PROFILE IS REQUIRED"
+  SAY "EXAMPLE: RX RDELETE 'FACILITY SVC244'"
+  EXIT
+RETURN
 ./ ADD NAME=REMOVE
 /* RAKF REMOVE USER FROM GROUP BREXX SCRIPT */
 /* GET ARGUMENTS */
-parse arg args
+PARSE ARG ARGS
 /* --------  DONE  -------- */
-if length(args) = 0 then do
-  say "RAKF01I Insufficient arguments"
-  say ""
-  say "REMOVE USERNAME GROUP(GROUPNAME)"
-  say "USERNAME AND GROUP IS REQUIRED"
-  exit
-end
-parse upper var args USERNAME args
-if pos("(",userid) > 0 then do
-    say "RAKF01E First argument must be user name"
-    exit
-end
-call check_length USERNAME 'username' 7
+IF LENGTH(ARGS) = 0 THEN DO
+  SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+  SAY ""
+  SAY "REMOVE USERNAME GROUP(GROUPNAME)"
+  SAY "USERNAME AND GROUP IS REQUIRED"
+  EXIT
+END
+PARSE UPPER VAR ARGS USERNAME ARGS
+IF POS("(",USERID) > 0 THEN DO
+    SAY "RAKF01E FIRST ARGUMENT MUST BE USER NAME"
+    EXIT
+END
+CALL CHECK_LENGTH USERNAME 'USERNAME' 7
 
-if length(args) = 0 then do
-  say "RAKF01I Insufficient arguments"
-  say ""
-  say "REMOVE USERNAME GROUP(GROUPNAME)"
-  say "USERNAME AND GROUP IS REQUIRED"
-  exit
-end
+IF LENGTH(ARGS) = 0 THEN DO
+  SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+  SAY ""
+  SAY "REMOVE USERNAME GROUP(GROUPNAME)"
+  SAY "USERNAME AND GROUP IS REQUIRED"
+  EXIT
+END
 
-/* -------- Parse Arguments -------- */
-do while (length(args) > 0)
-   parse var args t .
-      if pos("(",t) = 0 then do
-         say 'RAKF01E Argument' t 'not recognized'
-         exit
-      end
-      else do
-        parse var args o "(" s ")" args
-        current = o||"("||s||")"
-      end
-     parse var current option "(" selection ")"
-     select
-       when (upper(option) = 'GROUP') then do
-         GROUPNAME = selection
-         call check_length GROUPNAME 'GROUP' 8
-       end
-       otherwise do
-         say 'RAKF01E Argument' current 'not recognized'
-         exit
-       end
-     end
-end
+/* -------- PARSE ARGUMENTS -------- */
+DO WHILE (LENGTH(ARGS) > 0)
+   PARSE VAR ARGS T .
+      IF POS("(",T) = 0 THEN DO
+         SAY 'RAKF01E ARGUMENT' T 'NOT RECOGNIZED'
+         EXIT
+      END
+      ELSE DO
+        PARSE VAR ARGS O "(" S ")" ARGS
+        CURRENT = O||"("||S||")"
+      END
+     PARSE VAR CURRENT OPTION "(" SELECTION ")"
+     SELECT
+       WHEN (UPPER(OPTION) = 'GROUP') THEN DO
+         GROUPNAME = SELECTION
+         CALL CHECK_LENGTH GROUPNAME 'GROUP' 8
+       END
+       OTHERWISE DO
+         SAY 'RAKF01E ARGUMENT' CURRENT 'NOT RECOGNIZED'
+         EXIT
+       END
+     END
+END
 
 
-/* ----- Open RAKF User file ----- */
+/* ----- OPEN RAKF USER FILE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
 
-notfound_user = 1
-notfound_group = 1
-newprofile.0 = 0
-c = 0
-do i=1 to sortin.0
-  PARSE VAR sortin.i 1 ruser 10 GROUP 18 .
+NOTFOUND_USER = 1
+NOTFOUND_GROUP = 1
+NEWPROFILE.0 = 0
+C = 0
+DO I=1 TO SORTIN.0
+  PARSE VAR SORTIN.I 1 RUSER 10 GROUP 18 .
 
-  if strip(ruser) = upper(USERNAME) then do
-    notfound_user = 0
-  end
-  if strip(ruser) = upper(USERNAME) & strip(group) = GROUPNAME then do
-    notfound_group = 0
+  IF STRIP(RUSER) = UPPER(USERNAME) THEN DO
+    NOTFOUND_USER = 0
+  END
+  IF STRIP(RUSER) = UPPER(USERNAME) & STRIP(GROUP) = GROUPNAME THEN DO
+    NOTFOUND_GROUP = 0
     ITERATE
-  end
-  c = c + 1
-  newprofile.c = sortin.i
-end
+  END
+  C = C + 1
+  NEWPROFILE.C = SORTIN.I
+END
 
-if notfound_user then do
-    say "RAKF02E User" USERNAME "not found in user database."
-    exit
-end
+IF NOTFOUND_USER THEN DO
+    SAY "RAKF02E USER" USERNAME "NOT FOUND IN USER DATABASE."
+    EXIT
+END
 
-if notfound_group then do
-    say "RAKF02E User" USERNAME "not connected to" GROUPNAME
-    exit
-end
+IF NOTFOUND_GROUP THEN DO
+    SAY "RAKF02E USER" USERNAME "NOT CONNECTED TO" GROUPNAME
+    EXIT
+END
 
-newprofile.0 = c
+NEWPROFILE.0 = C
 
-do i = 1 to c
-  sortin.i = newprofile.i
-end
+DO I = 1 TO C
+  SORTIN.I = NEWPROFILE.I
+END
 
-sortin.0 = newprofile.0
+SORTIN.0 = NEWPROFILE.0
 
-call rxsort
+CALL RXSORT
 
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(USERS)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKW RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKW RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-/* Done */
-/* ----- Update RAKF ----- */
-call console("s rakfuser")
+/* DONE */
+/* ----- UPDATE RAKF ----- */
+CALL CONSOLE("S RAKFUSER")
 /* ----- DONE        ----- */
-exit
+EXIT
 
-check_length:
-  parse arg x y z
-  if length(x) > z then do
-    say 'RAKF02I' y 'must be' z 'characters or shorter'
-    exit
-  end
-return
+CHECK_LENGTH:
+  PARSE ARG X Y Z
+  IF LENGTH(X) > Z THEN DO
+    SAY 'RAKF02I' Y 'MUST BE' Z 'CHARACTERS OR SHORTER'
+    EXIT
+  END
+RETURN
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF user database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF USER DATABASE'
+    EXIT
+  END
+RETURN
 
 ./ ADD NAME=RLIST
 /* RAKF RLIST: LIST RAKF RESOURCES BREXX SCRIPT */
 /* GET ARGUMENTS */
-parse arg args
+PARSE ARG ARGS
 
-all = 0
+ALL = 0
 
-if length(args) = 0 then do
-    all = 1
-end
+IF LENGTH(ARGS) = 0 THEN DO
+    ALL = 1
+END
 
-parse upper var args class profile args
+PARSE UPPER VAR ARGS CLASS PROFILE ARGS
 
-if length(args) > 0 then do
-    say "RAKF05E Invalid argument:" args
-    exit
-end
+IF LENGTH(ARGS) > 0 THEN DO
+    SAY "RAKF05E INVALID ARGUMENT:" ARGS
+    EXIT
+END
 
-/* ----- Open RAKF profile file ----- */
+/* ----- OPEN RAKF PROFILE FILE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM sortin. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM SORTIN. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
 
-newprofile.0 = 0
-c = 0
-notfound_class = 1
-notfound_profile = 1
-do i = 1 to sortin.0
-  parse var sortin.i 1 rclass 9 rprofile 53 rgroup 61 raccess
-  if length(strip(rgroup)) = 0 then do
-    if all then do 
-      call print_profile rclass rprofile raccess
-      notfound_class = 0
-      notfound_profile = 0
-    end
-    if (strip(rclass) = class) then do 
-      notfound_class = 0
-      if length(profile) = 0  then do
-        notfound_profile = 0
-        call print_profile rclass rprofile raccess
-      end
-      if strip(rprofile) = profile then do
-        call print_profile class profile raccess
-        notfound_profile = 0
-      end
-    end
-  end
-end
+NEWPROFILE.0 = 0
+C = 0
+NOTFOUND_CLASS = 1
+NOTFOUND_PROFILE = 1
+DO I = 1 TO SORTIN.0
+  PARSE VAR SORTIN.I 1 RCLASS 9 RPROFILE 53 RGROUP 61 RACCESS
+  IF LENGTH(STRIP(RGROUP)) = 0 THEN DO
+    IF ALL THEN DO 
+      CALL PRINT_PROFILE RCLASS RPROFILE RACCESS
+      NOTFOUND_CLASS = 0
+      NOTFOUND_PROFILE = 0
+    END
+    IF (STRIP(RCLASS) = CLASS) THEN DO 
+      NOTFOUND_CLASS = 0
+      IF LENGTH(PROFILE) = 0  THEN DO
+        NOTFOUND_PROFILE = 0
+        CALL PRINT_PROFILE RCLASS RPROFILE RACCESS
+      END
+      IF STRIP(RPROFILE) = PROFILE THEN DO
+        CALL PRINT_PROFILE CLASS PROFILE RACCESS
+        NOTFOUND_PROFILE = 0
+      END
+    END
+  END
+END
 
-if notfound_class then do
-  say 'RAKF04E Class' class 'not found'
-  exit
-end
+IF NOTFOUND_CLASS THEN DO
+  SAY 'RAKF04E CLASS' CLASS 'NOT FOUND'
+  EXIT
+END
 
-if notfound_profile then do
-  say 'RAKF04E profile' profile 'in class' class 'not found'
-  exit
-end
+IF NOTFOUND_PROFILE THEN DO
+  SAY 'RAKF04E PROFILE' PROFILE 'IN CLASS' CLASS 'NOT FOUND'
+  EXIT
+END
 
 
 /* ----- DONE  ----- */
-exit
+EXIT
 
-check_length:
-  parse arg x y z
-  if length(x) > z then do
-    say 'RAKF02I' y 'must be' z 'characters or shorter'
-    exit
-  end
-return
+CHECK_LENGTH:
+  PARSE ARG X Y Z
+  IF LENGTH(X) > Z THEN DO
+    SAY 'RAKF02I' Y 'MUST BE' Z 'CHARACTERS OR SHORTER'
+    EXIT
+  END
+RETURN
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF profile database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF PROFILE DATABASE'
+    EXIT
+  END
+RETURN
 
-print_profile:
-    parse arg prt_class prt_profile puacc
-    say "CLASS=  " prt_class
-    say "PROFILE=" prt_profile
-    say "UACC=   " puacc
-    groups.0 = 0
-    count = 0
-    do c = 1 to sortin.0
-        parse var sortin.c 1 pclass 9 pprofile 53 pgroup 61 paccess
-        if strip(pclass) = strip(prt_class) &,
-           strip(pprofile) = strip(prt_profile) &,
-           length(strip(pgroup)) > 0 then do
-            count = count + 1
-            groups.count = left(pgroup,8) paccess
-        end
-    end
-    groups.0 = count
-    if groups.0 > 0 then do
-      say "" LEFT("GROUP(S)=",9) "ACCESS"
-      do x = 1 to groups.0
-        say " " groups.x
-      end
-    end
-    say ""
-return
+PRINT_PROFILE:
+    PARSE ARG PRT_CLASS PRT_PROFILE PUACC
+    SAY "CLASS=  " PRT_CLASS
+    SAY "PROFILE=" PRT_PROFILE
+    SAY "UACC=   " PUACC
+    GROUPS.0 = 0
+    COUNT = 0
+    DO C = 1 TO SORTIN.0
+        PARSE VAR SORTIN.C 1 PCLASS 9 PPROFILE 53 PGROUP 61 PACCESS
+        IF STRIP(PCLASS) = STRIP(PRT_CLASS) &,
+           STRIP(PPROFILE) = STRIP(PRT_PROFILE) &,
+           LENGTH(STRIP(PGROUP)) > 0 THEN DO
+            COUNT = COUNT + 1
+            GROUPS.COUNT = LEFT(PGROUP,8) PACCESS
+        END
+    END
+    GROUPS.0 = COUNT
+    IF GROUPS.0 > 0 THEN DO
+      SAY "" LEFT("GROUP(S)=",9) "ACCESS"
+      DO X = 1 TO GROUPS.0
+        SAY " " GROUPS.X
+      END
+    END
+    SAY ""
+RETURN
 
-usage:
-  say ""
-  say "RLIST CLASS PROFILE-NAME"
-  say "EXAMPLE: RX RLIST 'FACILITY'"
-  say "EXAMPLE: RX RLIST 'FACILITY SVC244'"
-  exit
-return
+USAGE:
+  SAY ""
+  SAY "RLIST CLASS PROFILE-NAME"
+  SAY "EXAMPLE: RX RLIST 'FACILITY'"
+  SAY "EXAMPLE: RX RLIST 'FACILITY SVC244'"
+  EXIT
+RETURN
 ./ ADD NAME=RVARY
 /* RAKF RDELETE: DELETE A RAKF PROFILE BREXX SCRIPT */
 /* GET ARGUMENTS */
-parse arg args
+PARSE ARG ARGS
 
-all = 0
+ALL = 0
 
-if length(args) > 0 then do
-    say "RAKF05E Invalid argument:" args
-    call usage
-end
+IF LENGTH(ARGS) > 0 THEN DO
+    SAY "RAKF05E INVALID ARGUMENT:" ARGS
+    CALL USAGE
+END
 
 
-/* ----- Open RAKF profile file ----- */
+/* ----- OPEN RAKF PROFILE FILE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.PROCLIB(RAKF)') SHR REUSE"
-call check_rc rc
+CALL CHECK_RC RC
 ADDRESS TSO "EXECIO * DISKR RAKF (STEM RAKFJCL. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"   
 
-say 'RAKF DATABASE STATUS:'
-say "DATABASE VOLUME DATASET(MEMBER)"
-say "-------- ------ ---------------"
-do i = 1 to RAKFJCL.0
-    parse var RAKFJCL.i "//" JCL DD "DSN=" DSN "(" MEM ")" .
-    if JCL = RAKFPROF then do 
-        x = LISTDSI("'"||DSN||"'")
+SAY 'RAKF DATABASE STATUS:'
+SAY "DATABASE VOLUME DATASET(MEMBER)"
+SAY "-------- ------ ---------------"
+DO I = 1 TO RAKFJCL.0
+    PARSE VAR RAKFJCL.I "//" JCL DD "DSN=" DSN "(" MEM ")" .
+    IF JCL = RAKFPROF THEN DO 
+        X = LISTDSI("'"||DSN||"'")
         SAY "PROFILES" SYSVOLUME DSN||"("||MEM||")"
-    end
-    if JCL = RAKFUSER then do
-        say "USERS   " SYSVOLUME DSN||"("||MEM||")"
-    end
-end
-say "RVARY COMMAND HAS FINISHED PROCESSING."
+    END
+    IF JCL = RAKFUSER THEN DO
+        SAY "USERS   " SYSVOLUME DSN||"("||MEM||")"
+    END
+END
+SAY "RVARY COMMAND HAS FINISHED PROCESSING."
 /* ----- DONE  ----- */
-exit
+EXIT
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF profile database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF PROFILE DATABASE'
+    EXIT
+  END
+RETURN
 
-usage:
-  say ""
-  say "RVARY Takes no arguments"
-  say "EXAMPLE: RX RVARY"
-  exit
-return
+USAGE:
+  SAY ""
+  SAY "RVARY TAKES NO ARGUMENTS"
+  SAY "EXAMPLE: RX RVARY"
+  EXIT
+RETURN
 ./ ADD NAME=SETROPTS
 /* RAKF SETROPTS BREXX SCRIPT */
-/* Replicates some SETROPTS functionality */
+/* REPLICATES SOME SETROPTS FUNCTIONALITY */
 /* GET ARGUMENTS */
-parse arg args
-/* -------- Default -------- */
+PARSE ARG ARGS
+/* -------- DEFAULT -------- */
 DEFAULT = 'LIST'
 CLASSES = ''
 /* --------  DONE  -------- */
-if length(args) = 0 then do
-  say "RAKF01I Insufficient arguments"
-  say ""
-  say "SETROPTS LIST"
-  exit
-end
+IF LENGTH(ARGS) = 0 THEN DO
+  SAY "RAKF01I INSUFFICIENT ARGUMENTS"
+  SAY ""
+  SAY "SETROPTS LIST"
+  EXIT
+END
 
-if args \= "LIST" then do
-    say 'RAKF01I Argument' args 'not recognized'
-    exit
-end
+IF ARGS \= "LIST" THEN DO
+    SAY 'RAKF01I ARGUMENT' ARGS 'NOT RECOGNIZED'
+    EXIT
+END
 
-/* ----- Open RAKF PROFILE file ----- */
+/* ----- OPEN RAKF PROFILE FILE ----- */
 ADDRESS TSO "ALLOC FI(RAKF) DA('SYS1.SECURE.CNTL(PROFILES)') SHR REUSE"
-call check_rc rc
-ADDRESS TSO "EXECIO * DISKR RAKF (STEM profiles. OPEN FINIS"
-call check_rc rc
+CALL CHECK_RC RC
+ADDRESS TSO "EXECIO * DISKR RAKF (STEM PROFILES. OPEN FINIS"
+CALL CHECK_RC RC
 ADDRESS TSO "FREE FI(RAKF)"
-do i=1 to profiles.0
-    class = strip(left(profiles.i,8))
-    if pos(class, classes) = 0 then do
-        classes = classes || " " || class
-    end
-end
+DO I=1 TO PROFILES.0
+    CLASS = STRIP(LEFT(PROFILES.I,8))
+    IF POS(CLASS, CLASSES) = 0 THEN DO
+        CLASSES = CLASSES || " " || CLASS
+    END
+END
 
-say "ACTIVE CLASSES = " || classes
+SAY "ACTIVE CLASSES = " || CLASSES
 
-exit
+EXIT
 
-check_rc:
-  parse arg rcode
-  if rcode > 0 then do
-    say 'RAKF04I Unable to open RAKF user database'
-    exit
-  end
-return
+CHECK_RC:
+  PARSE ARG RCODE
+  IF RCODE > 0 THEN DO
+    SAY 'RAKF04I UNABLE TO OPEN RAKF USER DATABASE'
+    EXIT
+  END
+RETURN
 ./ ADD NAME=$RAKFCL
 # RAKF Command Library
 
