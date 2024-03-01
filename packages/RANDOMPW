@@ -8,7 +8,7 @@
 //ADDRAND  EXEC PGM=IEBGENER
 //SYSPRINT DD SYSOUT=*
 //SYSIN DD DUMMY
-//SYSUT2 DD DSN=BREXX.V2R5M2.RXLIB(RANDOMPW),DISP=SHR
+//SYSUT2 DD DSN=BREXX.CURRENT.RXLIB(RANDOMPW),DISP=SHR
 //SYSUT1 DD *
  /* --------------------------------------------------------------------
  * RANDOMPW iterates N times and returns an 8 character password
