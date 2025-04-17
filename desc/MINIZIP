@@ -1,0 +1,82 @@
+{
+  printf("MiniZip 0.15 MVS 4.0\n");
+    printf("Demo of zLib + Zip package written by Gilles Vollant\n");
+  printf("more info at http://www.winimage.com/zLibDll/minizip.html\n");
+  printf("Modified for MVS, see http://gccmvs.sourceforge.net\n\n");
+}
+
+void do_help()
+{  
+  printf("Usage : minizip -abco zipfile files_to_add\n") ;
+    printf("-a opens files_to_add in text-translated mode and converts "
+        "EBCDIC to ASCII.\n");
+    printf("-b zips files without length indicators (use with V,VB or U "
+        "datasets only.)\n");
+    printf("-c chooses the alternate code-page 037 instead of the default "
+        "1047.\n");
+    printf("-o specifies that all files_to_add are Partition Organised "
+        "datasets and\n");
+    printf("that all members/alias's in each dataset should be zipped.\n");
+    printf("-l to lowercase names\n");
+    printf("-x <extension> to add an extension to all filenames\n");
+    printf("SYSUT1 and zipfile need to be allocated as F/FB with any LRECL "
+        "and BLKSIZE.\n\n");
+
+Package: MINIZIP
+Version: 4.0
+Maintainer: Phil Young
+Depends: 
+Homepage: https://github.com/MVS-sysgen/minizip
+Description: This package installs MINIZIP and MINIUNZ which allows for 
+ compressing and decompressing datasets. 
+
+ To use MINIZIP you need to use JCL. Minizip expects the following:
+
+  - DD for `STDOUT`, `SYSPRINT`, `SYSTERM`, and `SYSIN`
+  - DD for `SYSUT1`, which is the work DD
+  - A `PARM=` where parm follows the usage described above
+    - Note: You must use `DD:` for the output zip file, this 
+      will use the DD name in the JCL, in testing giving the
+      compressed dataset name as an argument would fail
+    - Put one or more datasets to compress
+    - You can also give specific members: `SYS1.PROCLIB(ASMCL)`
+  - :warning: You **must** Specify `REGION=0M` on the jobcard
+
+  Much like MINIZIP, when using MINIUNZ you need to use JCL. 
+  Miniunz expects the following:
+
+  - DD for `STDOUT`, `SYSPRINT`, `SYSTERM`, and `SYSIN`
+  - DD for `SYSUT1`, which is the work DD
+  - A `PARM=` where parm follows the usage described above
+    - You can use either the dataset names or `DD:` statements
+    - The input zip dataset must be a sequential dataset (PS)
+    - The output dataset must be a PDS
+    - Put one or more datasets to compress
+  - :warning: You **must** Specify `REGION=0M` on the jobcard
+
+  Included in the `src/contrib/minzip` folder are two procs. Put them
+  in `SYS2.PROCLIB`:
+
+  - `ZIP.jcl` compresses dataset(s)
+  - Parms:
+    - `OUTZIP` - New zip file to be created
+    - `INFILE` - the dataset(s)/members to compress
+    - `P` - minizip arguments
+
+  - `UNZIP.jcl` decompresses dataset(s)
+  - Parms:
+    - `INZIP` - File to be unzipped
+    - `OUTDSN` - New PDS to decompress to
+    - `P` - miniunz arguments
+
+ZIP:
+
+//ZIP JOB (JOB),'ZIP',CLASS=A,MSGCLASS=H,NOTIFY=IBMUSER,REGION=0M
+//ZIP EXEC ZIP,OUTZIP='IBMUSER.PROC.ZIP',
+//             INFILE='SYS2.PROCLIB SYS1.PROCLIB',P='-o'  
+
+UNZIP:
+
+//UNZIP JOB (JOB),'ZIP',CLASS=A,MSGCLASS=H,NOTIFY=IBMUSER,REGION=0M
+//UNZIP EXEC UNZIP,OUTDSN='IBMUSER.PROCTEST',                      
+//             INZIP='IBMUSER.PROC.ZIP'     
