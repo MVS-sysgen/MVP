@@ -54,8 +54,7 @@ Description: This package installs MINIZIP and MINIUNZ which allows for
     - Put one or more datasets to compress
   - :warning: You **must** Specify `REGION=0M` on the jobcard
 
-  Included in the `src/contrib/minzip` folder are two procs. Put them
-  in `SYS2.PROCLIB`:
+  Included in the in SYS2.PROCLIB folder are two procs:
 
   - `ZIP.jcl` compresses dataset(s)
   - Parms:
@@ -68,15 +67,3 @@ Description: This package installs MINIZIP and MINIUNZ which allows for
     - `INZIP` - File to be unzipped
     - `OUTDSN` - New PDS to decompress to
     - `P` - miniunz arguments
-
-ZIP:
-
-//ZIP JOB (JOB),'ZIP',CLASS=A,MSGCLASS=H,NOTIFY=IBMUSER,REGION=0M
-//ZIP EXEC ZIP,OUTZIP='IBMUSER.PROC.ZIP',
-//             INFILE='SYS2.PROCLIB SYS1.PROCLIB',P='-o'  
-
-UNZIP:
-
-//UNZIP JOB (JOB),'ZIP',CLASS=A,MSGCLASS=H,NOTIFY=IBMUSER,REGION=0M
-//UNZIP EXEC UNZIP,OUTDSN='IBMUSER.PROCTEST',                      
-//             INZIP='IBMUSER.PROC.ZIP'     
