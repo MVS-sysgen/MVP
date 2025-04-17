@@ -1,0 +1,12 @@
+Package: HTTPD
+Version: 3.3.0
+Maintainer: Mike Rayborn
+Depends: MINIZIP NJE38
+Homepage: 
+Description: HTTP Server for MVS
+ The HTTPD software is a HTTP protocol 1.0 server designed for the MVS
+ (release 38J) operating system running on a Hercules emulator. This 
+ allows for both static and dynamic documents to be served from this 
+ legacy operating system. Think of it as modern day internet (web browser)
+ meets MVS from yester year.
+ 
