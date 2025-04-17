@@ -235,7 +235,7 @@ submit_xmi = '''//{:8} JOB (TSO),
 
 submit_zip = '''//{:8} JOB (TSO),
 //             'MVP INSTALL',
-//             CLASS=A,REGION=0M
+//             CLASS=A,REGION=0M,
 //             MSGCLASS=A,
 //             MSGLEVEL=(1,1),USER={},PASSWORD={}
 //* CLEAN UP
@@ -247,11 +247,7 @@ submit_zip = '''//{:8} JOB (TSO),
 //SYSPRINT DD SYSOUT=*
 //* UNLOAD ZIP file to TO MVP.WORK
 //UNZIP EXEC PGM=MINIUNZ,          
-//  PARM='DD:ZIPFILE DD:UNZIP'
-//UNZIP    DD  DSN=SYS2.PROCLIB,DISP=(,CATLG,),
-//             UNIT=SYSDA,VOL=SER=PUB001,
-//             SPACE=(CYL,(10,5,50)),                   
-//             DCB=(DSORG=PS,RECFM=FB,LRECL=80,BLKSIZE=27920)                               
+//  PARM='DD:ZIPFILE MVP.WORK'                       
 //STDOUT   DD SYSOUT=*                           
 //SYSPRINT DD SYSOUT=*                           
 //SYSTERM  DD SYSOUT=*                           
@@ -259,10 +255,11 @@ submit_zip = '''//{:8} JOB (TSO),
 //SYSUT1   DD UNIT=SYSDA,SPACE=(CYL,300),        
 // DCB=(DSORG=PS,RECFM=FB,LRECL=128,BLKSIZE=6144)  
 //* Output dataset
-//UNZIP   DD  DSN=MVP.WORK,
-//             UNIT=3390,VOL=SER=PUB001,
-//             SPACE=(CYL,(10,10,20),RLSE),
-//             DISP=(NEW,CATLG,DELETE)
+//UNZIP    DD  DSN=MVP.WORK,DISP=(,CATLG,),
+//             UNIT=SYSDA,VOL=SER=PUB001,
+//             SPACE=(CYL,(10,5,50)),                   
+//             DCB=(DSORG=PO,RECFM=FB,LRECL=80,BLKSIZE=27920)  
+//* In ZIP File
 //ZIPFILE   DD DATA,DLM=$$'''
 
 def submit(jcl, host="127.0.0.1", port=3505, xmi=False, zip=False):
