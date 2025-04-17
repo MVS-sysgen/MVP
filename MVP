@@ -233,7 +233,39 @@ submit_xmi = '''//{:8} JOB (TSO),
 //XMITIN   DD DATA,DLM=$$
 '''
 
-def submit(jcl, host="127.0.0.1", port=3505, xmi=False):
+submit_zip = '''//{:8} JOB (TSO),
+//             'MVP INSTALL',
+//             CLASS=A,REGION=0M
+//             MSGCLASS=A,
+//             MSGLEVEL=(1,1),USER={},PASSWORD={}
+//* CLEAN UP
+//CLEANUP EXEC PGM=IDCAMS
+//SYSIN    DD *
+  DELETE MVP.WORK SCRATCH PURGE
+  SET MAXCC=0
+  SET LASTCC=0
+//SYSPRINT DD SYSOUT=*
+//* UNLOAD ZIP file to TO MVP.WORK
+//UNZIP EXEC PGM=MINIUNZ,          
+//  PARM='DD:ZIPFILE DD:UNZIP'
+//UNZIP    DD  DSN=SYS2.PROCLIB,DISP=(,CATLG,),
+//             UNIT=SYSDA,VOL=SER=PUB001,
+//             SPACE=(CYL,(10,5,50)),                   
+//             DCB=(DSORG=PS,RECFM=FB,LRECL=80,BLKSIZE=27920)                               
+//STDOUT   DD SYSOUT=*                           
+//SYSPRINT DD SYSOUT=*                           
+//SYSTERM  DD SYSOUT=*                           
+//SYSIN    DD DUMMY                              
+//SYSUT1   DD UNIT=SYSDA,SPACE=(CYL,300),        
+// DCB=(DSORG=PS,RECFM=FB,LRECL=128,BLKSIZE=6144)  
+//* Output dataset
+//UNZIP   DD  DSN=MVP.WORK,
+//             UNIT=3390,VOL=SER=PUB001,
+//             SPACE=(CYL,(10,10,20),RLSE),
+//             DISP=(NEW,CATLG,DELETE)
+//ZIPFILE   DD DATA,DLM=$$'''
+
+def submit(jcl, host="127.0.0.1", port=3505, xmi=False, zip=False):
     '''submits a job to hercules reader'''
     
     print("MVP104I - Sending {lines} bytes to {host}:{port} (xmi: {xmi})".format(lines=len(jcl),host=host,port=port,xmi=xmi))
@@ -243,7 +275,7 @@ def submit(jcl, host="127.0.0.1", port=3505, xmi=False):
     try:
         # Connect to server and send data
         sock.connect((host, port))
-        if not xmi:
+        if not xmi and not zip:
             sock.send(jcl.encode())
         else:
             sock.send(jcl)
@@ -443,6 +475,26 @@ if args.instruction == "INSTALL":
                                 host=config['DEFAULT']['hercules_ip'],
                                 port=int(config['DEFAULT']['ebcdic_reader']),
                                 xmi=True)
+                        
+                if package.split()[1] == "ZIP":
+                    t = submit_zip.format(args.package,config['DEFAULT']['user'], config['DEFAULT']['password'])
+
+                    temp = b''
+                    line = "{:80}"
+                    for l in t.splitlines():
+                        long_line = line.format(l)
+                        temp += long_line.encode('cp500')
+
+                    with open("{}/{}".format(config['DEFAULT']['packages'],args.package), 'rb') as zip:
+                        temp += zip.read()
+                    if args.print_only:
+                        print("MVP100I - Printing ZIP packages not supported")
+                    else:
+                        submit(
+                                temp,
+                                host=config['DEFAULT']['hercules_ip'],
+                                port=int(config['DEFAULT']['ebcdic_reader']),
+                                zip=True)
                 break
     if not package_exists:
         print("MVP199E - Could not find {}".format(args.package))
