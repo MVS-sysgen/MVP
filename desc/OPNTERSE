@@ -1,5 +1,5 @@
 Package: OPNTERSE
-Version: 0.1.0
+Version: 0.1.2
 Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
 Depends:
 Homepage:
@@ -9,7 +9,8 @@ OpenTerse is a reimplementation of the z/OS TERSE data
 compression format (PACK, SPACK and their common inverse, UNPACK).
 
 This package installs the OPNTERSE load module into SYS2.LINKLIB and
-adds TRSMAIN and AMATERSE as aliases for it, so any existing JCL that
+adds TRSMAIN and AMATERSE as copies of it (IEBCOPY renames;
+linkage-editor aliases corrupt ld370 modules on MVS 3.8), so any existing JCL that
 invokes PGM=TRSMAIN or PGM=AMATERSE runs OPNTERSE unmodified -- it
 mimics their PARM='PACK'|'SPACK'|'UNPACK' and SYSUT1/SYSUT2/SYSPRINT
 (and TRSMAIN's INFILE/OUTFILE) calling convention.
