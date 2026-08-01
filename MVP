@@ -157,6 +157,22 @@ INSTALL_JOB = '''//MVPINSTL JOB (TSO),
   CALL 'SYS2.CMDLIB(ADDUSER)' +
 'MVP PASSWORD({mvp_user}) DFLTGRP(ADMIN) GROUP(RAKFADM) OPERATIONS'
 /*
+//* Stash the MVP password where MVP.rexx can find it. It used to
+//* read the password column of SYS1.SECURE.CNTL(USERS), but RAKF
+//* now keeps salted SHA-256 hashes in SYS1.SECURE.SHADOW and leaves
+//* that column blank -- so jobs submitted through the internal
+//* reader went out with a blank password and were rejected:
+//*     IEF722I #001JCL  - FAILED - INVALID PASSWORD GIVEN
+//* Same PDS, so the SYS1.SECURE.* profile still protects it:
+//* UACC(NONE) with RAKFADM UPDATE. MVP is connected to RAKFADM, so
+//* it can read this and nobody else can.
+//MVPPW    EXEC PGM=IEBGENER
+//SYSPRINT DD   SYSOUT=*
+//SYSIN    DD   DUMMY
+//SYSUT2   DD   DSN=SYS1.SECURE.CNTL(MVP),DISP=SHR
+//SYSUT1   DD   *
+{mvp_user}
+/*
 //* reload the in-core tables so the new credential takes effect
 //UPDTUSER EXEC RAKFUSER
 '''
@@ -292,7 +308,7 @@ args = parser.parse_args()
 if 'password' not in config['DEFAULT'] and args.instruction != "INSTALL_MVP":
     print("MVP103E - MVP account password missing from MVP.ini")
     print("MVP103E - Use {} INSTALL_MVP to install MVP and generate a new password".format(sys.argv[0]))
-    print("MVP103E - If MVP has already been installed copy the password from SYS1.SECURE.CNTL(USERS)")
+    print("MVP103E - If MVP has already been installed copy the password from SYS1.SECURE.CNTL(MVP)")
     exit(1)
 
 if args.instruction == "INSTALL" and not args.package:

@@ -881,38 +881,31 @@ SUBMIT_WORK_JCL:
   RETURN
 
 GET_PW: 
-/* RETURNS A STRING WITH THE MVP USER PASSWORD FROM RAKF */
-  CALL DEBUG "GET_PW: OPENING 'SYS1.SECURE.CNTL(USERS)'"
+/* RETURNS A STRING WITH THE MVP USER PASSWORD FROM RAKF          */
+/* This used to read columns 19-26 of the MVP line in             */
+/* SYS1.SECURE.CNTL(USERS). RAKF now keeps salted SHA-256 hashes  */
+/* in SYS1.SECURE.SHADOW and leaves that column blank, so it      */
+/* returned 8 spaces and every job submitted through the internal */
+/* reader was rejected with IEF722I INVALID PASSWORD GIVEN. The   */
+/* MVP install writes the password to the MVP member instead.     */
+/* Same PDS, so the SYS1.SECURE.* profile still protects it:      */
+/* UACC(NONE) with RAKFADM UPDATE, and MVP is in RAKFADM.         */
+  CALL DEBUG "GET_PW: OPENING 'SYS1.SECURE.CNTL(MVP)'"
 
 
-  PW_STREAM = OPEN("'SYS1.SECURE.CNTL(USERS)'",'R')
+  PW_STREAM = OPEN("'SYS1.SECURE.CNTL(MVP)'",'R')
 
   IF PW_STREAM < 0 THEN DO
-    CALL ERROR "ERROR READING 'SYS1.SECURE.CNTL(USERS)':" PW_STREAM
+    CALL ERROR "ERROR READING 'SYS1.SECURE.CNTL(MVP)':" PW_STREAM
     EXIT 8
   END
 
-  USERS.0 = LINES(PW_STREAM)    
-  DO K=1 TO LINES(PW_STREAM)
-    USERS.K = LINEIN(PW_STREAM) 
-  END 
-  
-  CALL CLOSE PW_STREAM  
+  PW = STRIP(LINEIN(PW_STREAM))
 
-  PW = ""
-
-  CALL DEBUG "GET_PW: SEARCHING FOR MVP USER"
-  DO K=1 TO USERS.0
-    IF LEFT(USERS.K, 4) == "MVP " THEN DO
-      CALL DEBUG "GET_PW: MVP USER FOUND RETURNING"
-      /* RETURNS THE PASSWORD FOR THE MVP USER */
-      PW = SUBSTR(USERS.K,19,8)
-      LEAVE
-    END
-  END
+  CALL CLOSE PW_STREAM
 
   IF PW="" THEN DO
-    CALL DEBUG "GET_PW: MVP USER NOT FOUND!"
+    CALL DEBUG "GET_PW: MVP PASSWORD NOT FOUND!"
   END
 
   RETURN PW
