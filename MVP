@@ -144,15 +144,15 @@ INSTALL_JOB = '''//MVPINSTL JOB (TSO),
 //* sign-on path uses. It runs as an ordinary problem-state program; the
 //* jobcard user must be connected to RAKFADM, which is the protection
 //* boundary on the control datasets.
-//MVPRAKF  EXEC PGM=IKJEFT01
+//* No USERS/SHADOW DDs. They were a workaround for a libc370 bug that
+//* broke opening a dataset by DSN; with that fixed, ADDUSER resolves
+//* and allocates the control datasets itself, exactly as it does when
+//* typed at READY. Supplying the DDs instead routes the writes through
+//* fopen("DD:...","wb"), a path nothing has ever exercised.
+//* REGION: the step ran in the 512K job default, and a cc370 program
+//* GETMAINs a 256K stack before main() -- too tight under IKJEFT01.
+//MVPRAKF  EXEC PGM=IKJEFT01,REGION=4096K
 //SYSTSPRT DD   SYSOUT=*
-//* ADDUSER opens DD:USERS and DD:SHADOW first and only falls back to
-//* allocating by DSN, which does not work here -- without these DDs it
-//* reports "ADDUSER: cannot open USERS." and exits RC=12. (A RAKF
-//* authorization failure would abend S913 instead, so this is an
-//* allocation problem, not a permissions one.)
-//USERS    DD   DSN=SYS1.SECURE.CNTL(USERS),DISP=SHR
-//SHADOW   DD   DSN=SYS1.SECURE.SHADOW,DISP=SHR
 //SYSTSIN  DD   *
   CALL 'SYS2.CMDLIB(ADDUSER)' +
 'MVP PASSWORD({mvp_user}) DFLTGRP(ADMIN) GROUP(RAKFADM) OPERATIONS'
