@@ -146,6 +146,13 @@ INSTALL_JOB = '''//MVPINSTL JOB (TSO),
 //* boundary on the control datasets.
 //MVPRAKF  EXEC PGM=IKJEFT01
 //SYSTSPRT DD   SYSOUT=*
+//* ADDUSER opens DD:USERS and DD:SHADOW first and only falls back to
+//* allocating by DSN, which does not work here -- without these DDs it
+//* reports "ADDUSER: cannot open USERS." and exits RC=12. (A RAKF
+//* authorization failure would abend S913 instead, so this is an
+//* allocation problem, not a permissions one.)
+//USERS    DD   DSN=SYS1.SECURE.CNTL(USERS),DISP=SHR
+//SHADOW   DD   DSN=SYS1.SECURE.SHADOW,DISP=SHR
 //SYSTSIN  DD   *
   CALL 'SYS2.CMDLIB(ADDUSER)' +
 'MVP PASSWORD({mvp_user}) DFLTGRP(ADMIN) GROUP(RAKFADM) OPERATIONS'
