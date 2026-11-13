@@ -18,6 +18,11 @@ went wrong.
 
 Once installed you can begin using it on MVS/CE with: `RX MVP` for help.
 
+UFSD, FTPD, HTTPD and MVSMF are no longer MVP packages. On MVS/CE the
+sysgen installs them with SMP from the mvslovers releases
+(https://github.com/mvslovers), together with BREXX/370, RAKF and SDSF;
+see the MVS/CE README for the installed levels and how to upgrade them.
+
 :warning: if you're installing this on another system other than MVS/CE you must install Jay
 Moseley's IEFACTRT-4 usermod JLM0001 availble here: http://www.jaymoseley.com/hercules/iefactrt/exit04.htm
 and in the `extras` folder.
@@ -44,19 +49,19 @@ will install them all in the correct order.
 
 ## Example
 
-If you wanted to install the FTP server for MVS/CE you would first
-search for any packages with FTP then install the package you want:
+If you wanted to install Rob Prins' RPF editor you would first
+search for any packages with RPF then install the package you want:
 
 ```
  READY
-rx mvp search ftp
+rx mvp search rpf
  Searching...
 
- FTPD 1.5
-   MVS 3.8J FTPD Server
+ RPF 1.9.0
+   Rob Prins' Programming Facility
 
  READY
- rx mvp install FTPD
+ rx mvp install RPF
 ```
 
 ## Command Syntax
@@ -111,22 +116,22 @@ It's a little more complicated for XMI files, see the **Packages** section below
 
 A JCL procedure is included with MVP located at `SYS2.PROCLIB(MVP)` and can be used to install, list, search, packages.
 
-Example 1: Install FTPD
+Example 1: Install RPF
 
 ```
 //MVPRFE JOB (SYSGEN),'MVP INSTALL',CLASS=A,MSGCLASS=A,
 //       MSGLEVEL=(1,1),NOTIFY=IBMUSER
-//* This JCL installs FTP using MVP
-//MVPINST EXEC MVP,INSTALL='FTPD' 
+//* This JCL installs RPF using MVP
+//MVPINST EXEC MVP,INSTALL='RPF' 
 ```
 
-Example 2: Install FTPD with debugging enabled
+Example 2: Install RPF with debugging enabled
 
 ```
 //MVPRFE JOB (SYSGEN),'MVP INSTALL',CLASS=A,MSGCLASS=A,
 //       MSGLEVEL=(1,1),NOTIFY=IBMUSER
-//* This JCL installs FTP using MVP
-//MVPINST EXEC MVP,INSTALL='FTPD -D' 
+//* This JCL installs RPF using MVP
+//MVPINST EXEC MVP,INSTALL='RPF -D' 
 ```
 
 Example 3: List available packages
@@ -193,27 +198,19 @@ An ASCII file named the same as the package in the `cache` file located in the `
 - Homepage: URL to software homepage
 - Description: The first line is the short description use do display in search, the rest is the detailed description
 
-For example `desc/FTPD` contains:
+For example `desc/RPF` contains:
 ```
-Package: FTPD
-Version: 1.5
+Package: RPF
+Version: 1.9.0
 Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
-Depends: RANDOMPW
-Homepage: https://github.com/MVS-sysgen/FTPD
-Description: MVS 3.8J FTPD Server
+Depends:
+Homepage: http://www.prince-webdesign.nl/index.php/software/
+Description: Rob Prins' Programming Facility
 
-This is the JCC FTPD server with RAKF support, initially from TK4- with
-many addition.
-
-Users in the RAKF group *ADMIN* has access to use FTP. To allow users
-access to FTP add the user or group to the **FTPAUTH** resource in the
-FACILITY class in SYS1.SECURE.CNTL(PROFILES).
-
-To start the FTPD server run the command '/s ftpd' in the hercules console.
-To stop the FTP server run the command '/p ftpd' or '/stop ftpd' on the
-hercules console. To make changes to the configuration (ports, IP etc)
-edit the config file SYS1.PARMLIB(FTPDPM00). Visit the homepage
-for more startup and configuration information.
+ TSO full screen Editor and multi-utility programmer facility called RPF. RPF
+ runs under native TSO (or as a TSO command processor), even if ISPF is
+ running too, and RPF has an ISPF-like editor, browser, and quite a few other
+ utilities.
 ```
 
 ## JCL vs XMI
