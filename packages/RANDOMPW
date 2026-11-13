@@ -1,15 +1,24 @@
 //RANDOMPW JOB (TSO),
-//             'Install LISTPDS',
+//             'Install RANDOMPW',
 //             CLASS=A,
 //             MSGCLASS=A,
 //             MSGLEVEL=(1,1),
 //             USER=IBMUSER,PASSWORD=SYS1
-//* Installs REXX RANDOMPW to RXLIB
-//ADDRAND  EXEC PGM=IEBGENER
+//* Installs REXX RANDOMPW to SYS2.EXEC. The function used to go to
+//* BREXX.CURRENT.RXLIB, which on BREXX/370 3.1 is the SMP-owned
+//* BREXX.RXLIB, so it is now an internal routine of the exec.
+//RANDRX  EXEC PGM=IEBGENER
 //SYSPRINT DD SYSOUT=*
 //SYSIN DD DUMMY
-//SYSUT2 DD DSN=BREXX.CURRENT.RXLIB(RANDOMPW),DISP=SHR
+//SYSUT2 DD DSN=SYS2.EXEC(RANDOMPW),DISP=SHR
 //SYSUT1 DD *
+ /* Random password, call with RX RANDOMPW */
+ /* To generate a TSO password use RX RANDOMPW 20 TSO */
+parse arg number service
+if number = '' then number = 20
+say RANDOMPW(number service)
+exit 0
+
  /* --------------------------------------------------------------------
  * RANDOMPW iterates N times and returns an 8 character password
  * ................... Converted to BREXX By Phil Young October 2021
@@ -62,14 +71,3 @@ do g=1  to N;
 
 end
 return rando
-/*
-//RANDRX  EXEC PGM=IEBGENER
-//SYSPRINT DD SYSOUT=*
-//SYSIN DD DUMMY
-//SYSUT2 DD DSN=SYS2.EXEC(RANDOMPW),DISP=SHR
-//SYSUT1 DD *
- /* Random password, call with RX RANDOMPW */
- /* To generate a TSO password use RX RANDOMPW 20 TSO */
-parse arg number service
-if number = '' then number = 20
-say RANDOMPW(number service)

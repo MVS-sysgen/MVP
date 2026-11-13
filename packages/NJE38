@@ -32737,14 +32737,14 @@ AUTH  HMVS01   AT MVSB
   LKLIB(UMODLIB)
   .
 /*
+//* NJE0001 is only RECEIVEd, not applied: MVS/CE applies it in sysgen
+//* (TRANSMIT package), and RAKF's JLM0003 supersedes it with an
+//* IKJEFTE2 that has these names plus LISTUSER/LU/LISTP. Applying it
+//* again ends RC 12 (HMA2483) or would regress RAKF's table.
 //SMPCNTL  DD  *
  RECEIVE
          SELECT(NJE0001)
          .
-  APPLY
-        SELECT(NJE0001)
-        DIS(WRITE)
-        .
 /*
 //*
 //* ADD RAKF PROFILE
@@ -32811,14 +32811,23 @@ do i=1 to command.0
     say "*** Adding" COMMAND.i
     say "*** Issuing "||cmd||file||' '||COMMAND.i||'"' 
     ADDRESS COMMAND cmd||file||' '||COMMAND.i||'"'
+    if rc <> 0 then call cpfail rc
 end
 
 say "*** Appending to conf/local/custom.cnf"
 conffile = "conf/local/custom.cnf"
 say "*** Issuing " cmd||conffile||' INCLUDE '||file||'"'
 ADDRESS COMMAND cmd||conffile||' INCLUDE '||file||'"'
+if rc <> 0 then call cpfail rc
 
 say "*** Done"
+exit 0
+
+cpfail:
+/* BREXX/370 3.1: -3 = no READ on FACILITY DIAG8CMD, -5 = no SVC244 */
+say "*** CP command failed, RC" arg(1)
+say "*** The job user needs RAKF FACILITY READ on DIAG8CMD and SVC244"
+exit 8
 /*
 //SYSUT2   DD DSN=&&REXXCONF(NJECONF),DISP=(,PASS),UNIT=VIO,
 //            SPACE=(TRK,(5,5,5))
