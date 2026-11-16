@@ -1,7 +1,7 @@
 Package: RPF
-Version: 1.9.0
+Version: 2.0.2
 Maintainer: Soldier of FORTRAN <mainframed767@gmail.com>
-Depends:
+Depends: MINIZIP
 Homepage: http://www.prince-webdesign.nl/index.php/software/
 Description: Rob Prins' Programming Facility
 
